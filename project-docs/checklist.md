@@ -40,13 +40,13 @@ This file outlines **all tasks** for building the **baseline features** of AutoC
 
 ### 4. Ticket Creation & Viewing (Core)
 
-- [ ] **Ticket Creation**  Giv
+- [x] **Ticket Creation**  
   - **Customer** can create a new ticket with `title`, `description`, `priority`.  
   - Store the `customerId` to link it to the user.
-- [ ] **Ticket Listing**  
+- [x] **Ticket Listing**  
   - **Worker** or **Admin** can see a list of all tickets.  
   - **Customer** can see only their own tickets.
-- [ ] **Ticket Detail**  
+- [x] **Ticket Detail**  
   - Display `title`, `description`, `status`, `priority`.  
   - Verify relationships (e.g., `customer` name/email) are fetched correctly.
 
@@ -62,18 +62,18 @@ This file outlines **all tasks** for building the **baseline features** of AutoC
 
 ### 6. Minimal UI (via Lovable.dev + React + Tailwind)
 
-- [ ] **Lovable.dev Page Generation**  
+- [x] **Lovable.dev Page Generation**  
   - Generate at least a **Ticket List Page** (for workers/admin) and a **Ticket Detail Page**.  
   - Generate a **Customer Portal** page ("My Tickets") for viewing + creating tickets.
-- [ ] **Integrate Tailwind**  
+- [x] **Integrate Tailwind**  
   - Ensure Lovable.dev code uses Tailwind classes for styling consistency.
-- [ ] **Auth Handling**  
+- [x] **Auth Handling**  
   - Protect routes for Worker/Admin pages, redirect if unauthorized.  
   - Show or hide UI elements based on `User.role` (Customer vs. Worker vs. Admin).
 
 ### 7. Basic Testing & Deployment
 
-- [ ] **Local Testing**  
+- [x] **Local Testing**  
   - Confirm sign-up/sign-in, ticket creation, listing, assignment.  
   - Log out and in as different roles to verify correct access.
 - [ ] **Deploy to AWS Amplify**  

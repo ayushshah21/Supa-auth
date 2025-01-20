@@ -21,19 +21,40 @@ export const getUserRole = async (userId: string) => {
         const authUser = authData?.user;
         
         if (!authUser) {
+            console.log('No authenticated user found');
             throw new Error('No authenticated user found');
         }
 
         console.log('Auth user details:', { id: authUser.id, email: authUser.email });
 
-        // Try to find user by either ID or email using proper parameter binding
-        const { data: existingUser, error: checkError } = await supabase
+        // Try to find user by ID first
+        let { data: existingUser, error: checkError } = await supabase
             .from('users')
             .select('id, role, email')
-            .or(`id.eq.${userId},and(email.eq.${authUser.email})`.replace(/['"]/g, ''))
+            .eq('id', userId)
             .maybeSingle();
 
+        // If not found by ID, try by email
+        if (!existingUser && !checkError) {
+            const { data: userByEmail, error: emailCheckError } = await supabase
+                .from('users')
+                .select('id, role, email')
+                .eq('email', authUser.email)
+                .maybeSingle();
+            
+            if (emailCheckError) {
+                checkError = emailCheckError;
+            } else {
+                existingUser = userByEmail;
+            }
+        }
+
         console.log('User lookup result:', { existingUser, checkError });
+
+        if (checkError) {
+            console.error('Error checking for existing user:', checkError);
+            throw checkError;
+        }
 
         if (existingUser) {
             // If IDs don't match but email does, update the ID
@@ -52,7 +73,7 @@ export const getUserRole = async (userId: string) => {
             console.log('Returning existing user role:', existingUser.role);
             return existingUser.role;
         }
-
+        
         // If no user found at all, create a new one
         console.log('Creating new user record...');
         const { data: newUser, error: insertError } = await supabase
@@ -61,6 +82,8 @@ export const getUserRole = async (userId: string) => {
                 id: userId,
                 email: authUser.email,
                 role: 'CUSTOMER',
+                name: authUser.user_metadata?.full_name || null,
+                skills: [],
                 preferences: {},
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString()
@@ -73,7 +96,7 @@ export const getUserRole = async (userId: string) => {
             throw insertError;
         }
 
-        console.log('New user created:', newUser);
+        console.log('New user created with role:', newUser?.role);
         return newUser?.role;
     } catch (error) {
         console.error('Error in getUserRole:', error);
@@ -156,4 +179,12 @@ export const promoteUserRole = async (userId: string, newRole: 'WORKER' | 'ADMIN
 
     if (error) throw error;
     return data;
+};
+
+export const getWorkers = async () => {
+    const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .in('role', ['WORKER', 'ADMIN']);
+    return { data, error };
 }; 

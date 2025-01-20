@@ -17,14 +17,24 @@ const LoginPage = () => {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) {
-      setError(error.message);
-    } else {
+      if (error.message.includes("Email not confirmed")) {
+        setError(
+          "Please verify your email address before logging in. Check your inbox for the verification link."
+        );
+      } else if (error.message.includes("Invalid login credentials")) {
+        setError(
+          "Invalid email or password. If you haven't verified your email, please check your inbox."
+        );
+      } else {
+        setError(error.message);
+      }
+    } else if (data?.user) {
       navigate("/dashboard");
     }
     setLoading(false);

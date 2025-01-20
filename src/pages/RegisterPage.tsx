@@ -18,7 +18,7 @@ const RegisterPage = () => {
     const password = formData.get("password") as string;
     const fullName = formData.get("fullName") as string;
 
-    const { error: signUpError } = await supabase.auth.signUp({
+    const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -31,9 +31,16 @@ const RegisterPage = () => {
 
     if (signUpError) {
       setError(signUpError.message);
+    } else if (data?.user?.identities?.length === 0) {
+      setError(
+        "This email is already registered. Please try logging in instead."
+      );
+      navigate("/login");
     } else {
       navigate("/login");
-      alert("Please check your email to confirm your registration!");
+      alert(
+        "Please check your email to confirm your registration before logging in!"
+      );
     }
     setLoading(false);
   };
