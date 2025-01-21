@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCurrentUser, getUserRole } from "../lib/supabase/auth";
-import { getTickets } from "../lib/supabase/tickets";
+import { getCurrentUser, getUserRole, getWorkers } from "../lib/supabase/auth";
+import { getTickets, updateTickets } from "../lib/supabase/tickets";
 import type { Database, TicketStatus } from "../types/supabase";
+import BulkActions from "../components/tickets/BulkActions";
+import TicketTable from "../components/tickets/TicketTable";
 
 type Ticket = Database["public"]["Tables"]["tickets"]["Row"] & {
   customer: Database["public"]["Tables"]["users"]["Row"];
@@ -17,6 +19,11 @@ export default function AllTicketsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [statusFilter, setStatusFilter] = useState<TicketStatus | "ALL">("ALL");
+  const [selectedTickets, setSelectedTickets] = useState<string[]>([]);
+  const [workers, setWorkers] = useState<
+    Database["public"]["Tables"]["users"]["Row"][]
+  >([]);
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     const fetchTickets = async () => {
@@ -31,6 +38,12 @@ export default function AllTicketsPage() {
         if (userRole === "CUSTOMER") {
           navigate("/my-tickets");
           return;
+        }
+
+        // Load workers for assignment
+        if (userRole === "WORKER" || userRole === "ADMIN") {
+          const { data: workersData } = await getWorkers();
+          if (workersData) setWorkers(workersData);
         }
 
         const { data, error: ticketsError } = await getTickets(
@@ -49,31 +62,63 @@ export default function AllTicketsPage() {
     fetchTickets();
   }, [navigate, statusFilter]);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "OPEN":
-        return "bg-yellow-100 text-yellow-800";
-      case "IN_PROGRESS":
-        return "bg-blue-100 text-blue-800";
-      case "RESOLVED":
-        return "bg-green-100 text-green-800";
-      case "CLOSED":
-        return "bg-gray-100 text-gray-800";
-      default:
-        return "bg-gray-100 text-gray-800";
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedTickets(tickets.map((t) => t.id));
+    } else {
+      setSelectedTickets([]);
     }
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "HIGH":
-        return "text-red-600";
-      case "MEDIUM":
-        return "text-yellow-600";
-      case "LOW":
-        return "text-green-600";
-      default:
-        return "text-gray-600";
+  const handleSelectTicket = (ticketId: string, checked: boolean) => {
+    if (checked) {
+      setSelectedTickets((prev) => [...prev, ticketId]);
+    } else {
+      setSelectedTickets((prev) => prev.filter((id) => id !== ticketId));
+    }
+  };
+
+  const handleBulkStatusUpdate = async (newStatus: TicketStatus) => {
+    if (selectedTickets.length === 0) return;
+    setUpdating(true);
+    try {
+      const { error } = await updateTickets(selectedTickets, {
+        status: newStatus,
+      });
+      if (error) throw error;
+
+      // Refresh tickets
+      const { data } = await getTickets(
+        statusFilter === "ALL" ? undefined : { status: statusFilter }
+      );
+      setTickets(data || []);
+      setSelectedTickets([]);
+    } catch (err: any) {
+      setError(err.message || "Failed to update tickets");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleBulkAssign = async (workerId: string) => {
+    if (selectedTickets.length === 0) return;
+    setUpdating(true);
+    try {
+      const { error } = await updateTickets(selectedTickets, {
+        assigned_to_id: workerId || null,
+      });
+      if (error) throw error;
+
+      // Refresh tickets
+      const { data } = await getTickets(
+        statusFilter === "ALL" ? undefined : { status: statusFilter }
+      );
+      setTickets(data || []);
+      setSelectedTickets([]);
+    } catch (err: any) {
+      setError(err.message || "Failed to assign tickets");
+    } finally {
+      setUpdating(false);
     }
   };
 
@@ -107,76 +152,21 @@ export default function AllTicketsPage() {
         </div>
       </div>
 
-      {tickets.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-500">No tickets found.</p>
-        </div>
-      ) : (
-        <div className="bg-white shadow overflow-hidden sm:rounded-md">
-          <ul className="divide-y divide-gray-200">
-            {tickets.map((ticket) => (
-              <li
-                key={ticket.id}
-                className="hover:bg-gray-50 cursor-pointer"
-                onClick={() => navigate(`/ticket/${ticket.id}`)}
-              >
-                <div className="px-4 py-4 sm:px-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-900">
-                        {ticket.title}
-                      </h3>
-                      <p className="text-xs text-gray-500 mt-1">
-                        Customer: {ticket.customer?.email || "Unknown"}
-                      </p>
-                    </div>
-                    <div className="flex space-x-2">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
-                          ticket.status
-                        )}`}
-                      >
-                        {ticket.status}
-                      </span>
-                      <span
-                        className={`text-xs font-medium ${getPriorityColor(
-                          ticket.priority
-                        )}`}
-                      >
-                        {ticket.priority}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="mt-2">
-                    <p className="text-sm text-gray-500 line-clamp-2">
-                      {ticket.description}
-                    </p>
-                  </div>
-                  <div className="mt-2 flex justify-between text-xs text-gray-500">
-                    <div>
-                      Created:{" "}
-                      {new Date(ticket.created_at).toLocaleDateString()}
-                      {ticket.notes?.length > 0 && (
-                        <span className="ml-4">
-                          {ticket.notes.length} note
-                          {ticket.notes.length === 1 ? "" : "s"}
-                        </span>
-                      )}
-                    </div>
-                    <div>
-                      {ticket.assigned_to ? (
-                        <span>Assigned to: {ticket.assigned_to.email}</span>
-                      ) : (
-                        <span className="text-yellow-600">Unassigned</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <BulkActions
+        selectedCount={selectedTickets.length}
+        onStatusUpdate={handleBulkStatusUpdate}
+        onAssign={handleBulkAssign}
+        onClearSelection={() => setSelectedTickets([])}
+        workers={workers}
+        updating={updating}
+      />
+
+      <TicketTable
+        tickets={tickets}
+        selectedTickets={selectedTickets}
+        onSelectAll={handleSelectAll}
+        onSelectTicket={handleSelectTicket}
+      />
     </div>
   );
 }

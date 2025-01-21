@@ -52,21 +52,21 @@ This file outlines **all tasks** for building the **baseline features** of AutoC
 
 ### 5. Ticket Assignment & Status Updates
 
-- [ ] **Assign Ticket**  
+- [x] **Assign Ticket**  
   - Worker/Admin can set `assignedToId` to themselves or another worker.  
   - Include a simple dropdown or user list.
-- [ ] **Change Ticket Status**  
+- [x] **Change Ticket Status**  
   - Worker/Admin can update status to `OPEN`, `IN_PROGRESS`, `RESOLVED`, or `CLOSED`.
-- [ ] **Internal Notes**  
+- [x] **Internal Notes**  
   - Worker/Admin can add an internal note (e.g., "Reached out to customer").
 
-### 6. Minimal UI (via Lovable.dev + React + Tailwind)
+### 6. Minimal UI (via React + Tailwind)
 
-- [x] **Lovable.dev Page Generation**  
+- [x] **Page Generation**  
   - Generate at least a **Ticket List Page** (for workers/admin) and a **Ticket Detail Page**.  
   - Generate a **Customer Portal** page ("My Tickets") for viewing + creating tickets.
 - [x] **Integrate Tailwind**  
-  - Ensure Lovable.dev code uses Tailwind classes for styling consistency.
+  - Ensure code uses Tailwind classes for styling consistency.
 - [x] **Auth Handling**  
   - Protect routes for Worker/Admin pages, redirect if unauthorized.  
   - Show or hide UI elements based on `User.role` (Customer vs. Worker vs. Admin).
@@ -76,96 +76,135 @@ This file outlines **all tasks** for building the **baseline features** of AutoC
 - [x] **Local Testing**  
   - Confirm sign-up/sign-in, ticket creation, listing, assignment.  
   - Log out and in as different roles to verify correct access.
-- [ ] **Deploy to AWS Amplify**  
+- [ ] **Deploy to AWS Amplify** (High Priority)  
   - Connect GitHub, configure build settings.  
   - Ensure `.env` variables are set in Amplify environment.
 - [ ] **Smoke Test Live App**  
   - Create tickets, assign them, update statuses in the deployed environment.
+  - Test all core workflows in production.
 
 ---
 
 ## Additional Baseline Tasks (Due by Friday)
 
-### 8. Queue Management & Bulk Operations
+### 8. Queue Management & Bulk Operations (High Priority)
 
-- [ ] **Queue Views**  
+- [x] **Queue Views**  
   - Filter tickets by `OPEN`, `IN_PROGRESS`, `RESOLVED`, `CLOSED`.  
   - Sort tickets by priority or creation date.
-- [ ] **Bulk Updates**  
-  - Check multiple tickets to change status or assign to a single user.  
-  - Integrate a simple UI (can also be generated via Lovable.dev if desired).
-- [ ] **Real-Time Updates (Optional)**  
-  - Use Supabase Realtime or React Query for live ticket status changes.
+- [ ] **Bulk Updates** (Next Task)  
+  - Add checkboxes to ticket rows for multi-select.
+  - Implement "Update Selected" for status changes and assignments.
+- [ ] **Real-Time Updates** (Must do)  
+  - Enable Supabase Realtime for tickets table.
+  - Implement frontend subscription for live updates.
 
-### 9. Collaboration & Templates
+### 9. Collaboration & Templates (High Priority)
 
-- [ ] **Collaboration Tools**  
+- [x] **Collaboration Tools**  
   - Internal notes visible only to Workers/Admins.  
   - Potential mention/tag system for referencing colleagues (optional).
-- [ ] **Quick Responses (Macros)**  
-  - Create a few templated messages (e.g., "We're looking into this.").  
-  - Provide a dropdown to insert these quickly.
+- [ ] **Quick Responses (Macros)** (Next Task)  
+  - Create templates table or hardcode initial set.
+  - Add dropdown in note creation form.
+  - Implement template selection and auto-fill.
 
-### 10. Performance Tools & Metrics
+### 10. Performance Tools & Metrics (Medium Priority)
 
 - [ ] **Metrics Tracking**  
-  - Show average response time, number of tickets per status.
+  - Implement worker dashboard with key metrics.
+  - Track tickets resolved per day.
+  - Calculate average resolution times.
 - [ ] **Personal Stats**  
-  - For Workers/Admin: "Tickets resolved today," "Avg. resolution time," etc.
+  - Add stats widget to dashboard.
+  - Show daily/weekly performance metrics.
+  - Display current workload indicators.
 
 ### 11. Administrative Control
 
-- [ ] **Team Management (Optional)**  
-  - If needed, add a `Team` model or pivot table for grouping users.  
-  - Link to `User` to form teams for skill-based routing.
-- [ ] **Routing Intelligence (Phase 1)**  
-  - Simple rule-based assignment (e.g., if `priority=HIGH`, auto-assign to certain users).
-- [ ] **Coverage Schedules (Optional)**  
-  - Let Admin set coverage hours or on-call rotations.
+- [x] **Team Management**  
+  - Admin can promote users to WORKER or ADMIN roles.  
+  - Manage user roles and permissions.
+- [ ] **Audit Logging** (Medium Priority)  
+  - Create audit_log table for tracking changes.
+  - Log status and assignment changes.
+  - Add audit history view for admins.
+- [ ] **Routing Intelligence** (Week 2 - AI Phase)  
+  - Move to AI integration phase.
+- [ ] **Coverage Schedules** (Optional)  
+  - Defer to post-baseline phase.
 
 ### 12. Data Management & Scalability
 
-- [ ] **Schema Flexibility**  
-  - Confirm `CustomField` and `Tag` models (if you included them) are ready for expansion.
-- [ ] **Audit Logging**  
-  - Record changes to tickets (status changes, assignment) in a log or another table.
-- [ ] **Archival Strategies**  
-  - Option to archive tickets older than X days.
-- [ ] **Performance Optimization**  
-  - Index frequently queried fields (e.g., `status`, `assignedToId`).
+- [x] **Schema Flexibility**  
+  - Confirm `CustomField` and `Tag` models are ready for expansion.
+- [ ] **Audit Logging** (Medium Priority)  
+  - Implement change tracking system.
+  - Record all significant ticket modifications.
+- [ ] **Archival Strategies** (Low Priority)  
+  - Defer to post-baseline phase.
+- [ ] **Performance Optimization** (Low Priority)  
+  - Defer to post-baseline phase.
 
 ### 13. Customer-Facing Enhancements
 
-- [ ] **History of Interactions**  
+- [x] **History of Interactions**  
   - Let customers see all notes relevant to them or external messages.
-- [ ] **Feedback & Ratings**  
-  - Add a rating or feedback form upon ticket closure.
-- [ ] **Knowledge Base Link**  
-  - Provide a link to an FAQ or docs page (or create a minimal KB system).
+- [ ] **Feedback & Ratings** (Medium Priority)  
+  - Add rating form for resolved tickets.
+  - Implement simple star rating system.
+  - Store feedback in new ratings table.
+- [ ] **Knowledge Base Link** (Week 2 - AI Phase)  
+  - Move to AI integration phase.
 
-### 14. Communication Tools
+### 14. Communication Tools (Week 2 - AI Phase)
 
-- [ ] **Live Chat (Optional)**  
-  - Implement a simple chat, or embed a third-party widget.  
-  - Possibly integrate with Supabase Realtime channels.
+- [ ] **Live Chat**  
+  - Move to AI integration phase.
 - [ ] **Email Integration**  
-  - (Future) Let customers reply by email to update a ticket automatically.
+  - Move to AI integration phase.
 - [ ] **Widget Embeds**  
-  - Optionally embed a "Create Ticket" form in a public site or help center.
+  - Move to AI integration phase.
 
 ### 15. Finish & Validate
 
-- [ ] **Run Through All Workflows**  
+- [x] **Run Through All Workflows**  
   - Customer sign-up → ticket creation → worker assignment → resolution.  
   - Check each role sees the correct data.
-- [ ] **Polish UI & UX**  
+- [x] **Polish UI & UX**  
   - Ensure navigation is intuitive, error messages are clear.  
-  - Possibly use Lovable.dev to refine or update page designs.
-- [ ] **Final Demo**  
-  - Prepare the baseline app for a quick walk-through or recording.  
-  - Verify all baseline features are functional before moving on to AI features.
+  - Added responsive navbar and role-based navigation.
+- [ ] **Final Baseline Demo** (High Priority)  
+  - Deploy to AWS Amplify.
+  - Verify all baseline features in production.
+  - Document any remaining issues.
+  - Prepare for AI phase transition.
 
 ---
+
+**Baseline Completion Checklist**
+
+High Priority (Next Tasks):
+1. [ ] Deploy to AWS Amplify
+2. [ ] Implement Bulk Operations
+3. [ ] Add Quick Response Templates
+4. [ ] Complete Final Baseline Demo
+
+Medium Priority:
+1. [ ] Add Personal Stats & Metrics
+2. [ ] Implement Audit Logging
+3. [ ] Add Customer Feedback System
+
+Optional/If Time Permits:
+1. [ ] Real-Time Updates
+2. [ ] Archival Strategies
+3. [ ] Performance Optimization
+
+Week 2 (AI Phase):
+1. [ ] Knowledge Base Integration
+2. [ ] Routing Intelligence
+3. [ ] Communication Tools
+4. [ ] AI-Powered Features
 
 **Done!**  
 

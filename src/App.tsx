@@ -1,4 +1,6 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from "./components/layout/Layout";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -6,25 +8,28 @@ import DashboardPage from "./pages/DashboardPage";
 import CreateTicketPage from "./pages/CreateTicketPage";
 import MyTicketsPage from "./pages/MyTicketsPage";
 import AllTicketsPage from "./pages/AllTicketsPage";
+import AssignedTicketsPage from "./pages/AssignedTicketsPage";
 import TicketDetailPage from "./pages/TicketDetailPage";
-import { ProtectedRoute } from "./components/ProtectedRoute";
+import ManageUsersPage from "./pages/ManageUsersPage";
 
 function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
 
-        {/* Protected routes */}
+        {/* Protected routes with Layout */}
         <Route
           path="/dashboard"
           element={
-            <ProtectedRoute allowedRoles={["CUSTOMER", "WORKER", "ADMIN"]}>
-              <DashboardPage />
-            </ProtectedRoute>
+            <Layout>
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            </Layout>
           }
         />
 
@@ -32,17 +37,21 @@ function App() {
         <Route
           path="/create-ticket"
           element={
-            <ProtectedRoute allowedRoles={["CUSTOMER"]}>
-              <CreateTicketPage />
-            </ProtectedRoute>
+            <Layout>
+              <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+                <CreateTicketPage />
+              </ProtectedRoute>
+            </Layout>
           }
         />
         <Route
           path="/my-tickets"
           element={
-            <ProtectedRoute allowedRoles={["CUSTOMER"]}>
-              <MyTicketsPage />
-            </ProtectedRoute>
+            <Layout>
+              <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+                <MyTicketsPage />
+              </ProtectedRoute>
+            </Layout>
           }
         />
 
@@ -50,23 +59,47 @@ function App() {
         <Route
           path="/all-tickets"
           element={
-            <ProtectedRoute allowedRoles={["WORKER", "ADMIN"]}>
-              <AllTicketsPage />
-            </ProtectedRoute>
+            <Layout>
+              <ProtectedRoute allowedRoles={["WORKER", "ADMIN"]}>
+                <AllTicketsPage />
+              </ProtectedRoute>
+            </Layout>
           }
         />
-
-        {/* Shared routes */}
+        <Route
+          path="/assigned-tickets"
+          element={
+            <Layout>
+              <ProtectedRoute allowedRoles={["WORKER", "ADMIN"]}>
+                <AssignedTicketsPage />
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
         <Route
           path="/ticket/:ticketId"
           element={
-            <ProtectedRoute allowedRoles={["CUSTOMER", "WORKER", "ADMIN"]}>
-              <TicketDetailPage />
-            </ProtectedRoute>
+            <Layout>
+              <ProtectedRoute>
+                <TicketDetailPage />
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+
+        {/* Admin routes */}
+        <Route
+          path="/admin/users"
+          element={
+            <Layout>
+              <ProtectedRoute allowedRoles={["ADMIN"]}>
+                <ManageUsersPage />
+              </ProtectedRoute>
+            </Layout>
           }
         />
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }
 

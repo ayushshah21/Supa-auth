@@ -45,4 +45,13 @@ export const updateTicket = async (id: string, updates: Database['public']['Tabl
         .select()
         .single();
     return { data, error };
+};
+
+export const updateTickets = async (ids: string[], updates: Database['public']['Tables']['tickets']['Update']) => {
+    const { data, error } = await supabase
+        .from('tickets')
+        .update(updates)
+        .in('id', ids)
+        .select();
+    return { data, error };
 }; 
