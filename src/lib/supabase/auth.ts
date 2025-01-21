@@ -1,5 +1,9 @@
-import type { Database, UserRole } from '../../types/supabase';
+import type { Database } from '../../types/supabase';
 import { supabase } from './client';
+import type { UserRole } from '../../types/supabase';
+
+// Cache for user roles
+const userRoleCache = new Map<string, UserRole>();
 
 export const getCurrentUser = async () => {
     const { data: { user }, error } = await supabase.auth.getUser();
@@ -10,9 +14,17 @@ export const getCurrentUser = async () => {
 export const signOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
+    // Clear role cache on sign out
+    clearRoleCache();
 };
 
 export const getUserRole = async (userId: string) => {
+    // Check cache first
+    if (userRoleCache.has(userId)) {
+        console.log('[auth] Returning cached role for user:', userId);
+        return userRoleCache.get(userId)!;
+    }
+
     try {
         console.log('Getting role for user:', userId);
         
@@ -79,6 +91,8 @@ export const getUserRole = async (userId: string) => {
             }
             
             console.log('Returning existing user role:', existingUser.role);
+            // Cache the role before returning
+            userRoleCache.set(userId, existingUser.role);
             return existingUser.role;
         }
         
@@ -106,11 +120,20 @@ export const getUserRole = async (userId: string) => {
         }
 
         console.log('New user created with role:', newUser?.role);
+        // Cache the role of the new user
+        if (newUser?.role) {
+            userRoleCache.set(userId, newUser.role);
+        }
         return newUser?.role;
     } catch (error) {
         console.error('Error in getUserRole:', error);
         throw error;
     }
+};
+
+// Function to clear role cache when needed (e.g., on logout)
+export const clearRoleCache = () => {
+    userRoleCache.clear();
 };
 
 export const getUsers = async () => {

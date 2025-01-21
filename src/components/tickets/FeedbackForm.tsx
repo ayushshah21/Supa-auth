@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { supabase } from "../../lib/supabase/client";
-import { createFeedbackInteraction } from "../../lib/supabase/interactions";
+import { createFeedbackInteraction } from "../../lib/supabase/interactions/mutations";
 
 type Props = {
   ticketId: string;

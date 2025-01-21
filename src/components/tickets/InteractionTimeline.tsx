@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import type { Interaction } from "../../lib/supabase/interactions";
+import type { Interaction } from "../../lib/supabase/interactions/types";
 import type { UserRole } from "../../types/supabase";
 import { supabase } from "../../lib/supabase/client";
-import { getInteractions } from "../../lib/supabase/interactions";
+import { getInteractions } from "../../lib/supabase/interactions/queries";
 
 type Props = {
   ticketId: string;

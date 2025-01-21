@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase/client";
 import { getCurrentUser, getUserRole } from "../lib/supabase/auth";
-import { getWorkerAverageRatings } from "../lib/supabase/interactions";
+import { getWorkerAverageRatings } from "../lib/supabase/interactions/queries";
 import type { Database, UserRole } from "../types/supabase";
 
 type WorkerStats = {
