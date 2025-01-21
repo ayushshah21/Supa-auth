@@ -18,6 +18,7 @@ export interface Database {
           role: UserRole;
           skills: Skill[];
           preferences: Json | null;
+          avatar_url: string | null;
         };
         Insert: Omit<Database['public']['Tables']['users']['Row'], 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Database['public']['Tables']['users']['Insert']>;

@@ -1,4 +1,4 @@
-import type { Database } from '../../types/supabase';
+import type { Database, UserRole } from '../../types/supabase';
 import { supabase } from './client';
 
 export const getCurrentUser = async () => {
@@ -30,7 +30,7 @@ export const getUserRole = async (userId: string) => {
         // Try to find user by ID first
         let { data: existingUser, error: checkError } = await supabase
             .from('users')
-            .select('id, role, email')
+            .select('id, role, email, avatar_url')
             .eq('id', userId)
             .maybeSingle();
 
@@ -38,7 +38,7 @@ export const getUserRole = async (userId: string) => {
         if (!existingUser && !checkError) {
             const { data: userByEmail, error: emailCheckError } = await supabase
                 .from('users')
-                .select('id, role, email')
+                .select('id, role, email, avatar_url')
                 .eq('email', authUser.email)
                 .maybeSingle();
             
@@ -69,6 +69,14 @@ export const getUserRole = async (userId: string) => {
                     console.error('Failed to update user ID:', updateError);
                 }
             }
+
+            // Always sync avatar URL from database to auth metadata
+            if (existingUser.avatar_url) {
+                console.log('Syncing avatar URL to auth metadata:', existingUser.avatar_url);
+                await supabase.auth.updateUser({
+                    data: { avatar_url: existingUser.avatar_url }
+                });
+            }
             
             console.log('Returning existing user role:', existingUser.role);
             return existingUser.role;
@@ -83,6 +91,7 @@ export const getUserRole = async (userId: string) => {
                 email: authUser.email,
                 role: 'CUSTOMER',
                 name: authUser.user_metadata?.full_name || null,
+                avatar_url: authUser.user_metadata?.avatar_url || null,
                 skills: [],
                 preferences: {},
                 created_at: new Date().toISOString(),
@@ -160,14 +169,14 @@ export const signUpUser = async (email: string, password: string) => {
     }
 };
 
-// Function to promote user role (admin only)
-export const promoteUserRole = async (userId: string, newRole: 'WORKER' | 'ADMIN') => {
+// Function to update user role (admin only)
+export const updateUserRole = async (userId: string, newRole: UserRole) => {
     // First verify the current user is an admin
     const currentUser = await getCurrentUser();
     if (!currentUser) throw new Error('Not authenticated');
     
     const currentRole = await getUserRole(currentUser.id);
-    if (currentRole !== 'ADMIN') throw new Error('Only admins can promote users');
+    if (currentRole !== 'ADMIN') throw new Error('Only admins can modify user roles');
 
     // Update the user's role
     const { data, error } = await supabase

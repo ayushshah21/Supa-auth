@@ -4,11 +4,16 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getCurrentUser, getUserRole, getWorkers } from "../lib/supabase/auth";
 import { getTickets, updateTicket } from "../lib/supabase/tickets";
 import { createNote } from "../lib/supabase/notes";
+import {
+  createStatusChangeInteraction,
+  createAssignmentInteraction,
+  createNoteInteraction,
+} from "../lib/supabase/interactions";
 import { supabase } from "../lib/supabase/client";
 import type { Database, UserRole } from "../types/supabase";
 import TicketHeader from "../components/tickets/TicketHeader";
 import TicketManagement from "../components/tickets/TicketManagement";
-import TicketNotes from "../components/tickets/TicketNotes";
+import InteractionTimeline from "../components/tickets/InteractionTimeline";
 
 type Ticket = Database["public"]["Tables"]["tickets"]["Row"] & {
   customer: Database["public"]["Tables"]["users"]["Row"];
@@ -17,7 +22,7 @@ type Ticket = Database["public"]["Tables"]["tickets"]["Row"] & {
 };
 
 export default function TicketDetailPage() {
-  const { ticketId } = useParams();
+  const { ticketId } = useParams<{ ticketId: string }>();
   const navigate = useNavigate();
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [loading, setLoading] = useState(true);
@@ -69,6 +74,7 @@ export default function TicketDetailPage() {
 
     setupPage();
 
+    // Set up realtime subscriptions
     const ticketsChannel = supabase
       .channel("public:tickets-changes")
       .on(
@@ -103,9 +109,27 @@ export default function TicketDetailPage() {
       )
       .subscribe();
 
+    const interactionsChannel = supabase
+      .channel("public:interactions-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "interactions",
+          filter: `ticket_id=eq.${ticketId}`,
+        },
+        async () => {
+          console.log("Interactions updated, refreshing...");
+          await fetchTicket();
+        }
+      )
+      .subscribe();
+
     return () => {
       supabase.removeChannel(ticketsChannel);
       supabase.removeChannel(notesChannel);
+      supabase.removeChannel(interactionsChannel);
     };
   }, [navigate, ticketId]);
 
@@ -115,8 +139,19 @@ export default function TicketDetailPage() {
     if (!ticket || !ticketId) return;
     setUpdating(true);
     try {
+      const user = await getCurrentUser();
+      if (!user) throw new Error("User not found");
+
       const { error } = await updateTicket(ticketId, { status: newStatus });
       if (error) throw error;
+
+      await createStatusChangeInteraction(
+        ticketId,
+        user.id,
+        ticket.status,
+        newStatus
+      );
+
       setTicket({ ...ticket, status: newStatus });
     } catch (err: any) {
       setError(err.message);
@@ -129,11 +164,24 @@ export default function TicketDetailPage() {
     if (!ticket || !ticketId) return;
     setUpdating(true);
     try {
+      const user = await getCurrentUser();
+      if (!user) throw new Error("User not found");
+
       const { error } = await updateTicket(ticketId, {
         assigned_to_id: workerId,
       });
       if (error) throw error;
+
       const assignedWorker = workers.find((w) => w.id === workerId);
+      await createAssignmentInteraction(
+        ticketId,
+        user.id,
+        ticket.assigned_to?.id || null,
+        workerId,
+        ticket.assigned_to?.email,
+        assignedWorker?.email
+      );
+
       setTicket({ ...ticket, assigned_to: assignedWorker || null });
     } catch (err: any) {
       setError(err.message);
@@ -155,14 +203,16 @@ export default function TicketDetailPage() {
       const user = await getCurrentUser();
       if (!user) throw new Error("User not found");
 
-      const { error } = await createNote({
+      const { error: noteError } = await createNote({
         ticket_id: ticketId,
         content,
         internal,
         author_id: user.id,
         metadata: null,
       });
-      if (error) throw error;
+      if (noteError) throw noteError;
+
+      await createNoteInteraction(ticketId, user.id, content, internal);
 
       const { data } = await getTickets();
       const updatedTicket = data?.find((t) => t.id === ticketId);
@@ -253,7 +303,9 @@ export default function TicketDetailPage() {
             </>
           )}
 
-          <TicketNotes notes={ticket.notes} userRole={userRole} />
+          {ticketId && (
+            <InteractionTimeline ticketId={ticketId} userRole={userRole} />
+          )}
         </div>
       </div>
     </div>

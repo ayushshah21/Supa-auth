@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
-import { getUsers, promoteUserRole } from "../lib/supabase/auth";
-import type { Database } from "../types/supabase";
+import { getUsers, updateUserRole } from "../lib/supabase/auth";
+import type { Database, UserRole } from "../types/supabase";
 
 type User = Database["public"]["Tables"]["users"]["Row"];
 
@@ -9,7 +9,7 @@ export default function ManageUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [promoting, setPromoting] = useState<string | null>(null);
+  const [updating, setUpdating] = useState<string | null>(null);
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -27,13 +27,10 @@ export default function ManageUsersPage() {
     loadUsers();
   }, []);
 
-  const handlePromoteUser = async (
-    userId: string,
-    newRole: "WORKER" | "ADMIN"
-  ) => {
+  const handleRoleUpdate = async (userId: string, newRole: UserRole) => {
     try {
-      setPromoting(userId);
-      await promoteUserRole(userId, newRole);
+      setUpdating(userId);
+      await updateUserRole(userId, newRole);
       // Update local state
       setUsers(
         users.map((user) =>
@@ -41,9 +38,9 @@ export default function ManageUsersPage() {
         )
       );
     } catch (err: any) {
-      setError(err.message || "Failed to promote user");
+      setError(err.message || "Failed to update user role");
     } finally {
-      setPromoting(null);
+      setUpdating(null);
     }
   };
 
@@ -128,28 +125,41 @@ export default function ManageUsersPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {user.role === "CUSTOMER" && (
-                      <div className="flex space-x-2">
+                    <div className="flex space-x-2">
+                      {user.role !== "CUSTOMER" && (
                         <button
-                          onClick={() => handlePromoteUser(user.id, "WORKER")}
-                          disabled={promoting === user.id}
+                          onClick={() => handleRoleUpdate(user.id, "CUSTOMER")}
+                          disabled={updating === user.id}
+                          className="text-gray-600 hover:text-gray-900 disabled:opacity-50"
+                        >
+                          {updating === user.id
+                            ? "Updating..."
+                            : "Change to Customer"}
+                        </button>
+                      )}
+                      {user.role !== "WORKER" && (
+                        <button
+                          onClick={() => handleRoleUpdate(user.id, "WORKER")}
+                          disabled={updating === user.id}
                           className="text-blue-600 hover:text-blue-900 disabled:opacity-50"
                         >
-                          {promoting === user.id
-                            ? "Promoting..."
-                            : "Promote to Worker"}
+                          {updating === user.id
+                            ? "Updating..."
+                            : "Change to Worker"}
                         </button>
+                      )}
+                      {user.role !== "ADMIN" && (
                         <button
-                          onClick={() => handlePromoteUser(user.id, "ADMIN")}
-                          disabled={promoting === user.id}
+                          onClick={() => handleRoleUpdate(user.id, "ADMIN")}
+                          disabled={updating === user.id}
                           className="text-purple-600 hover:text-purple-900 disabled:opacity-50"
                         >
-                          {promoting === user.id
-                            ? "Promoting..."
-                            : "Promote to Admin"}
+                          {updating === user.id
+                            ? "Updating..."
+                            : "Change to Admin"}
                         </button>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}

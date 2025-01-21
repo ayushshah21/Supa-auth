@@ -4,3 +4,4 @@ export * from './tickets';
 export * from './notes';
 export * from './teams';
 export * from './tags'; 
+export * from './interactions'; 
