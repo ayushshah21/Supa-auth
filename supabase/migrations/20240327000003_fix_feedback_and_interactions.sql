@@ -3,39 +3,47 @@ DROP POLICY IF EXISTS "Customers can create feedback interactions" ON interactio
 DROP POLICY IF EXISTS "Workers and admins can create interactions" ON interactions;
 DROP POLICY IF EXISTS "Users can view interactions for their tickets" ON interactions;
 
--- Policy for customers to create feedback interactions for their tickets
-CREATE POLICY "Customers can create feedback interactions" ON interactions
-FOR INSERT TO authenticated
-WITH CHECK (
-  type = 'FEEDBACK' AND
-  EXISTS (
-    SELECT 1 FROM tickets 
-    WHERE tickets.id = interactions.ticket_id
-    AND tickets.customer_id = auth.uid()
-  )
-);
+-- Enable RLS
+ALTER TABLE interactions ENABLE ROW LEVEL SECURITY;
 
--- Policy for workers and admins to create any interactions
+-- Policy for customers to create feedback and rating interactions
+CREATE POLICY "Customers can create feedback interactions" ON interactions
+  FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    auth.uid() IN (
+      SELECT customer_id FROM tickets WHERE id = ticket_id
+    )
+    AND type IN ('FEEDBACK', 'RATING')
+  );
+
+-- Policy for workers and admins to create all types of interactions
 CREATE POLICY "Workers and admins can create interactions" ON interactions
-FOR INSERT TO authenticated
-WITH CHECK (
-  auth.uid() IN (
-    SELECT id FROM users WHERE role IN ('WORKER', 'ADMIN')
-  )
-);
+  FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM users
+      WHERE id = auth.uid()
+      AND role IN ('WORKER', 'ADMIN')
+    )
+  );
 
 -- Policy for viewing interactions
 CREATE POLICY "Users can view interactions for their tickets" ON interactions
-FOR SELECT TO authenticated
-USING (
-  auth.uid() IN (
-    -- Workers and admins can see all interactions
-    SELECT id FROM users WHERE role IN ('WORKER', 'ADMIN')
-    UNION
-    -- Customers can see interactions for their tickets
-    SELECT customer_id FROM tickets WHERE id = interactions.ticket_id
-  )
-);
+  FOR SELECT
+  TO authenticated
+  USING (
+    auth.uid() IN (
+      SELECT customer_id FROM tickets WHERE id = ticket_id
+    )
+    OR
+    EXISTS (
+      SELECT 1 FROM users
+      WHERE id = auth.uid()
+      AND role IN ('WORKER', 'ADMIN')
+    )
+  );
 
 -- Fix feedback table policies
 DROP POLICY IF EXISTS "Customers can insert feedback for their tickets" ON feedback;
