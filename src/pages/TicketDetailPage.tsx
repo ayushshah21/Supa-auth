@@ -14,12 +14,117 @@ import type { Database, UserRole } from "../types/supabase";
 import TicketHeader from "../components/tickets/TicketHeader";
 import TicketManagement from "../components/tickets/TicketManagement";
 import InteractionTimeline from "../components/tickets/InteractionTimeline";
+import FeedbackForm from "../components/tickets/FeedbackForm";
+import RatingForm from "../components/tickets/RatingForm";
 
 type Ticket = Database["public"]["Tables"]["tickets"]["Row"] & {
   customer: Database["public"]["Tables"]["users"]["Row"];
   assigned_to: Database["public"]["Tables"]["users"]["Row"] | null;
   notes: Database["public"]["Tables"]["notes"]["Row"][];
 };
+
+type Feedback = {
+  id: string;
+  content: {
+    feedback: string;
+  };
+  created_at: string;
+  user_id: string;
+  type: string;
+};
+
+function FeedbackSection({ ticketId }: { ticketId: string }) {
+  const [feedbackList, setFeedbackList] = useState<Feedback[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFeedback = async () => {
+      console.log("[FeedbackSection] Fetching feedback for ticket:", ticketId);
+
+      const { data, error } = await supabase
+        .from("interactions")
+        .select("*")
+        .eq("ticket_id", ticketId)
+        .eq("type", "FEEDBACK")
+        .order("created_at", { ascending: false });
+
+      console.log("[FeedbackSection] Raw feedback data:", data);
+
+      if (!error && data) {
+        // Validate the data structure
+        const validFeedback = data.map((item) => ({
+          id: item.id,
+          content: item.content,
+          created_at: item.created_at,
+          user_id: item.user_id,
+          type: item.type,
+        }));
+        console.log(
+          "[FeedbackSection] Processed feedback data:",
+          validFeedback
+        );
+        setFeedbackList(validFeedback);
+      } else if (error) {
+        console.error("[FeedbackSection] Error fetching feedback:", error);
+      }
+      setLoading(false);
+    };
+
+    fetchFeedback();
+  }, [ticketId]);
+
+  if (loading) {
+    return <div className="animate-pulse h-20 bg-gray-100 rounded"></div>;
+  }
+
+  if (feedbackList.length === 0) {
+    return (
+      <div className="bg-gray-50 rounded-md p-4">
+        <p className="text-gray-500 text-sm">No feedback provided yet.</p>
+      </div>
+    );
+  }
+
+  console.log("[FeedbackSection] Rendering feedback list:", feedbackList);
+
+  return (
+    <div className="space-y-4">
+      {feedbackList.map((feedback) => {
+        console.log("[FeedbackSection] Rendering feedback item:", feedback);
+        return (
+          <div key={feedback.id} className="bg-purple-50 rounded-md p-4">
+            <div className="flex items-center space-x-2 mb-2">
+              <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center">
+                <svg
+                  className="h-5 w-5 text-purple-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-medium text-gray-900">
+                Customer Feedback
+              </h3>
+            </div>
+            <div className="text-gray-700 whitespace-pre-wrap">
+              {feedback.content.feedback}
+            </div>
+            <div className="mt-2 text-sm text-gray-500">
+              Submitted on {new Date(feedback.created_at).toLocaleString()}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 export default function TicketDetailPage() {
   const { ticketId } = useParams<{ ticketId: string }>();
@@ -28,10 +133,15 @@ export default function TicketDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [userRole, setUserRole] = useState<UserRole | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [workers, setWorkers] = useState<
     Database["public"]["Tables"]["users"]["Row"][]
   >([]);
   const [updating, setUpdating] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [hasFeedback, setHasFeedback] = useState(false);
+  const [showRating, setShowRating] = useState(false);
+  const [hasRating, setHasRating] = useState(false);
 
   const fetchTicket = async () => {
     try {
@@ -42,6 +152,59 @@ export default function TicketDetailPage() {
       if (!foundTicket) throw new Error("Ticket not found");
 
       setTicket(foundTicket as Ticket);
+
+      // Check if this ticket already has feedback and rating
+      if (ticketId) {
+        console.log(
+          "[TicketDetailPage] Checking feedback and rating for ticket:",
+          ticketId
+        );
+
+        // Check feedback
+        const { data: feedbackData, error: feedbackError } = await supabase
+          .from("interactions")
+          .select("id")
+          .eq("ticket_id", ticketId)
+          .eq("type", "FEEDBACK")
+          .maybeSingle();
+
+        console.log("[TicketDetailPage] Feedback check result:", {
+          feedbackData,
+          feedbackError,
+        });
+
+        // Check rating
+        const { data: ratingData, error: ratingError } = await supabase
+          .from("interactions")
+          .select("id")
+          .eq("ticket_id", ticketId)
+          .eq("type", "RATING")
+          .maybeSingle();
+
+        console.log("[TicketDetailPage] Rating check result:", {
+          ratingData,
+          ratingError,
+        });
+
+        setHasFeedback(!!feedbackData);
+        setHasRating(!!ratingData);
+
+        // Show feedback form for resolved tickets without feedback
+        if (foundTicket.status === "RESOLVED" && !feedbackData) {
+          console.log(
+            "[TicketDetailPage] Showing feedback form for resolved ticket without feedback"
+          );
+          setShowFeedback(true);
+        }
+
+        // Show rating form for resolved tickets without rating
+        if (foundTicket.status === "RESOLVED" && !ratingData) {
+          console.log(
+            "[TicketDetailPage] Showing rating form for resolved ticket without rating"
+          );
+          setShowRating(true);
+        }
+      }
     } catch (err: any) {
       setError(err.message || "Failed to load ticket");
     }
@@ -55,6 +218,7 @@ export default function TicketDetailPage() {
           navigate("/login");
           return;
         }
+        setCurrentUserId(user.id);
 
         const role = await getUserRole(user.id);
         setUserRole(role);
@@ -153,6 +317,11 @@ export default function TicketDetailPage() {
       );
 
       setTicket({ ...ticket, status: newStatus });
+
+      // Show feedback form when ticket is resolved and user is the customer and hasn't given feedback yet
+      if (newStatus === "RESOLVED" && userRole === "CUSTOMER" && !hasFeedback) {
+        setShowFeedback(true);
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -238,6 +407,12 @@ export default function TicketDetailPage() {
 
   if (!ticket) return null;
 
+  const isCustomer = userRole === "CUSTOMER";
+  const shouldShowFeedback =
+    isCustomer && ticket.status === "RESOLVED" && showFeedback && !hasFeedback;
+  const shouldShowRating =
+    isCustomer && ticket.status === "RESOLVED" && showRating && !hasRating;
+
   return (
     <div className="max-w-4xl mx-auto p-4">
       <div className="mb-6">
@@ -277,6 +452,32 @@ export default function TicketDetailPage() {
             </p>
           </div>
 
+          {shouldShowFeedback && currentUserId && (
+            <div className="mt-6">
+              <FeedbackForm
+                ticketId={ticket.id}
+                userId={currentUserId}
+                onSubmit={() => {
+                  setShowFeedback(false);
+                  setHasFeedback(true);
+                }}
+              />
+            </div>
+          )}
+
+          {shouldShowRating && currentUserId && (
+            <div className="mt-6">
+              <RatingForm
+                ticketId={ticket.id}
+                userId={currentUserId}
+                onSubmit={() => {
+                  setShowRating(false);
+                  setHasRating(true);
+                }}
+              />
+            </div>
+          )}
+
           {userRole !== "CUSTOMER" && (
             <>
               <div className="mt-6">
@@ -292,6 +493,10 @@ export default function TicketDetailPage() {
                 </p>
               </div>
 
+              <div className="mt-6">
+                <FeedbackSection ticketId={ticket.id} />
+              </div>
+
               <TicketManagement
                 ticket={ticket}
                 workers={workers}
@@ -303,9 +508,9 @@ export default function TicketDetailPage() {
             </>
           )}
 
-          {ticketId && (
-            <InteractionTimeline ticketId={ticketId} userRole={userRole} />
-          )}
+          <div className="mt-6">
+            <InteractionTimeline ticketId={ticket.id} userRole={userRole} />
+          </div>
         </div>
       </div>
     </div>
