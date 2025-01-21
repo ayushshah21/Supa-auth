@@ -19,5 +19,8 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     emptyOutDir: true
+  },
+  define: {
+    'process.env.VITE_VERCEL_URL': JSON.stringify(process.env.VERCEL_URL),
   }
 })
