@@ -14,4 +14,10 @@ const vitestConfig = defineVitestConfig({
 export default defineConfig({
   plugins: [react()],
   test: vitestConfig.test,
+  base: '/',
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    emptyOutDir: true
+  }
 })
