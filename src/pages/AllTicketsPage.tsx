@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentUser, getUserRole, getWorkers } from "../lib/supabase/auth";
 import { getTickets, updateTickets } from "../lib/supabase/tickets";
+import { supabase } from "../lib/supabase/client";
 import type { Database, TicketStatus } from "../types/supabase";
 import BulkActions from "../components/tickets/BulkActions";
 import TicketTable from "../components/tickets/TicketTable";
@@ -25,8 +26,21 @@ export default function AllTicketsPage() {
   >([]);
   const [updating, setUpdating] = useState(false);
 
+  // Function to fetch tickets with current filter
+  const fetchTickets = async () => {
+    try {
+      const { data, error: ticketsError } = await getTickets(
+        statusFilter === "ALL" ? undefined : { status: statusFilter }
+      );
+      if (ticketsError) throw ticketsError;
+      setTickets(data || []);
+    } catch (err: any) {
+      setError(err.message || "Failed to load tickets");
+    }
+  };
+
   useEffect(() => {
-    const fetchTickets = async () => {
+    const setupPage = async () => {
       try {
         const user = await getCurrentUser();
         if (!user) {
@@ -46,12 +60,7 @@ export default function AllTicketsPage() {
           if (workersData) setWorkers(workersData);
         }
 
-        const { data, error: ticketsError } = await getTickets(
-          statusFilter === "ALL" ? undefined : { status: statusFilter }
-        );
-
-        if (ticketsError) throw ticketsError;
-        setTickets(data || []);
+        await fetchTickets();
       } catch (err: any) {
         setError(err.message || "Failed to load tickets");
       } finally {
@@ -59,7 +68,32 @@ export default function AllTicketsPage() {
       }
     };
 
-    fetchTickets();
+    setupPage();
+
+    // Set up realtime subscription
+    const channel = supabase
+      .channel("public:tickets-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "tickets",
+        },
+        async (payload) => {
+          console.log("Realtime event received:", payload);
+
+          // Refresh the entire list to ensure we have all relationships
+          // This is simpler than trying to manually update relationships
+          await fetchTickets();
+        }
+      )
+      .subscribe();
+
+    // Cleanup subscription
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [navigate, statusFilter]);
 
   const handleSelectAll = (checked: boolean) => {
@@ -87,11 +121,7 @@ export default function AllTicketsPage() {
       });
       if (error) throw error;
 
-      // Refresh tickets
-      const { data } = await getTickets(
-        statusFilter === "ALL" ? undefined : { status: statusFilter }
-      );
-      setTickets(data || []);
+      // The realtime subscription will handle the update
       setSelectedTickets([]);
     } catch (err: any) {
       setError(err.message || "Failed to update tickets");
@@ -109,11 +139,7 @@ export default function AllTicketsPage() {
       });
       if (error) throw error;
 
-      // Refresh tickets
-      const { data } = await getTickets(
-        statusFilter === "ALL" ? undefined : { status: statusFilter }
-      );
-      setTickets(data || []);
+      // The realtime subscription will handle the update
       setSelectedTickets([]);
     } catch (err: any) {
       setError(err.message || "Failed to assign tickets");

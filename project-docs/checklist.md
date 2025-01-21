@@ -92,7 +92,7 @@ This file outlines **all tasks** for building the **baseline features** of AutoC
 - [x] **Queue Views**  
   - Filter tickets by `OPEN`, `IN_PROGRESS`, `RESOLVED`, `CLOSED`.  
   - Sort tickets by priority or creation date.
-- [ ] **Bulk Updates** (Next Task)  
+- [x] **Bulk Updates** (Next Task)  
   - Add checkboxes to ticket rows for multi-select.
   - Implement "Update Selected" for status changes and assignments.
 - [ ] **Real-Time Updates** (Must do)  

@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getCurrentUser, getUserRole, getWorkers } from "../lib/supabase/auth";
 import { getTickets, updateTicket } from "../lib/supabase/tickets";
 import { createNote } from "../lib/supabase/notes";
+import { supabase } from "../lib/supabase/client";
 import type { Database, UserRole } from "../types/supabase";
 import TicketHeader from "../components/tickets/TicketHeader";
 import TicketManagement from "../components/tickets/TicketManagement";
@@ -27,8 +28,22 @@ export default function TicketDetailPage() {
   >([]);
   const [updating, setUpdating] = useState(false);
 
+  const fetchTicket = async () => {
+    try {
+      const { data, error: ticketsError } = await getTickets();
+      if (ticketsError) throw ticketsError;
+
+      const foundTicket = data?.find((t) => t.id === ticketId);
+      if (!foundTicket) throw new Error("Ticket not found");
+
+      setTicket(foundTicket as Ticket);
+    } catch (err: any) {
+      setError(err.message || "Failed to load ticket");
+    }
+  };
+
   useEffect(() => {
-    const fetchTicket = async () => {
+    const setupPage = async () => {
       try {
         const user = await getCurrentUser();
         if (!user) {
@@ -39,20 +54,12 @@ export default function TicketDetailPage() {
         const role = await getUserRole(user.id);
         setUserRole(role);
 
-        const { data, error: ticketError } = await getTickets();
-        if (ticketError) throw ticketError;
-
-        const foundTicket = data?.find((t) => t.id === ticketId);
-        if (!foundTicket) {
-          throw new Error("Ticket not found");
+        if (role === "WORKER" || role === "ADMIN") {
+          const { data: workersData } = await getWorkers();
+          if (workersData) setWorkers(workersData);
         }
 
-        if (role === "CUSTOMER" && foundTicket.customer_id !== user.id) {
-          navigate("/my-tickets");
-          return;
-        }
-
-        setTicket(foundTicket as Ticket);
+        await fetchTicket();
       } catch (err: any) {
         setError(err.message || "Failed to load ticket");
       } finally {
@@ -60,18 +67,47 @@ export default function TicketDetailPage() {
       }
     };
 
-    fetchTicket();
-  }, [ticketId, navigate]);
+    setupPage();
 
-  useEffect(() => {
-    if (userRole && (userRole === "WORKER" || userRole === "ADMIN")) {
-      const loadWorkers = async () => {
-        const { data } = await getWorkers();
-        if (data) setWorkers(data);
-      };
-      loadWorkers();
-    }
-  }, [userRole]);
+    const ticketsChannel = supabase
+      .channel("public:tickets-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "tickets",
+          filter: `id=eq.${ticketId}`,
+        },
+        async () => {
+          console.log("Ticket updated, refreshing...");
+          await fetchTicket();
+        }
+      )
+      .subscribe();
+
+    const notesChannel = supabase
+      .channel("public:notes-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "notes",
+          filter: `ticket_id=eq.${ticketId}`,
+        },
+        async () => {
+          console.log("Notes updated, refreshing...");
+          await fetchTicket();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(ticketsChannel);
+      supabase.removeChannel(notesChannel);
+    };
+  }, [navigate, ticketId]);
 
   const handleStatusChange = async (
     newStatus: Database["public"]["Tables"]["tickets"]["Row"]["status"]
