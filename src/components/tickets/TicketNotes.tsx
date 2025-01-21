@@ -23,8 +23,11 @@ export default function TicketNotes({ notes, userRole }: Props) {
             }`}
           >
             <div className="flex justify-between items-start">
-              <p className="text-sm text-gray-600">{note.content}</p>
-              <div className="text-xs text-gray-500">
+              <div
+                className="text-sm text-gray-600 prose prose-sm max-w-none"
+                dangerouslySetInnerHTML={{ __html: note.content }}
+              />
+              <div className="text-xs text-gray-500 ml-4 shrink-0">
                 {new Date(note.created_at).toLocaleString()}
               </div>
             </div>

@@ -11,6 +11,7 @@ import AllTicketsPage from "./pages/AllTicketsPage";
 import AssignedTicketsPage from "./pages/AssignedTicketsPage";
 import TicketDetailPage from "./pages/TicketDetailPage";
 import ManageUsersPage from "./pages/ManageUsersPage";
+import StatsPage from "./pages/StatsPage";
 
 function App() {
   return (
@@ -96,6 +97,18 @@ function App() {
                 <ManageUsersPage />
               </ProtectedRoute>
             </Layout>
+          }
+        />
+
+        {/* Add this inside the Routes component, with the other protected routes */}
+        <Route
+          path="/stats"
+          element={
+            <ProtectedRoute allowedRoles={["WORKER", "ADMIN"]}>
+              <Layout>
+                <StatsPage />
+              </Layout>
+            </ProtectedRoute>
           }
         />
       </Routes>

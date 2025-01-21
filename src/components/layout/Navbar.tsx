@@ -37,14 +37,16 @@ export default function Navbar({ userRole, userEmail }: NavbarProps) {
       case "WORKER":
         links.push(
           { to: "/all-tickets", label: "All Tickets" },
-          { to: "/assigned-tickets", label: "My Assigned Tickets" }
+          { to: "/assigned-tickets", label: "My Assigned Tickets" },
+          { to: "/stats", label: "Stats" }
         );
         break;
       case "ADMIN":
         links.push(
           { to: "/all-tickets", label: "All Tickets" },
           { to: "/assigned-tickets", label: "My Assigned Tickets" },
-          { to: "/admin/users", label: "Manage Users" }
+          { to: "/admin/users", label: "Manage Users" },
+          { to: "/stats", label: "Stats" }
         );
         break;
     }

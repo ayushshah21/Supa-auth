@@ -1,5 +1,5 @@
-import { useState } from "react";
 import type { Database } from "../../types/supabase";
+import NoteEditor from "./NoteEditor";
 
 type Props = {
   ticket: {
@@ -23,15 +23,6 @@ export default function TicketManagement({
   onAddNote,
   updating,
 }: Props) {
-  const [newNote, setNewNote] = useState("");
-  const [isInternalNote, setIsInternalNote] = useState(true);
-
-  const handleAddNote = async () => {
-    if (!newNote.trim()) return;
-    await onAddNote({ content: newNote, internal: isInternalNote });
-    setNewNote("");
-  };
-
   return (
     <div className="mt-6 space-y-4">
       <h2 className="text-lg font-medium text-gray-900 mb-2">
@@ -85,33 +76,7 @@ export default function TicketManagement({
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Add Note
         </label>
-        <textarea
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          rows={3}
-          value={newNote}
-          onChange={(e) => setNewNote(e.target.value)}
-          placeholder="Add a note..."
-          disabled={updating}
-        />
-        <div className="mt-2 flex items-center justify-between">
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              checked={isInternalNote}
-              onChange={(e) => setIsInternalNote(e.target.checked)}
-              disabled={updating}
-            />
-            <span className="ml-2 text-sm text-gray-600">Internal Note</span>
-          </label>
-          <button
-            onClick={handleAddNote}
-            disabled={!newNote.trim() || updating}
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-          >
-            Add Note
-          </button>
-        </div>
+        <NoteEditor onSubmit={onAddNote} disabled={updating} />
       </div>
     </div>
   );

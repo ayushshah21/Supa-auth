@@ -14,17 +14,10 @@ export default function InteractionTimeline({ ticketId, userRole }: Props) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("[InteractionTimeline] Component mounted", {
-      ticketId,
-      userRole,
-    });
 
     const fetchInteractions = async () => {
       try {
-        console.log("[InteractionTimeline] Starting fetchInteractions");
         const { data, error } = await getInteractions(ticketId);
-
-        console.log("[InteractionTimeline] Query response:", { data, error });
 
         if (error) {
           console.error(
@@ -36,7 +29,6 @@ export default function InteractionTimeline({ ticketId, userRole }: Props) {
         }
 
         if (data) {
-          console.log("[InteractionTimeline] Setting interactions:", data);
           setInteractions(data);
         }
         setLoading(false);
@@ -49,7 +41,6 @@ export default function InteractionTimeline({ ticketId, userRole }: Props) {
     fetchInteractions();
 
     // Set up realtime subscription
-    console.log("[InteractionTimeline] Setting up realtime subscription");
     const channel = supabase
       .channel(`public:interactions:${ticketId}`)
       .on(
@@ -73,7 +64,6 @@ export default function InteractionTimeline({ ticketId, userRole }: Props) {
       });
 
     return () => {
-      console.log("[InteractionTimeline] Cleaning up subscription");
       supabase.removeChannel(channel);
     };
   }, [ticketId, userRole]);
@@ -197,12 +187,13 @@ export default function InteractionTimeline({ ticketId, userRole }: Props) {
                 added a note
               </p>
               <div
-                className={`mt-1 text-sm ${
+                className={`mt-1 text-sm prose prose-sm prose-a:text-blue-600 prose-a:underline hover:prose-a:text-blue-800 max-w-none ${
                   interaction.content.internal ? "bg-yellow-50" : "bg-gray-50"
                 } rounded-md p-3`}
-              >
-                {interaction.content.text}
-              </div>
+                dangerouslySetInnerHTML={{
+                  __html: interaction.content.text || "",
+                }}
+              />
               <p className="text-xs text-gray-400 mt-1">{date}</p>
             </div>
           </div>
