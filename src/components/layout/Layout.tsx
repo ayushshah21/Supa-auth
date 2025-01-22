@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getCurrentUser, getUserRole } from "../../lib/supabase/auth";
 import type { UserRole } from "../../types/supabase";
 import Navbar from "./Navbar";
+import Sidebar from "./Sidebar";
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -12,6 +13,7 @@ export default function Layout({ children }: LayoutProps) {
   const [userRole, setUserRole] = useState<UserRole | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,8 +49,18 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar userRole={userRole} userEmail={userEmail} />
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">{children}</main>
+      {/* Top navbar for user actions only */}
+      <Navbar userRole={userRole} userEmail={userEmail} hideNavigation />
+      {/* Sidebar for navigation */}
+      <Sidebar userRole={userRole} onCollapse={setIsCollapsed} />
+      {/* Main content with padding for sidebar */}
+      <main
+        className={`transition-all duration-300 ${
+          isCollapsed ? "ml-16" : "ml-64"
+        }`}
+      >
+        {children}
+      </main>
     </div>
   );
 }

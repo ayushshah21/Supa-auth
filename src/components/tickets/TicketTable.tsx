@@ -12,6 +12,8 @@ type Props = {
   selectedTickets: string[];
   onSelectAll: (checked: boolean) => void;
   onSelectTicket: (ticketId: string, checked: boolean) => void;
+  hideSelectionColumn?: boolean;
+  hideCustomerColumn?: boolean;
 };
 
 export default function TicketTable({
@@ -19,6 +21,8 @@ export default function TicketTable({
   selectedTickets,
   onSelectAll,
   onSelectTicket,
+  hideSelectionColumn = false,
+  hideCustomerColumn = false,
 }: Props) {
   const navigate = useNavigate();
 
@@ -63,20 +67,24 @@ export default function TicketTable({
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              <input
-                type="checkbox"
-                checked={selectedTickets.length === tickets.length}
-                onChange={(e) => onSelectAll(e.target.checked)}
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-              />
-            </th>
+            {!hideSelectionColumn && (
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <input
+                  type="checkbox"
+                  checked={selectedTickets.length === tickets.length}
+                  onChange={(e) => onSelectAll(e.target.checked)}
+                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+              </th>
+            )}
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Title
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Customer
-            </th>
+            {!hideCustomerColumn && (
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Customer
+              </th>
+            )}
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Status
             </th>
@@ -98,15 +106,19 @@ export default function TicketTable({
                 navigate(`/ticket/${ticket.id}`);
               }}
             >
-              <td className="px-6 py-4 whitespace-nowrap">
-                <input
-                  type="checkbox"
-                  checked={selectedTickets.includes(ticket.id)}
-                  onChange={(e) => onSelectTicket(ticket.id, e.target.checked)}
-                  onClick={(e) => e.stopPropagation()}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-              </td>
+              {!hideSelectionColumn && (
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <input
+                    type="checkbox"
+                    checked={selectedTickets.includes(ticket.id)}
+                    onChange={(e) =>
+                      onSelectTicket(ticket.id, e.target.checked)
+                    }
+                    onClick={(e) => e.stopPropagation()}
+                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  />
+                </td>
+              )}
               <td className="px-6 py-4 whitespace-nowrap">
                 <div>
                   <div className="text-sm font-medium text-gray-900">
@@ -117,11 +129,13 @@ export default function TicketTable({
                   </div>
                 </div>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <div className="text-sm text-gray-900">
-                  {ticket.customer?.email}
-                </div>
-              </td>
+              {!hideCustomerColumn && (
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm text-gray-900">
+                    {ticket.customer?.email}
+                  </div>
+                </td>
+              )}
               <td className="px-6 py-4 whitespace-nowrap">
                 <span
                   className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
