@@ -23,6 +23,21 @@ export interface Database {
         Insert: Omit<Database['public']['Tables']['users']['Row'], 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Database['public']['Tables']['users']['Insert']>;
       };
+      templates: {
+        Row: {
+          id: string;
+          created_at: string;
+          updated_at: string;
+          name: string;
+          content: string;
+          description: string | null;
+          scope: string;
+          created_by: string | null;
+          is_active: boolean;
+        };
+        Insert: Omit<Database['public']['Tables']['templates']['Row'], 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Database['public']['Tables']['templates']['Insert']>;
+      };
       teams: {
         Row: {
           id: string;
@@ -56,9 +71,9 @@ export interface Database {
           description: string;
           status: TicketStatus;
           priority: TicketPriority;
-          metadata: Json | null;
           customer_id: string;
           assigned_to_id: string | null;
+          resolved_at: string | null;
         };
         Insert: Omit<Database['public']['Tables']['tickets']['Row'], 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Database['public']['Tables']['tickets']['Insert']>;

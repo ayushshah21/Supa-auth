@@ -40,7 +40,7 @@ export default function NoteEditor({ onSubmit, disabled }: NoteEditorProps) {
         />
       </div>
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between space-x-4">
         <label className="flex items-center">
           <input
             type="checkbox"

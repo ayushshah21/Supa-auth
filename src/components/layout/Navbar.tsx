@@ -45,8 +45,8 @@ export default function Navbar({ userRole, userEmail }: NavbarProps) {
         links.push(
           { to: "/all-tickets", label: "All Tickets" },
           { to: "/assigned-tickets", label: "My Assigned Tickets" },
-          { to: "/admin/users", label: "Manage Users" },
-          { to: "/stats", label: "Stats" }
+          { to: "/stats", label: "Stats" },
+          { to: "/admin/users", label: "Manage Users" }
         );
         break;
     }

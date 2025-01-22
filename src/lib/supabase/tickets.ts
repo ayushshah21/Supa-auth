@@ -29,22 +29,90 @@ export const getTickets = async (options?: {
 };
 
 export const createTicket = async (ticket: Database['public']['Tables']['tickets']['Insert']) => {
-    const { data, error } = await supabase
-        .from('tickets')
-        .insert(ticket)
-        .select()
-        .single();
-    return { data, error };
+    console.log('[tickets/createTicket] Starting ticket creation with raw input:', ticket);
+    
+    // Only send fields that exist in the database
+    const { 
+        title,
+        description,
+        priority,
+        customer_id,
+        status,
+        assigned_to_id,
+        resolved_at
+    } = ticket;
+
+    const ticketData = {
+        title,
+        description,
+        priority,
+        customer_id,
+        status,
+        assigned_to_id,
+        resolved_at
+    };
+
+    console.log('[tickets/createTicket] Cleaned ticket data to send:', ticketData);
+    console.log('[tickets/createTicket] Ticket field names:', Object.keys(ticketData));
+    
+    try {
+        const { data, error } = await supabase
+            .from('tickets')
+            .insert(ticketData)
+            .select('*')
+            .single();
+        
+        if (error) {
+            console.error('[tickets/createTicket] Error creating ticket:', {
+                error,
+                errorMessage: error.message,
+                errorDetails: error.details,
+                errorHint: error.hint,
+                errorCode: error.code
+            });
+            return { data: null, error };
+        }
+
+        console.log('[tickets/createTicket] Successfully created ticket:', data);
+        return { data, error: null };
+    } catch (err) {
+        console.error('[tickets/createTicket] Unexpected error:', err);
+        return { data: null, error: err instanceof Error ? err : new Error('Unknown error') };
+    }
 };
 
 export const updateTicket = async (id: string, updates: Database['public']['Tables']['tickets']['Update']) => {
-    const { data, error } = await supabase
-        .from('tickets')
-        .update(updates)
-        .eq('id', id)
-        .select()
-        .single();
-    return { data, error };
+    console.log('[tickets/updateTicket] Starting ticket update:', {
+        ticketId: id,
+        updates,
+        updateFields: Object.keys(updates)
+    });
+
+    try {
+        const { data, error } = await supabase
+            .from('tickets')
+            .update(updates)
+            .eq('id', id)
+            .select()
+            .single();
+
+        if (error) {
+            console.error('[tickets/updateTicket] Error updating ticket:', {
+                error,
+                errorMessage: error.message,
+                errorDetails: error.details,
+                errorHint: error.hint,
+                errorCode: error.code
+            });
+            return { data: null, error };
+        }
+
+        console.log('[tickets/updateTicket] Successfully updated ticket:', data);
+        return { data, error: null };
+    } catch (err) {
+        console.error('[tickets/updateTicket] Unexpected error:', err);
+        return { data: null, error: err instanceof Error ? err : new Error('Unknown error') };
+    }
 };
 
 export const updateTickets = async (ids: string[], updates: Database['public']['Tables']['tickets']['Update']) => {

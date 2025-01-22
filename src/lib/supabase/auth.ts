@@ -39,64 +39,25 @@ export const getUserRole = async (userId: string) => {
 
         console.log('Auth user details:', { id: authUser.id, email: authUser.email });
 
-        // Try to find user by ID first
-        let { data: existingUser, error: checkError } = await supabase
+        // First try to get existing user
+        const { data: existingUser, error: fetchError } = await supabase
             .from('users')
-            .select('id, role, email, avatar_url')
+            .select('role')
             .eq('id', userId)
-            .maybeSingle();
+            .single();
 
-        // If not found by ID, try by email
-        if (!existingUser && !checkError) {
-            const { data: userByEmail, error: emailCheckError } = await supabase
-                .from('users')
-                .select('id, role, email, avatar_url')
-                .eq('email', authUser.email)
-                .maybeSingle();
-            
-            if (emailCheckError) {
-                checkError = emailCheckError;
-            } else {
-                existingUser = userByEmail;
-            }
+        if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 means no rows returned
+            console.error('Error fetching user:', fetchError);
+            throw fetchError;
         }
 
-        console.log('User lookup result:', { existingUser, checkError });
-
-        if (checkError) {
-            console.error('Error checking for existing user:', checkError);
-            throw checkError;
+        // If user exists, return their role
+        if (existingUser?.role) {
+            userRoleCache.set(userId, existingUser.role as UserRole);
+            return existingUser.role as UserRole;
         }
 
-        if (existingUser) {
-            // If IDs don't match but email does, update the ID
-            if (existingUser.id !== userId) {
-                console.log('Updating user ID to match auth ID...');
-                const { error: updateError } = await supabase
-                    .from('users')
-                    .update({ id: userId })
-                    .eq('id', existingUser.id);
-                
-                if (updateError) {
-                    console.error('Failed to update user ID:', updateError);
-                }
-            }
-
-            // Always sync avatar URL from database to auth metadata
-            if (existingUser.avatar_url) {
-                console.log('Syncing avatar URL to auth metadata:', existingUser.avatar_url);
-                await supabase.auth.updateUser({
-                    data: { avatar_url: existingUser.avatar_url }
-                });
-            }
-            
-            console.log('Returning existing user role:', existingUser.role);
-            // Cache the role before returning
-            userRoleCache.set(userId, existingUser.role);
-            return existingUser.role;
-        }
-        
-        // If no user found at all, create a new one
+        // If no user found, create a new user with CUSTOMER role
         console.log('Creating new user record...');
         const { data: newUser, error: insertError } = await supabase
             .from('users')
@@ -122,9 +83,9 @@ export const getUserRole = async (userId: string) => {
         console.log('New user created with role:', newUser?.role);
         // Cache the role of the new user
         if (newUser?.role) {
-            userRoleCache.set(userId, newUser.role);
+            userRoleCache.set(userId, newUser.role as UserRole);
         }
-        return newUser?.role;
+        return newUser?.role as UserRole;
     } catch (error) {
         console.error('Error in getUserRole:', error);
         throw error;

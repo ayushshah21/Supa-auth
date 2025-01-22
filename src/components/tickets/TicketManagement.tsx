@@ -23,6 +23,13 @@ export default function TicketManagement({
   onAddNote,
   updating,
 }: Props) {
+  console.log("[TicketManagement] Current state:", {
+    ticketStatus: ticket.status,
+    assignedToId: ticket.assigned_to?.id,
+    availableWorkers: workers.map((w) => ({ id: w.id, email: w.email })),
+    isUpdating: updating,
+  });
+
   return (
     <div className="mt-6 space-y-4">
       <h2 className="text-lg font-medium text-gray-900 mb-2">
@@ -59,7 +66,13 @@ export default function TicketManagement({
           <select
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             value={ticket.assigned_to?.id || ""}
-            onChange={(e) => onAssignmentChange(e.target.value)}
+            onChange={(e) => {
+              console.log("[TicketManagement] Assignment change:", {
+                selectedValue: e.target.value,
+                selectedWorker: workers.find((w) => w.id === e.target.value),
+              });
+              onAssignmentChange(e.target.value);
+            }}
             disabled={updating}
           >
             <option value="">Unassigned</option>

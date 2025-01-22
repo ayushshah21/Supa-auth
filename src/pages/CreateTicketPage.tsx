@@ -19,29 +19,49 @@ export default function CreateTicketPage() {
     setIsSubmitting(true);
 
     try {
+      console.log("[CreateTicketPage] Starting ticket creation...");
+
       const user = await getCurrentUser();
       if (!user) {
+        console.error("[CreateTicketPage] No authenticated user found");
         setError("You must be logged in to create a ticket");
         return;
       }
 
-      const { error: ticketError } = await createTicket({
+      console.log("[CreateTicketPage] Current user:", {
+        id: user.id,
+        email: user.email,
+      });
+
+      const ticketData = {
         title,
         description,
         priority,
         customer_id: user.id,
-        status: "OPEN",
-        metadata: null,
+        status: "OPEN" as const,
         assigned_to_id: null,
-      });
+        resolved_at: null,
+      };
+
+      console.log(
+        "[CreateTicketPage] Preparing to create ticket with data:",
+        ticketData
+      );
+
+      const { error: ticketError } = await createTicket(ticketData);
 
       if (ticketError) {
+        console.error("[CreateTicketPage] Error creating ticket:", ticketError);
         setError(ticketError.message);
         return;
       }
 
+      console.log(
+        "[CreateTicketPage] Ticket created successfully, navigating to my-tickets"
+      );
       navigate("/my-tickets");
     } catch (err: any) {
+      console.error("[CreateTicketPage] Unexpected error:", err);
       setError(err.message || "Error creating ticket");
     } finally {
       setIsSubmitting(false);
