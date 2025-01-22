@@ -28,7 +28,16 @@ dist-ssr
 .env.test.local
 .env.production.local
 
+# Sensitive files
+.env
+.env.*
+!.env.example
+
 # Database backups
 backups/
 *.dump
 *.sql
+!supabase/migrations/*.sql
+
+# Supabase
+.supabase/
