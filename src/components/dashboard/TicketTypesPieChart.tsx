@@ -29,14 +29,14 @@ export default function TicketTypesPieChart({
 }: TicketTypesPieChartProps) {
   if (loading) {
     return (
-      <div className="animate-pulse h-[300px] bg-gray-100 rounded-lg"></div>
+      <div className="animate-pulse h-[250px] bg-gray-100 rounded-lg"></div>
     );
   }
 
   return (
     <div className="bg-white p-4 rounded-lg shadow">
       <h3 className="text-lg font-medium text-gray-900 mb-4">Ticket Types</h3>
-      <div className="h-[300px]">
+      <div className="h-[250px]">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie

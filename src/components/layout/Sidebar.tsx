@@ -34,12 +34,14 @@ export default function Sidebar({ userRole, onCollapse }: SidebarProps) {
         break;
       case "WORKER":
         links.push(
+          { to: "/all-tickets", label: "All Tickets", icon: "🎫" },
           { to: "/assigned-tickets", label: "My Assigned", icon: "📌" },
           { to: "/stats", label: "Stats", icon: "📈" }
         );
         break;
       case "ADMIN":
         links.push(
+          { to: "/all-tickets", label: "All Tickets", icon: "🎫" },
           { to: "/assigned-tickets", label: "My Assigned", icon: "📌" },
           { to: "/stats", label: "Stats", icon: "📈" },
           { to: "/admin/users", label: "Users", icon: "👥" }
