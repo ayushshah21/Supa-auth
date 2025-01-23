@@ -193,5 +193,24 @@
       "WORKER": "Trabajador",
       "CUSTOMER": "Cliente"
     }
+  },
+  "profile": {
+    "title": "Configuración del Perfil",
+    "avatarAlt": "Foto de Perfil",
+    "setName": "Establece tu nombre",
+    "role": "Rol",
+    "labels": {
+      "fullName": "Nombre Completo",
+      "email": "Correo Electrónico"
+    },
+    "emailNotEditable": "El correo electrónico no se puede cambiar",
+    "saving": "Guardando...",
+    "saveChanges": "Guardar Cambios",
+    "errors": {
+      "loadProfile": "Error al cargar el perfil",
+      "unauthorized": "Debes iniciar sesión para acceder a esta página",
+      "avatarUpload": "Error al subir el avatar",
+      "saveProfile": "Error al guardar los cambios del perfil"
+    }
   }
 } 

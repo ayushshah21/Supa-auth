@@ -193,5 +193,24 @@
       "WORKER": "Worker",
       "CUSTOMER": "Customer"
     }
+  },
+  "profile": {
+    "title": "Profile Settings",
+    "avatarAlt": "Profile Picture",
+    "setName": "Set your name",
+    "role": "Role",
+    "labels": {
+      "fullName": "Full Name",
+      "email": "Email"
+    },
+    "emailNotEditable": "Email cannot be changed",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes",
+    "errors": {
+      "loadProfile": "Failed to load profile",
+      "unauthorized": "You must be logged in to access this page",
+      "avatarUpload": "Failed to upload avatar",
+      "saveProfile": "Failed to save profile changes"
+    }
   }
 } 

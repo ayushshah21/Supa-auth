@@ -164,7 +164,7 @@
     "basedOnRatings": "{{count}} રેટિંગ પર આધારિત",
     "basedOnRatingsPlural": "{{count}} રેટિંગ્સ પર આધારિત",
     "workerPerformance": "કર્મચારી પરફોર્મન્સ",
-    "averageRatingsDescription": "ગ્રાહકો તરફથી સરેરાશ રેટિંગ્સ અને પ્રતિસાદ",
+    "averageRatingsDescription": "ગ્રાહકો તરફથી સરેરાશ રેટિંગ્સ અનુસાર પ્રતિસાદ",
     "worker": "કર્મચારી",
     "averageRating": "સરેરાશ રેટિંગ",
     "totalRatings": "કુલ રેટિંગ્સ"
@@ -192,6 +192,25 @@
       "ADMIN": "એડમિન",
       "WORKER": "કર્મચારી",
       "CUSTOMER": "ગ્રાહક"
+    }
+  },
+  "profile": {
+    "title": "પ્રોફાઇલ સેટિંગ્સ",
+    "avatarAlt": "પ્રોફાઇલ ફોટો",
+    "setName": "તમારું નામ સેટ કરો",
+    "role": "ભૂમિકા",
+    "labels": {
+      "fullName": "પૂરું નામ",
+      "email": "ઇમેઇલ"
+    },
+    "emailNotEditable": "ઇમેઇલ બદલી શકાતો નથી",
+    "saving": "સાચવી રહ્યા છીએ...",
+    "saveChanges": "ફેરફારો સાચવો",
+    "errors": {
+      "loadProfile": "પ્રોફાઇલ લોડ કરવામાં નિષ્ફળ",
+      "unauthorized": "આ પેજ ઍક્સેસ કરવા માટે તમારે લૉગિન કરવું જરૂરી છે",
+      "avatarUpload": "પ્રોફાઇલ ફોટો અપલોડ કરવામાં નિષ્ફળ",
+      "saveProfile": "પ્રોફાઇલ ફેરફારો સાચવવામાં નિષ્ફળ"
     }
   }
 } 

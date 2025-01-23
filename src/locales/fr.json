@@ -193,5 +193,24 @@
       "WORKER": "Agent",
       "CUSTOMER": "Client"
     }
+  },
+  "profile": {
+    "title": "Paramètres du Profil",
+    "avatarAlt": "Photo de Profil",
+    "setName": "Définir votre nom",
+    "role": "Rôle",
+    "labels": {
+      "fullName": "Nom Complet",
+      "email": "Email"
+    },
+    "emailNotEditable": "L'email ne peut pas être modifié",
+    "saving": "Enregistrement...",
+    "saveChanges": "Enregistrer les Modifications",
+    "errors": {
+      "loadProfile": "Échec du chargement du profil",
+      "unauthorized": "Vous devez être connecté pour accéder à cette page",
+      "avatarUpload": "Échec du téléchargement de l'avatar",
+      "saveProfile": "Échec de l'enregistrement des modifications du profil"
+    }
   }
 } 
