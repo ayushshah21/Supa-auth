@@ -65,7 +65,7 @@ export default function TicketTypesPieChart({
                 `${priority} ${(percent * 100).toFixed(0)}%`
               }
             >
-              {translatedData.map((entry, index) => (
+              {translatedData.map((_entry, index) => (
                 <Cell
                   key={`cell-${index}`}
                   fill={
