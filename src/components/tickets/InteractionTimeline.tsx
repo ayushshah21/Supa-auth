@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { Interaction } from "../../lib/supabase/interactions/types";
 import type { UserRole } from "../../types/supabase";
 import { supabase } from "../../lib/supabase/client";
@@ -17,6 +18,7 @@ export default function InteractionTimeline({
   userRole,
   customerEmail,
 }: Props) {
+  const { t } = useTranslation();
   const [interactions, setInteractions] = useState<Interaction[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -76,7 +78,7 @@ export default function InteractionTimeline({
 
   const renderInteractionContent = (interaction: Interaction) => {
     const date = new Date(interaction.created_at).toLocaleString();
-    const author = interaction.author?.email || "Unknown";
+    const author = interaction.author?.email || t("ticket.labels.unknown");
 
     switch (interaction.type) {
       case "FEEDBACK":
@@ -101,7 +103,7 @@ export default function InteractionTimeline({
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm text-gray-500">
-                <span className="font-medium">{author}</span> provided feedback
+                {t("ticket.timeline.providedFeedback", { author })}
               </p>
               <div className="mt-1 text-sm bg-purple-50 rounded-md p-3">
                 {interaction.content.feedback}
@@ -133,7 +135,7 @@ export default function InteractionTimeline({
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm text-gray-500">
-                <span className="font-medium">{author}</span> rated this ticket
+                {t("ticket.timeline.ratedTicket", { author })}
               </p>
               <div className="mt-1 text-sm bg-yellow-50 rounded-md p-3">
                 <div className="flex space-x-1 text-lg">
@@ -150,7 +152,9 @@ export default function InteractionTimeline({
                     </span>
                   ))}
                   <span className="ml-2 text-sm text-gray-600">
-                    ({interaction.content.rating} out of 5)
+                    {t("ticket.timeline.ratingOutOf", {
+                      rating: interaction.content.rating,
+                    })}
                   </span>
                 </div>
                 {interaction.content.comment && (
@@ -186,15 +190,15 @@ export default function InteractionTimeline({
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm text-gray-500">
-                Status changed from{" "}
-                <span className="font-medium">
-                  {interaction.content.oldStatus}
-                </span>{" "}
-                to{" "}
-                <span className="font-medium">
-                  {interaction.content.newStatus}
-                </span>{" "}
-                by {author}
+                {t("ticket.timeline.statusChanged", {
+                  oldStatus: t(
+                    `ticket.status.${interaction.content.oldStatus}`
+                  ),
+                  newStatus: t(
+                    `ticket.status.${interaction.content.newStatus}`
+                  ),
+                  author,
+                })}
               </p>
               <p className="text-xs text-gray-400">{date}</p>
             </div>
@@ -223,15 +227,15 @@ export default function InteractionTimeline({
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm text-gray-500">
-                Assigned from{" "}
-                <span className="font-medium">
-                  {interaction.content.oldAssigneeEmail || "Unassigned"}
-                </span>{" "}
-                to{" "}
-                <span className="font-medium">
-                  {interaction.content.newAssigneeEmail || "Unassigned"}
-                </span>{" "}
-                by {author}
+                {t("ticket.timeline.assignmentChanged", {
+                  oldAssignee:
+                    interaction.content.oldAssigneeEmail ||
+                    t("ticket.labels.unassigned"),
+                  newAssignee:
+                    interaction.content.newAssigneeEmail ||
+                    t("ticket.labels.unassigned"),
+                  author,
+                })}
               </p>
               <p className="text-xs text-gray-400">{date}</p>
             </div>
@@ -274,9 +278,11 @@ export default function InteractionTimeline({
                 <p className="text-sm text-gray-500">
                   <span className="font-medium">{author}</span>{" "}
                   {interaction.content.internal && (
-                    <span className="text-yellow-600">(Internal) </span>
+                    <span className="text-yellow-600">
+                      {t("ticket.timeline.internalNote")}{" "}
+                    </span>
                   )}
-                  added a note
+                  {t("ticket.timeline.noteAdded")}
                 </p>
                 {!interaction.content.internal &&
                   userRole !== "CUSTOMER" &&
@@ -289,9 +295,9 @@ export default function InteractionTimeline({
                           messageContent: interaction.content.text,
                         });
                         if (success) {
-                          toast.success("Email notification sent!");
+                          toast.success(t("ticket.messages.emailSent"));
                         } else {
-                          toast.error("Failed to send email notification");
+                          toast.error(t("common.error"));
                         }
                       }}
                       className="ml-2 inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -309,7 +315,7 @@ export default function InteractionTimeline({
                           d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                         />
                       </svg>
-                      Notify
+                      {t("ticket.timeline.notify")}
                     </button>
                   )}
               </div>
@@ -344,28 +350,23 @@ export default function InteractionTimeline({
   return (
     <div className="mt-6">
       <h2 className="text-lg font-medium text-gray-900 mb-4">
-        Activity Timeline
+        {t("ticket.timeline.title")}
       </h2>
       <div className="flow-root">
-        <ul className="-mb-8">
-          {interactions.map((interaction, idx) => {
-            const content = renderInteractionContent(interaction);
-            if (!content) return null;
-
-            return (
-              <li key={interaction.id}>
-                <div className="relative pb-8">
-                  {idx !== interactions.length - 1 && (
-                    <span
-                      className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
-                      aria-hidden="true"
-                    />
-                  )}
-                  {content}
-                </div>
-              </li>
-            );
-          })}
+        <ul role="list" className="-mb-8">
+          {interactions.map((interaction, idx) => (
+            <li key={interaction.id}>
+              <div className="relative pb-8">
+                {idx !== interactions.length - 1 && (
+                  <span
+                    className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
+                    aria-hidden="true"
+                  />
+                )}
+                {renderInteractionContent(interaction)}
+              </div>
+            </li>
+          ))}
         </ul>
       </div>
     </div>

@@ -1,0 +1,189 @@
+{
+  "common": {
+    "appTitle": "Support TicketAI",
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "success": "Succès",
+    "dashboard": "Tableau de bord",
+    "stats": "Statistiques",
+    "manageUsers": "Gérer les utilisateurs",
+    "openMenu": "Ouvrir le menu principal",
+    "backToTickets": "Retour aux tickets",
+    "error": {
+      "loadUser": "Échec du chargement des données utilisateur",
+      "loadTickets": "Échec du chargement des tickets"
+    }
+  },
+  "sidebar": {
+    "toggle": "Basculer la barre latérale",
+    "mainNavigation": "Navigation principale"
+  },
+  "dashboard": {
+    "recentOpenTickets": "Tickets ouverts récents",
+    "mySupportTickets": "Mes tickets de support",
+    "noTicketsYet": "Vous n'avez pas encore créé de tickets.",
+    "createFirstTicket": "Créer votre premier ticket",
+    "error": {
+      "loadData": "Échec du chargement des données du tableau de bord"
+    },
+    "stats": {
+      "openTickets": "Tickets ouverts",
+      "recentlyResolved": "Récemment résolus",
+      "last7Days": "7 derniers jours",
+      "avgResolutionTime": "Temps moyen de résolution",
+      "totalTickets": "Total des tickets"
+    },
+    "charts": {
+      "ticketsByPriority": "Tickets par priorité",
+      "ticketsOverTime": "Tickets dans le temps",
+      "tickets": "Tickets"
+    }
+  },
+  "auth": {
+    "signIn": "Se connecter",
+    "signOut": "Se déconnecter",
+    "email": "Email",
+    "password": "Mot de passe",
+    "signInTitle": "Connectez-vous à votre compte",
+    "signInWithGoogle": "Se connecter avec Google",
+    "continueWith": "Ou continuer avec",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "signUp": "S'inscrire",
+    "errors": {
+      "emailNotConfirmed": "Veuillez vérifier votre adresse e-mail avant de vous connecter. Vérifiez votre boîte de réception pour le lien de vérification.",
+      "invalidCredentials": "Email ou mot de passe invalide. Si vous n'avez pas vérifié votre email, veuillez vérifier votre boîte de réception."
+    }
+  },
+  "ticket": {
+    "create": "Créer un nouveau ticket",
+    "myTickets": "Mes tickets",
+    "allTickets": "Tous les tickets",
+    "assignedTickets": "Mes tickets assignés",
+    "noTicketsFound": "Aucun ticket trouvé.",
+    "manageAllTickets": "Gérer tous les tickets de support",
+    "supportTickets": "Tickets de support",
+    "filter": {
+      "allStatus": "Tous les statuts"
+    },
+    "status": {
+      "OPEN": "Ouvert",
+      "IN_PROGRESS": "En cours",
+      "RESOLVED": "Résolu",
+      "CLOSED": "Fermé"
+    },
+    "priority": {
+      "LOW": "Faible",
+      "MEDIUM": "Moyen",
+      "HIGH": "Élevé"
+    },
+    "actions": {
+      "resolve": "Résoudre le ticket",
+      "assign": "Assigner le ticket",
+      "addNote": "Ajouter une note",
+      "sendEmail": "Envoyer un email",
+      "submitFeedback": "Soumettre un retour",
+      "submitRating": "Soumettre une évaluation"
+    },
+    "labels": {
+      "title": "Titre",
+      "description": "Description",
+      "status": "Statut",
+      "priority": "Priorité",
+      "assignedTo": "Assigné à",
+      "unassigned": "Non assigné",
+      "customer": "Client",
+      "createdAt": "Créé le",
+      "updatedAt": "Mis à jour le",
+      "unknown": "Inconnu",
+      "createdBy": "Créé par",
+      "on": "le"
+    },
+    "messages": {
+      "ticketCreated": "Ticket créé avec succès",
+      "ticketUpdated": "Ticket mis à jour avec succès",
+      "noteAdded": "Note ajoutée avec succès",
+      "emailSent": "Email envoyé avec succès",
+      "feedbackSubmitted": "Merci pour votre retour",
+      "ratingSubmitted": "Merci pour votre évaluation"
+    },
+    "bulk": {
+      "selected": "{{count}} ticket sélectionné",
+      "selectedPlural": "{{count}} tickets sélectionnés",
+      "changeStatus": "Changer le statut",
+      "assignTo": "Assigner à",
+      "clearSelection": "Effacer la sélection"
+    },
+    "noAssignedTickets": "Aucun ticket ne vous est actuellement assigné.",
+    "management": {
+      "title": "Gestion des tickets"
+    },
+    "timeline": {
+      "title": "Chronologie des activités",
+      "statusChanged": "Statut changé de {{oldStatus}} à {{newStatus}} par {{author}}",
+      "assignmentChanged": "Assigné de {{oldAssignee}} à {{newAssignee}} par {{author}}",
+      "noteAdded": "{{author}} a ajouté une note",
+      "internalNote": "(Interne)",
+      "providedFeedback": "{{author}} a fourni un retour",
+      "ratedTicket": "{{author}} a évalué ce ticket",
+      "ratingOutOf": "({{rating}} sur 5)",
+      "notify": "Notifier"
+    },
+    "sections": {
+      "description": "Description",
+      "assignment": "Attribution",
+      "assignedTo": "Assigné à",
+      "noFeedback": "Aucun retour fourni pour le moment."
+    }
+  },
+  "feedback": {
+    "title": "Partagez votre retour",
+    "description": "Veuillez partager votre avis sur la façon dont nous avons géré votre ticket. Vos commentaires nous aident à améliorer notre service.",
+    "placeholder": "Comment était notre service ? Comment pouvons-nous nous améliorer ?",
+    "submit": "Soumettre le retour"
+  },
+  "rating": {
+    "title": "Évaluez votre expérience",
+    "description": "Veuillez prendre un moment pour évaluer votre expérience avec notre équipe de support.",
+    "submit": "Soumettre l'évaluation"
+  },
+  "stats": {
+    "performanceDashboard": "Tableau de bord des performances",
+    "noStatsAvailable": "Aucune statistique disponible",
+    "yourRating": "Votre évaluation",
+    "yourAverageRating": "Votre note moyenne selon les retours clients",
+    "ratingOutOf": "({{rating}} sur 5)",
+    "notAvailable": "N/D",
+    "basedOnRatings": "Basé sur {{count}} évaluation",
+    "basedOnRatingsPlural": "Basé sur {{count}} évaluations",
+    "workerPerformance": "Performance des agents",
+    "averageRatingsDescription": "Notes moyennes et retours des clients",
+    "worker": "Agent",
+    "averageRating": "Note moyenne",
+    "totalRatings": "Total des évaluations"
+  },
+  "users": {
+    "manageUsers": "Gérer les utilisateurs",
+    "noUsers": "Aucun utilisateur trouvé",
+    "labels": {
+      "email": "Email",
+      "name": "Nom",
+      "currentRole": "Rôle actuel",
+      "actions": "Actions"
+    },
+    "actions": {
+      "changeToCustomer": "Changer en client",
+      "changeToWorker": "Changer en agent",
+      "changeToAdmin": "Changer en administrateur",
+      "updating": "Mise à jour..."
+    },
+    "errors": {
+      "loadUsers": "Échec du chargement des utilisateurs",
+      "updateRole": "Échec de la mise à jour du rôle de l'utilisateur"
+    },
+    "roles": {
+      "ADMIN": "Administrateur",
+      "WORKER": "Agent",
+      "CUSTOMER": "Client"
+    }
+  }
+} 

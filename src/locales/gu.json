@@ -1,0 +1,189 @@
+{
+  "common": {
+    "appTitle": "ટિકેટAI સપોર્ટ",
+    "loading": "લોડ થઈ રહ્યું છે...",
+    "error": "એક ભૂલ આવી",
+    "success": "સફળતા",
+    "dashboard": "ડેશબોર્ડ",
+    "stats": "આંકડા",
+    "manageUsers": "વપરાશકર્તાઓનું સંચાલન",
+    "openMenu": "મુખ્ય મેનુ ખોલો",
+    "backToTickets": "ટિકેટ્સ પર પાછા જાઓ",
+    "error": {
+      "loadUser": "વપરાશકર્તા ડેટા લોડ કરવામાં નિષ્ફળ",
+      "loadTickets": "ટિકેટ્સ લોડ કરવામાં નિષ્ફળ"
+    }
+  },
+  "sidebar": {
+    "toggle": "સાઇડબાર ટૉગલ કરો",
+    "mainNavigation": "મુખ્ય નેવિગેશન"
+  },
+  "dashboard": {
+    "recentOpenTickets": "તાજેતરની ખુલ્લી ટિકેટ્સ",
+    "mySupportTickets": "મારી સપોર્ટ ટિકેટ્સ",
+    "noTicketsYet": "તમે હજી સુધી કોઈ ટિકેટ બનાવી નથી.",
+    "createFirstTicket": "તમારી પ્રથમ ટિકેટ બનાવો",
+    "error": {
+      "loadData": "ડેશબોર્ડ ડેટા લોડ કરવામાં નિષ્ફળ"
+    },
+    "stats": {
+      "openTickets": "ખુલ્લી ટિકેટ્સ",
+      "recentlyResolved": "તાજેતરમાં ઉકેલાયેલ",
+      "last7Days": "છેલ્લા 7 દિવસ",
+      "avgResolutionTime": "સરેરાશ ઉકેલ સમય",
+      "totalTickets": "કુલ ટિકેટ્સ"
+    },
+    "charts": {
+      "ticketsByPriority": "પ્રાથમિકતા અનુસાર ટિકેટ્સ",
+      "ticketsOverTime": "સમય અનુસાર ટિકેટ્સ",
+      "tickets": "ટિકેટ્સ"
+    }
+  },
+  "auth": {
+    "signIn": "સાઇન ઇન કરો",
+    "signOut": "સાઇન આઉટ કરો",
+    "email": "ઇમેઇલ",
+    "password": "પાસવર્ડ",
+    "signInTitle": "તમારા એકાઉન્ટમાં સાઇન ઇન કરો",
+    "signInWithGoogle": "Google સાથે સાઇન ઇન કરો",
+    "continueWith": "અથવા આની સાથે ચાલુ રાખો",
+    "noAccount": "એકાઉન્ટ નથી?",
+    "signUp": "સાઇન અપ કરો",
+    "errors": {
+      "emailNotConfirmed": "કૃપા કરી લૉગિન કરતા પહેલા તમારા ઇમેઇલની પુષ્ટિ કરો. વેરિફિકેશન લિંક માટે તમારું ઇનબૉક્સ તપાસો.",
+      "invalidCredentials": "અમાન્ય ઇમેઇલ અથવા પાસવર્ડ. જો તમે તમારો ઇમેઇલ વેરિફાઇ નથી કર્યો, તો કૃપા કરી તમારું ઇનબૉક્સ તપાસો."
+    }
+  },
+  "ticket": {
+    "create": "નવી ટિકેટ બનાવો",
+    "myTickets": "મારી ટિકેટ્સ",
+    "allTickets": "બધી ટિકેટ્સ",
+    "assignedTickets": "મને સોંપાયેલી ટિકેટ્સ",
+    "noTicketsFound": "કોઈ ટિકેટ મળી નથી.",
+    "manageAllTickets": "બધી સપોર્ટ ટિકેટ્સનું સંચાલન કરો",
+    "supportTickets": "સપોર્ટ ટિકેટ્સ",
+    "filter": {
+      "allStatus": "બધી સ્થિતિ"
+    },
+    "status": {
+      "OPEN": "ખુલ્લી",
+      "IN_PROGRESS": "પ્રગતિમાં",
+      "RESOLVED": "ઉકેલાયેલ",
+      "CLOSED": "બંધ"
+    },
+    "priority": {
+      "LOW": "નીચી",
+      "MEDIUM": "મધ્યમ",
+      "HIGH": "ઉચ્ચ"
+    },
+    "actions": {
+      "resolve": "ટિકેટ ઉકેલો",
+      "assign": "ટિકેટ સોંપો",
+      "addNote": "નોંધ ઉમેરો",
+      "sendEmail": "ઇમેઇલ મોકલો",
+      "submitFeedback": "પ્રતિસાદ સબમિટ કરો",
+      "submitRating": "રેટિંગ સબમિટ કરો"
+    },
+    "labels": {
+      "title": "શીર્ષક",
+      "description": "વર્ણન",
+      "status": "સ્થિતિ",
+      "priority": "પ્રાથમિકતા",
+      "assignedTo": "સોંપાયેલ",
+      "unassigned": "સોંપાયેલ નથી",
+      "customer": "ગ્રાહક",
+      "createdAt": "બનાવ્યાની તારીખ",
+      "updatedAt": "અપડેટની તારીખ",
+      "unknown": "અજાણ્યું",
+      "createdBy": "બનાવનાર",
+      "on": "ના રોજ"
+    },
+    "messages": {
+      "ticketCreated": "ટિકેટ સફળતાપૂર્વક બનાવાઈ",
+      "ticketUpdated": "ટિકેટ સફળતાપૂર્વક અપડેટ થઈ",
+      "noteAdded": "નોંધ સફળતાપૂર્વક ઉમેરાઈ",
+      "emailSent": "ઇમેઇલ સફળતાપૂર્વક મોકલાયો",
+      "feedbackSubmitted": "તમારા પ્રતિસાદ બદલ આભાર",
+      "ratingSubmitted": "તમારા રેટિંગ બદલ આભાર"
+    },
+    "bulk": {
+      "selected": "{{count}} ટિકેટ પસંદ કરી",
+      "selectedPlural": "{{count}} ટિકેટ્સ પસંદ કરી",
+      "changeStatus": "સ્થિતિ બદલો",
+      "assignTo": "સોંપો",
+      "clearSelection": "પસંદગી સાફ કરો"
+    },
+    "noAssignedTickets": "હાલમાં તમને કોઈ ટિકેટ સોંપવામાં આવી નથી.",
+    "management": {
+      "title": "ટિકેટ મેનેજમેન્ટ"
+    },
+    "timeline": {
+      "title": "પ્રવૃત્તિ ટાઇમલાઇન",
+      "statusChanged": "{{author}} દ્વારા સ્થિતિ {{oldStatus}}થી {{newStatus}}માં બદલાઈ",
+      "assignmentChanged": "{{author}} દ્વારા {{oldAssignee}}થી {{newAssignee}}ને સોંપાઈ",
+      "noteAdded": "{{author}}એ નોંધ ઉમેરી",
+      "internalNote": "(આંતરિક)",
+      "providedFeedback": "{{author}}એ પ્રતિસાદ આપ્યો",
+      "ratedTicket": "{{author}}એ આ ટિકેટને રેટ કરી",
+      "ratingOutOf": "(5માંથી {{rating}})",
+      "notify": "સૂચિત કરો"
+    },
+    "sections": {
+      "description": "વર્ણન",
+      "assignment": "સોંપણી",
+      "assignedTo": "સોંપાયેલ",
+      "noFeedback": "હજી સુધી કોઈ પ્રતિસાદ આપવામાં આવ્યો નથી."
+    }
+  },
+  "feedback": {
+    "title": "તમારો પ્રતિસાદ શેર કરો",
+    "description": "કૃપા કરી અમે તમારી ટિકેટ કેવી રીતે હેન્ડલ કરી તે અંગે તમારા વિચારો શેર કરો. તમારો પ્રતિસાદ અમારી સેવા સુધારવામાં મદદ કરે છે.",
+    "placeholder": "અમારી સેવા કેવી હતી? અમે કેવી રીતે સુધારી શકીએ?",
+    "submit": "પ્રતિસાદ સબમિટ કરો"
+  },
+  "rating": {
+    "title": "તમારા અનુભવને રેટ કરો",
+    "description": "કૃપા કરી અમારી સપોર્ટ ટીમ સાથેના તમારા અનુભવને રેટ કરવા માટે થોડો સમય લો.",
+    "submit": "રેટિંગ સબમિટ કરો"
+  },
+  "stats": {
+    "performanceDashboard": "પરફોર્મન્સ ડેશબોર્ડ",
+    "noStatsAvailable": "કોઈ આંકડા ઉપલબ્ધ નથી",
+    "yourRating": "તમારું રેટિંગ",
+    "yourAverageRating": "ગ્રાહક પ્રતિસાદ પરથી તમારું સરેરાશ રેટિંગ",
+    "ratingOutOf": "(5માંથી {{rating}})",
+    "notAvailable": "ઉપલબ્ધ નથી",
+    "basedOnRatings": "{{count}} રેટિંગ પર આધારિત",
+    "basedOnRatingsPlural": "{{count}} રેટિંગ્સ પર આધારિત",
+    "workerPerformance": "કર્મચારી પરફોર્મન્સ",
+    "averageRatingsDescription": "ગ્રાહકો તરફથી સરેરાશ રેટિંગ્સ અને પ્રતિસાદ",
+    "worker": "કર્મચારી",
+    "averageRating": "સરેરાશ રેટિંગ",
+    "totalRatings": "કુલ રેટિંગ્સ"
+  },
+  "users": {
+    "manageUsers": "વપરાશકર્તાઓનું સંચાલન",
+    "noUsers": "કોઈ વપરાશકર્તા મળ્યા નથી",
+    "labels": {
+      "email": "ઇમેઇલ",
+      "name": "નામ",
+      "currentRole": "વર્તમાન ભૂમિકા",
+      "actions": "ક્રિયાઓ"
+    },
+    "actions": {
+      "changeToCustomer": "ગ્રાહકમાં બદલો",
+      "changeToWorker": "કર્મચારીમાં બદલો",
+      "changeToAdmin": "એડમિનમાં બદલો",
+      "updating": "અપડેટ થઈ રહ્યું છે..."
+    },
+    "errors": {
+      "loadUsers": "વપરાશકર્તાઓ લોડ કરવામાં નિષ્ફળ",
+      "updateRole": "વપરાશકર્તાની ભૂમિકા અપડેટ કરવામાં નિષ્ફળ"
+    },
+    "roles": {
+      "ADMIN": "એડમિન",
+      "WORKER": "કર્મચારી",
+      "CUSTOMER": "ગ્રાહક"
+    }
+  }
+} 

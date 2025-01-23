@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { getCurrentUser, getUserRole, getWorkers } from "../lib/supabase/auth";
 import { getTickets } from "../lib/supabase/tickets";
 import {
@@ -33,6 +34,7 @@ type Ticket = Database["public"]["Tables"]["tickets"]["Row"] & {
 export default function TicketDetailPage() {
   const { ticketId } = useParams<{ ticketId: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -305,7 +307,12 @@ export default function TicketDetailPage() {
     );
   }
 
-  if (error) return <div className="text-red-600 p-4 text-center">{error}</div>;
+  if (error)
+    return (
+      <div className="text-red-600 p-4 text-center">
+        {t("common.error")}: {error}
+      </div>
+    );
 
   if (!ticket) return null;
 
@@ -337,7 +344,7 @@ export default function TicketDetailPage() {
               d="M10 19l-7-7m0 0l7-7m-7 7h18"
             />
           </svg>
-          Back to Tickets
+          {t("common.backToTickets")}
         </button>
       </div>
 
@@ -347,7 +354,7 @@ export default function TicketDetailPage() {
 
           <div className="mt-6">
             <h2 className="text-lg font-medium text-gray-900 mb-2">
-              Description
+              {t("ticket.labels.description")}
             </h2>
             <p className="text-gray-600 whitespace-pre-wrap">
               {ticket.description}
@@ -402,7 +409,7 @@ export default function TicketDetailPage() {
           {userRole === "CUSTOMER" && (
             <div className="mt-6">
               <h2 className="text-lg font-medium text-gray-900 mb-2">
-                Add Message
+                {t("ticket.actions.addNote")}
               </h2>
               <NoteEditor
                 onSubmit={async ({ content }) => {

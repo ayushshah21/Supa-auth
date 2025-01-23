@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { User } from "@supabase/supabase-js";
+import { useTranslation } from "react-i18next";
 import { getCurrentUser, getUserRole } from "../lib/supabase";
 import { getTickets } from "../lib/supabase/tickets";
 import { supabase } from "../lib/supabase/client";
@@ -16,6 +17,7 @@ type Ticket = Database["public"]["Tables"]["tickets"]["Row"] & {
 
 const DashboardPage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<UserRole | null>(null);
   const [loading, setLoading] = useState(true);
@@ -35,7 +37,7 @@ const DashboardPage = () => {
       setRole(userRole);
     } catch (err: Error | unknown) {
       const errorMessage =
-        err instanceof Error ? err.message : "Failed to load user data";
+        err instanceof Error ? err.message : t("common.error.loadUser");
       setError(errorMessage);
     }
   };
@@ -52,7 +54,9 @@ const DashboardPage = () => {
       if (ticketsError) throw ticketsError;
       setTickets(data || []);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to load tickets");
+      setError(
+        err instanceof Error ? err.message : t("common.error.loadTickets")
+      );
     } finally {
       setLoading(false);
     }
@@ -101,7 +105,9 @@ const DashboardPage = () => {
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {t("common.dashboard")}
+          </h1>
         </div>
 
         {/* Main Content */}
@@ -117,7 +123,7 @@ const DashboardPage = () => {
                 <div className="px-4 py-5 sm:p-6">
                   <div className="sm:flex sm:justify-between sm:items-center mb-6">
                     <h2 className="text-xl font-semibold mb-4 sm:mb-0">
-                      Recent Open Tickets
+                      {t("dashboard.recentOpenTickets")}
                     </h2>
                   </div>
 
@@ -141,26 +147,26 @@ const DashboardPage = () => {
               <div className="px-4 py-5 sm:p-6">
                 <div className="sm:flex sm:justify-between sm:items-center mb-6">
                   <h2 className="text-xl font-semibold mb-4 sm:mb-0">
-                    My Support Tickets
+                    {t("dashboard.mySupportTickets")}
                   </h2>
                   <button
                     onClick={() => navigate("/create-ticket")}
                     className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
-                    Create New Ticket
+                    {t("ticket.create")}
                   </button>
                 </div>
 
                 {tickets.length === 0 ? (
                   <div className="text-center py-12">
                     <p className="text-gray-500 mb-4">
-                      You haven't created any tickets yet.
+                      {t("dashboard.noTicketsYet")}
                     </p>
                     <button
                       onClick={() => navigate("/create-ticket")}
                       className="text-blue-600 hover:text-blue-700 font-medium"
                     >
-                      Create your first ticket
+                      {t("dashboard.createFirstTicket")}
                     </button>
                   </div>
                 ) : (

@@ -1,0 +1,64 @@
+{
+  "common": {
+    "appTitle": "TicketAI Support",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "email": "Email",
+    "password": "Password"
+  },
+  "ticket": {
+    "create": "Create New Ticket",
+    "status": {
+      "OPEN": "Open",
+      "IN_PROGRESS": "In Progress",
+      "RESOLVED": "Resolved",
+      "CLOSED": "Closed"
+    },
+    "priority": {
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High"
+    },
+    "actions": {
+      "resolve": "Resolve Ticket",
+      "assign": "Assign Ticket",
+      "addNote": "Add Note",
+      "sendEmail": "Send Email",
+      "submitFeedback": "Submit Feedback",
+      "submitRating": "Submit Rating"
+    },
+    "labels": {
+      "description": "Description",
+      "status": "Status",
+      "priority": "Priority",
+      "assignedTo": "Assigned To",
+      "customer": "Customer",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At"
+    },
+    "messages": {
+      "ticketCreated": "Ticket created successfully",
+      "ticketUpdated": "Ticket updated successfully",
+      "noteAdded": "Note added successfully",
+      "emailSent": "Email sent successfully",
+      "feedbackSubmitted": "Thank you for your feedback",
+      "ratingSubmitted": "Thank you for your rating"
+    }
+  },
+  "feedback": {
+    "title": "Share Your Feedback",
+    "description": "Please share your thoughts about how we handled your ticket. Your feedback helps us improve our service.",
+    "placeholder": "What did you think about our service? How can we improve?",
+    "submit": "Submit Feedback"
+  },
+  "rating": {
+    "title": "Rate Your Experience",
+    "description": "Please take a moment to rate your experience with our support team.",
+    "submit": "Submit Rating"
+  }
+} 

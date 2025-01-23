@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "../lib/supabase/client";
 import { getCurrentUser, getUserRole } from "../lib/supabase/auth";
 import { getWorkerAverageRatings } from "../lib/supabase/interactions/queries";
@@ -26,13 +27,14 @@ export default function StatsPage() {
   const [workerRatings, setWorkerRatings] = useState<WorkerRating[]>([]);
   const [userRole, setUserRole] = useState<UserRole | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     async function fetchStats() {
       try {
         const user = await getCurrentUser();
         if (!user) {
-          setError("No user found");
+          setError(t("common.error.loadUser"));
           setLoading(false);
           return;
         }
@@ -59,7 +61,7 @@ export default function StatsPage() {
 
           if (!data) {
             console.error("[StatsPage] No data returned");
-            setError("No stats data available");
+            setError(t("common.error.loadData"));
             setLoading(false);
             return;
           }
@@ -70,7 +72,7 @@ export default function StatsPage() {
         }
       } catch (err) {
         console.error("[StatsPage] Caught error:", err);
-        setError("Failed to fetch stats");
+        setError(t("common.error.loadData"));
       } finally {
         setLoading(false);
       }
@@ -89,7 +91,7 @@ export default function StatsPage() {
           }
         }
       } catch (err: any) {
-        setError(err.message || "Failed to load statistics");
+        setError(t("common.error.loadData"));
       }
     };
 
@@ -97,7 +99,7 @@ export default function StatsPage() {
     if (currentUserId) {
       loadRatings();
     }
-  }, [currentUserId]);
+  }, [currentUserId, t]);
 
   if (loading) {
     return (
@@ -110,11 +112,15 @@ export default function StatsPage() {
   }
 
   if (error) {
-    return <div className="text-red-600">Error: {error}</div>;
+    return (
+      <div className="text-red-600">
+        {t("common.error")}: {error}
+      </div>
+    );
   }
 
   if (!stats) {
-    return <div>No stats available</div>;
+    return <div>{t("stats.noStatsAvailable")}</div>;
   }
 
   const renderRatingsSection = () => {
@@ -130,9 +136,11 @@ export default function StatsPage() {
       return (
         <div className="bg-white rounded-lg shadow overflow-hidden mt-6">
           <div className="px-6 py-5 border-b border-gray-200">
-            <h2 className="text-lg font-medium text-gray-900">Your Rating</h2>
+            <h2 className="text-lg font-medium text-gray-900">
+              {t("stats.yourRating")}
+            </h2>
             <p className="mt-1 text-sm text-gray-500">
-              Your average rating from customer feedback
+              {t("stats.yourAverageRating")}
             </p>
           </div>
 
@@ -154,12 +162,15 @@ export default function StatsPage() {
               </div>
               <span className="text-gray-600 ml-2">
                 {workerRating.averageRating !== null
-                  ? `(${workerRating.averageRating.toFixed(1)} out of 5)`
-                  : "(N/A)"}
+                  ? t("stats.ratingOutOf", {
+                      rating: workerRating.averageRating.toFixed(1),
+                    })
+                  : t("stats.notAvailable")}
               </span>
               <span className="text-sm text-gray-500 ml-4">
-                Based on {workerRating.totalRatings} rating
-                {workerRating.totalRatings === 1 ? "" : "s"}
+                {t("stats.basedOnRatings", {
+                  count: workerRating.totalRatings,
+                })}
               </span>
             </div>
           </div>
@@ -173,10 +184,10 @@ export default function StatsPage() {
         <div className="bg-white rounded-lg shadow overflow-hidden mt-6">
           <div className="px-6 py-5 border-b border-gray-200">
             <h2 className="text-lg font-medium text-gray-900">
-              Worker Performance
+              {t("stats.workerPerformance")}
             </h2>
             <p className="mt-1 text-sm text-gray-500">
-              Average ratings and feedback from customers
+              {t("stats.averageRatingsDescription")}
             </p>
           </div>
 
@@ -186,13 +197,13 @@ export default function StatsPage() {
                 <thead>
                   <tr>
                     <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Worker
+                      {t("stats.worker")}
                     </th>
                     <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Average Rating
+                      {t("stats.averageRating")}
                     </th>
                     <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Total Ratings
+                      {t("stats.totalRatings")}
                     </th>
                   </tr>
                 </thead>
@@ -225,7 +236,9 @@ export default function StatsPage() {
                               </span>
                             </div>
                           ) : (
-                            <span className="text-gray-500">N/A</span>
+                            <span className="text-gray-500">
+                              {t("stats.notAvailable")}
+                            </span>
                           )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -248,7 +261,7 @@ export default function StatsPage() {
   return (
     <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
       <h1 className="text-2xl font-semibold text-gray-900 mb-8">
-        Performance Dashboard
+        {t("stats.performanceDashboard")}
       </h1>
 
       {/* Only show stats for workers and admins */}
@@ -258,7 +271,7 @@ export default function StatsPage() {
           <div className="bg-white overflow-hidden shadow rounded-lg">
             <div className="px-4 py-5 sm:p-6">
               <dt className="text-sm font-medium text-gray-500 truncate">
-                Open Tickets
+                {t("dashboard.stats.openTickets")}
               </dt>
               <dd className="mt-1 text-3xl font-semibold text-gray-900">
                 {stats?.open_tickets}
@@ -270,11 +283,14 @@ export default function StatsPage() {
           <div className="bg-white overflow-hidden shadow rounded-lg">
             <div className="px-4 py-5 sm:p-6">
               <dt className="text-sm font-medium text-gray-500 truncate">
-                Resolved (Last 7 Days)
+                {t("dashboard.stats.recentlyResolved")}
               </dt>
               <dd className="mt-1 text-3xl font-semibold text-gray-900">
                 {stats?.resolved_last_7_days}
               </dd>
+              <p className="mt-2 text-sm text-gray-600">
+                {t("dashboard.stats.last7Days")}
+              </p>
             </div>
           </div>
 
@@ -282,7 +298,7 @@ export default function StatsPage() {
           <div className="bg-white overflow-hidden shadow rounded-lg">
             <div className="px-4 py-5 sm:p-6">
               <dt className="text-sm font-medium text-gray-500 truncate">
-                Avg. Resolution Time
+                {t("dashboard.stats.avgResolutionTime")}
               </dt>
               <dd className="mt-1 text-3xl font-semibold text-gray-900">
                 {stats?.avg_resolution_hours.toFixed(1)}h
@@ -294,7 +310,7 @@ export default function StatsPage() {
           <div className="bg-white overflow-hidden shadow rounded-lg">
             <div className="px-4 py-5 sm:p-6">
               <dt className="text-sm font-medium text-gray-500 truncate">
-                Total Tickets Handled
+                {t("dashboard.stats.totalTickets")}
               </dt>
               <dd className="mt-1 text-3xl font-semibold text-gray-900">
                 {stats?.total_tickets}

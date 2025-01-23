@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { supabase } from "../../lib/supabase/client";
 import { createFeedbackInteraction } from "../../lib/supabase/interactions/mutations";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   ticketId: string;
@@ -12,6 +13,7 @@ export default function FeedbackForm({ ticketId, userId, onSubmit }: Props) {
   const [content, setContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,9 +68,7 @@ export default function FeedbackForm({ ticketId, userId, onSubmit }: Props) {
       onSubmit?.();
     } catch (err) {
       console.error("[FeedbackForm] Error submitting feedback:", err);
-      setError(
-        err instanceof Error ? err.message : "Failed to submit feedback"
-      );
+      setError(err instanceof Error ? err.message : t("common.error"));
     } finally {
       setSubmitting(false);
     }
@@ -76,11 +76,10 @@ export default function FeedbackForm({ ticketId, userId, onSubmit }: Props) {
 
   return (
     <div className="bg-white shadow sm:rounded-lg p-6">
-      <h3 className="text-lg font-medium text-gray-900">Share Your Feedback</h3>
-      <p className="mt-1 text-sm text-gray-500">
-        Please share your thoughts about how we handled your ticket. Your
-        feedback helps us improve our service.
-      </p>
+      <h3 className="text-lg font-medium text-gray-900">
+        {t("feedback.title")}
+      </h3>
+      <p className="mt-1 text-sm text-gray-500">{t("feedback.description")}</p>
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <div>
@@ -88,7 +87,7 @@ export default function FeedbackForm({ ticketId, userId, onSubmit }: Props) {
             rows={4}
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="What did you think about our service? How can we improve?"
+            placeholder={t("feedback.placeholder")}
             className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
             disabled={submitting}
           />
@@ -102,7 +101,7 @@ export default function FeedbackForm({ ticketId, userId, onSubmit }: Props) {
             disabled={submitting || !content.trim()}
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {submitting ? "Submitting..." : "Submit Feedback"}
+            {submitting ? t("common.loading") : t("feedback.submit")}
           </button>
         </div>
       </form>

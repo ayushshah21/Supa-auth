@@ -1,0 +1,189 @@
+{
+  "common": {
+    "appTitle": "Soporte TicketAI",
+    "loading": "Cargando...",
+    "error": "Se produjo un error",
+    "success": "Éxito",
+    "dashboard": "Panel de Control",
+    "stats": "Estadísticas",
+    "manageUsers": "Gestionar Usuarios",
+    "openMenu": "Abrir menú principal",
+    "backToTickets": "Volver a Tickets",
+    "error": {
+      "loadUser": "Error al cargar los datos del usuario",
+      "loadTickets": "Error al cargar los tickets"
+    }
+  },
+  "sidebar": {
+    "toggle": "Alternar barra lateral",
+    "mainNavigation": "Navegación principal"
+  },
+  "dashboard": {
+    "recentOpenTickets": "Tickets Abiertos Recientes",
+    "mySupportTickets": "Mis Tickets de Soporte",
+    "noTicketsYet": "Aún no has creado ningún ticket.",
+    "createFirstTicket": "Crea tu primer ticket",
+    "error": {
+      "loadData": "Error al cargar los datos del panel"
+    },
+    "stats": {
+      "openTickets": "Tickets Abiertos",
+      "recentlyResolved": "Resueltos Recientemente",
+      "last7Days": "Últimos 7 días",
+      "avgResolutionTime": "Tiempo Promedio de Resolución",
+      "totalTickets": "Total de Tickets"
+    },
+    "charts": {
+      "ticketsByPriority": "Tickets por Prioridad",
+      "ticketsOverTime": "Tickets a lo Largo del Tiempo",
+      "tickets": "Tickets"
+    }
+  },
+  "auth": {
+    "signIn": "Iniciar Sesión",
+    "signOut": "Cerrar Sesión",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "signInTitle": "Inicia sesión en tu cuenta",
+    "signInWithGoogle": "Iniciar sesión con Google",
+    "continueWith": "O continuar con",
+    "noAccount": "¿No tienes una cuenta?",
+    "signUp": "Regístrate",
+    "errors": {
+      "emailNotConfirmed": "Por favor, verifica tu dirección de correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada para el enlace de verificación.",
+      "invalidCredentials": "Correo electrónico o contraseña inválidos. Si no has verificado tu correo electrónico, revisa tu bandeja de entrada."
+    }
+  },
+  "ticket": {
+    "create": "Crear Nuevo Ticket",
+    "myTickets": "Mis Tickets",
+    "allTickets": "Todos los Tickets",
+    "assignedTickets": "Mis Tickets Asignados",
+    "noTicketsFound": "No se encontraron tickets.",
+    "manageAllTickets": "Gestionar todos los tickets de soporte",
+    "supportTickets": "Tickets de Soporte",
+    "filter": {
+      "allStatus": "Todos los Estados"
+    },
+    "status": {
+      "OPEN": "Abierto",
+      "IN_PROGRESS": "En Progreso",
+      "RESOLVED": "Resuelto",
+      "CLOSED": "Cerrado"
+    },
+    "priority": {
+      "LOW": "Baja",
+      "MEDIUM": "Media",
+      "HIGH": "Alta"
+    },
+    "actions": {
+      "resolve": "Resolver Ticket",
+      "assign": "Asignar Ticket",
+      "addNote": "Agregar Nota",
+      "sendEmail": "Enviar Correo",
+      "submitFeedback": "Enviar Comentarios",
+      "submitRating": "Enviar Calificación"
+    },
+    "labels": {
+      "title": "Título",
+      "description": "Descripción",
+      "status": "Estado",
+      "priority": "Prioridad",
+      "assignedTo": "Asignado a",
+      "unassigned": "Sin asignar",
+      "customer": "Cliente",
+      "createdAt": "Creado el",
+      "updatedAt": "Actualizado el",
+      "unknown": "Desconocido",
+      "createdBy": "Creado por",
+      "on": "el"
+    },
+    "messages": {
+      "ticketCreated": "Ticket creado exitosamente",
+      "ticketUpdated": "Ticket actualizado exitosamente",
+      "noteAdded": "Nota agregada exitosamente",
+      "emailSent": "Correo enviado exitosamente",
+      "feedbackSubmitted": "Gracias por tus comentarios",
+      "ratingSubmitted": "Gracias por tu calificación"
+    },
+    "bulk": {
+      "selected": "{{count}} ticket seleccionado",
+      "selectedPlural": "{{count}} tickets seleccionados",
+      "changeStatus": "Cambiar Estado",
+      "assignTo": "Asignar a",
+      "clearSelection": "Limpiar Selección"
+    },
+    "noAssignedTickets": "No tienes tickets asignados actualmente.",
+    "management": {
+      "title": "Gestión del Ticket"
+    },
+    "timeline": {
+      "title": "Línea de Tiempo",
+      "statusChanged": "Estado cambiado de {{oldStatus}} a {{newStatus}} por {{author}}",
+      "assignmentChanged": "Asignado de {{oldAssignee}} a {{newAssignee}} por {{author}}",
+      "noteAdded": "{{author}} agregó una nota",
+      "internalNote": "(Interno)",
+      "providedFeedback": "{{author}} proporcionó comentarios",
+      "ratedTicket": "{{author}} calificó este ticket",
+      "ratingOutOf": "({{rating}} de 5)",
+      "notify": "Notificar"
+    },
+    "sections": {
+      "description": "Descripción",
+      "assignment": "Asignación",
+      "assignedTo": "Asignado a",
+      "noFeedback": "Aún no se han proporcionado comentarios."
+    }
+  },
+  "feedback": {
+    "title": "Comparte tus Comentarios",
+    "description": "Por favor, comparte tu opinión sobre cómo manejamos tu ticket. Tus comentarios nos ayudan a mejorar nuestro servicio.",
+    "placeholder": "¿Qué te pareció nuestro servicio? ¿Cómo podemos mejorar?",
+    "submit": "Enviar Comentarios"
+  },
+  "rating": {
+    "title": "Califica tu Experiencia",
+    "description": "Por favor, tómate un momento para calificar tu experiencia con nuestro equipo de soporte.",
+    "submit": "Enviar Calificación"
+  },
+  "stats": {
+    "performanceDashboard": "Panel de Rendimiento",
+    "noStatsAvailable": "No hay estadísticas disponibles",
+    "yourRating": "Tu Calificación",
+    "yourAverageRating": "Tu calificación promedio según los comentarios de los clientes",
+    "ratingOutOf": "({{rating}} de 5)",
+    "notAvailable": "N/D",
+    "basedOnRatings": "Basado en {{count}} calificación",
+    "basedOnRatingsPlural": "Basado en {{count}} calificaciones",
+    "workerPerformance": "Rendimiento del Personal",
+    "averageRatingsDescription": "Calificaciones promedio y comentarios de los clientes",
+    "worker": "Trabajador",
+    "averageRating": "Calificación Promedio",
+    "totalRatings": "Total de Calificaciones"
+  },
+  "users": {
+    "manageUsers": "Gestionar Usuarios",
+    "noUsers": "No se encontraron usuarios",
+    "labels": {
+      "email": "Correo Electrónico",
+      "name": "Nombre",
+      "currentRole": "Rol Actual",
+      "actions": "Acciones"
+    },
+    "actions": {
+      "changeToCustomer": "Cambiar a Cliente",
+      "changeToWorker": "Cambiar a Trabajador",
+      "changeToAdmin": "Cambiar a Administrador",
+      "updating": "Actualizando..."
+    },
+    "errors": {
+      "loadUsers": "Error al cargar usuarios",
+      "updateRole": "Error al actualizar el rol del usuario"
+    },
+    "roles": {
+      "ADMIN": "Administrador",
+      "WORKER": "Trabajador",
+      "CUSTOMER": "Cliente"
+    }
+  }
+} 

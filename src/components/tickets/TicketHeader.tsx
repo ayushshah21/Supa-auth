@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 type Props = {
   ticket: {
     title: string;
@@ -37,6 +39,8 @@ const getPriorityColor = (priority: string) => {
 };
 
 export default function TicketHeader({ ticket }: Props) {
+  const { t } = useTranslation();
+
   return (
     <div className="flex justify-between items-start">
       <div>
@@ -44,7 +48,9 @@ export default function TicketHeader({ ticket }: Props) {
           {ticket.title}
         </h1>
         <p className="text-sm text-gray-500">
-          Created by {ticket.customer?.email || "Unknown"} on{" "}
+          {t("ticket.labels.createdBy")}{" "}
+          {ticket.customer?.email || t("ticket.labels.unknown")}{" "}
+          {t("ticket.labels.on")}{" "}
           {new Date(ticket.created_at).toLocaleDateString()}
         </p>
       </div>
@@ -54,14 +60,14 @@ export default function TicketHeader({ ticket }: Props) {
             ticket.status
           )}`}
         >
-          {ticket.status}
+          {t(`ticket.status.${ticket.status}`)}
         </span>
         <span
           className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getPriorityColor(
             ticket.priority
           )}`}
         >
-          {ticket.priority}
+          {t(`ticket.priority.${ticket.priority}`)}
         </span>
       </div>
     </div>

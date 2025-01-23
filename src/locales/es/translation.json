@@ -1,0 +1,64 @@
+{
+  "common": {
+    "appTitle": "Soporte TicketAI",
+    "loading": "Cargando...",
+    "error": "Se produjo un error",
+    "success": "Éxito"
+  },
+  "auth": {
+    "signIn": "Iniciar Sesión",
+    "signOut": "Cerrar Sesión",
+    "email": "Correo Electrónico",
+    "password": "Contraseña"
+  },
+  "ticket": {
+    "create": "Crear Nuevo Ticket",
+    "status": {
+      "OPEN": "Abierto",
+      "IN_PROGRESS": "En Progreso",
+      "RESOLVED": "Resuelto",
+      "CLOSED": "Cerrado"
+    },
+    "priority": {
+      "LOW": "Baja",
+      "MEDIUM": "Media",
+      "HIGH": "Alta"
+    },
+    "actions": {
+      "resolve": "Resolver Ticket",
+      "assign": "Asignar Ticket",
+      "addNote": "Agregar Nota",
+      "sendEmail": "Enviar Correo",
+      "submitFeedback": "Enviar Comentarios",
+      "submitRating": "Enviar Calificación"
+    },
+    "labels": {
+      "description": "Descripción",
+      "status": "Estado",
+      "priority": "Prioridad",
+      "assignedTo": "Asignado a",
+      "customer": "Cliente",
+      "createdAt": "Creado el",
+      "updatedAt": "Actualizado el"
+    },
+    "messages": {
+      "ticketCreated": "Ticket creado exitosamente",
+      "ticketUpdated": "Ticket actualizado exitosamente",
+      "noteAdded": "Nota agregada exitosamente",
+      "emailSent": "Correo enviado exitosamente",
+      "feedbackSubmitted": "Gracias por tus comentarios",
+      "ratingSubmitted": "Gracias por tu calificación"
+    }
+  },
+  "feedback": {
+    "title": "Comparte tus Comentarios",
+    "description": "Por favor, comparte tu opinión sobre cómo manejamos tu ticket. Tus comentarios nos ayudan a mejorar nuestro servicio.",
+    "placeholder": "¿Qué te pareció nuestro servicio? ¿Cómo podemos mejorar?",
+    "submit": "Enviar Comentarios"
+  },
+  "rating": {
+    "title": "Califica tu Experiencia",
+    "description": "Por favor, tómate un momento para calificar tu experiencia con nuestro equipo de soporte.",
+    "submit": "Enviar Calificación"
+  }
+} 

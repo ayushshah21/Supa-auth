@@ -1,0 +1,189 @@
+{
+  "common": {
+    "appTitle": "TicketAI Support",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "dashboard": "Dashboard",
+    "stats": "Stats",
+    "manageUsers": "Manage Users",
+    "openMenu": "Open main menu",
+    "backToTickets": "Back to Tickets",
+    "error": {
+      "loadUser": "Failed to load user data",
+      "loadTickets": "Failed to load tickets"
+    }
+  },
+  "sidebar": {
+    "toggle": "Toggle sidebar",
+    "mainNavigation": "Main navigation"
+  },
+  "dashboard": {
+    "recentOpenTickets": "Recent Open Tickets",
+    "mySupportTickets": "My Support Tickets",
+    "noTicketsYet": "You haven't created any tickets yet.",
+    "createFirstTicket": "Create your first ticket",
+    "error": {
+      "loadData": "Failed to load dashboard data"
+    },
+    "stats": {
+      "openTickets": "Open Tickets",
+      "recentlyResolved": "Recently Resolved",
+      "last7Days": "Last 7 days",
+      "avgResolutionTime": "Avg. Resolution Time",
+      "totalTickets": "Total Tickets"
+    },
+    "charts": {
+      "ticketsByPriority": "Tickets by Priority",
+      "ticketsOverTime": "Tickets Over Time",
+      "tickets": "Tickets"
+    }
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "email": "Email",
+    "password": "Password",
+    "signInTitle": "Sign in to your account",
+    "signInWithGoogle": "Sign in with Google",
+    "continueWith": "Or continue with",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "errors": {
+      "emailNotConfirmed": "Please verify your email address before logging in. Check your inbox for the verification link.",
+      "invalidCredentials": "Invalid email or password. If you haven't verified your email, please check your inbox."
+    }
+  },
+  "ticket": {
+    "create": "Create New Ticket",
+    "myTickets": "My Tickets",
+    "allTickets": "All Tickets",
+    "assignedTickets": "My Assigned Tickets",
+    "noTicketsFound": "No tickets found.",
+    "manageAllTickets": "Manage all support tickets",
+    "supportTickets": "Support Tickets",
+    "filter": {
+      "allStatus": "All Status"
+    },
+    "status": {
+      "OPEN": "Open",
+      "IN_PROGRESS": "In Progress",
+      "RESOLVED": "Resolved",
+      "CLOSED": "Closed"
+    },
+    "priority": {
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High"
+    },
+    "actions": {
+      "resolve": "Resolve Ticket",
+      "assign": "Assign Ticket",
+      "addNote": "Add Note",
+      "sendEmail": "Send Email",
+      "submitFeedback": "Submit Feedback",
+      "submitRating": "Submit Rating"
+    },
+    "labels": {
+      "title": "Title",
+      "description": "Description",
+      "status": "Status",
+      "priority": "Priority",
+      "assignedTo": "Assigned To",
+      "unassigned": "Unassigned",
+      "customer": "Customer",
+      "createdAt": "Created at",
+      "updatedAt": "Updated at",
+      "unknown": "Unknown",
+      "createdBy": "Created by",
+      "on": "on"
+    },
+    "messages": {
+      "ticketCreated": "Ticket created successfully",
+      "ticketUpdated": "Ticket updated successfully",
+      "noteAdded": "Note added successfully",
+      "emailSent": "Email sent successfully",
+      "feedbackSubmitted": "Thank you for your feedback",
+      "ratingSubmitted": "Thank you for your rating"
+    },
+    "bulk": {
+      "selected": "{{count}} ticket selected",
+      "selectedPlural": "{{count}} tickets selected",
+      "changeStatus": "Change Status",
+      "assignTo": "Assign To",
+      "clearSelection": "Clear Selection"
+    },
+    "noAssignedTickets": "No tickets are currently assigned to you.",
+    "management": {
+      "title": "Ticket Management"
+    },
+    "timeline": {
+      "title": "Activity Timeline",
+      "statusChanged": "Status changed from {{oldStatus}} to {{newStatus}} by {{author}}",
+      "assignmentChanged": "Assigned from {{oldAssignee}} to {{newAssignee}} by {{author}}",
+      "noteAdded": "{{author}} added a note",
+      "internalNote": "(Internal)",
+      "providedFeedback": "{{author}} provided feedback",
+      "ratedTicket": "{{author}} rated this ticket",
+      "ratingOutOf": "({{rating}} out of 5)",
+      "notify": "Notify"
+    },
+    "sections": {
+      "description": "Description",
+      "assignment": "Assignment",
+      "assignedTo": "Assigned to",
+      "noFeedback": "No feedback provided yet."
+    }
+  },
+  "feedback": {
+    "title": "Share Your Feedback",
+    "description": "Please share your thoughts on how we handled your ticket. Your feedback helps us improve our service.",
+    "placeholder": "How was our service? How can we improve?",
+    "submit": "Submit Feedback"
+  },
+  "rating": {
+    "title": "Rate Your Experience",
+    "description": "Please take a moment to rate your experience with our support team.",
+    "submit": "Submit Rating"
+  },
+  "stats": {
+    "performanceDashboard": "Performance Dashboard",
+    "noStatsAvailable": "No stats available",
+    "yourRating": "Your Rating",
+    "yourAverageRating": "Your average rating from customer feedback",
+    "ratingOutOf": "({{rating}} out of 5)",
+    "notAvailable": "N/A",
+    "basedOnRatings": "Based on {{count}} rating",
+    "basedOnRatingsPlural": "Based on {{count}} ratings",
+    "workerPerformance": "Worker Performance",
+    "averageRatingsDescription": "Average ratings and feedback from customers",
+    "worker": "Worker",
+    "averageRating": "Average Rating",
+    "totalRatings": "Total Ratings"
+  },
+  "users": {
+    "manageUsers": "Manage Users",
+    "noUsers": "No users found",
+    "labels": {
+      "email": "Email",
+      "name": "Name",
+      "currentRole": "Current Role",
+      "actions": "Actions"
+    },
+    "actions": {
+      "changeToCustomer": "Change to Customer",
+      "changeToWorker": "Change to Worker",
+      "changeToAdmin": "Change to Admin",
+      "updating": "Updating..."
+    },
+    "errors": {
+      "loadUsers": "Failed to load users",
+      "updateRole": "Failed to update user role"
+    },
+    "roles": {
+      "ADMIN": "Admin",
+      "WORKER": "Worker",
+      "CUSTOMER": "Customer"
+    }
+  }
+} 

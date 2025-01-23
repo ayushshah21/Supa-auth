@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import type { Database } from "../../types/supabase";
 
 type Props = {
@@ -25,6 +26,7 @@ export default function TicketTable({
   hideCustomerColumn = false,
 }: Props) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -57,7 +59,7 @@ export default function TicketTable({
   if (tickets.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">No tickets found.</p>
+        <p className="text-gray-500">{t("ticket.noTicketsFound")}</p>
       </div>
     );
   }
@@ -78,21 +80,21 @@ export default function TicketTable({
               </th>
             )}
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Title
+              {t("ticket.labels.title")}
             </th>
             {!hideCustomerColumn && (
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Customer
+                {t("ticket.labels.customer")}
               </th>
             )}
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Status
+              {t("ticket.labels.status")}
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Priority
+              {t("ticket.labels.priority")}
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Assigned To
+              {t("ticket.labels.assignedTo")}
             </th>
           </tr>
         </thead>
@@ -142,7 +144,7 @@ export default function TicketTable({
                     ticket.status
                   )}`}
                 >
-                  {ticket.status}
+                  {t(`ticket.status.${ticket.status}`)}
                 </span>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
@@ -151,11 +153,11 @@ export default function TicketTable({
                     ticket.priority
                   )}`}
                 >
-                  {ticket.priority}
+                  {t(`ticket.priority.${ticket.priority}`)}
                 </span>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {ticket.assigned_to?.email || "Unassigned"}
+                {ticket.assigned_to?.email || t("ticket.labels.unassigned")}
               </td>
             </tr>
           ))}

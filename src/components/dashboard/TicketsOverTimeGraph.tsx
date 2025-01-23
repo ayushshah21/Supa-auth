@@ -7,6 +7,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useTranslation } from "react-i18next";
 
 interface TicketTrend {
   date: string;
@@ -16,12 +17,16 @@ interface TicketTrend {
 interface TicketsOverTimeGraphProps {
   data: TicketTrend[];
   loading?: boolean;
+  title?: string;
 }
 
 export default function TicketsOverTimeGraph({
   data,
   loading,
+  title,
 }: TicketsOverTimeGraphProps) {
+  const { t } = useTranslation();
+
   if (loading) {
     return (
       <div className="animate-pulse h-[250px] bg-gray-100 rounded-lg"></div>
@@ -31,7 +36,7 @@ export default function TicketsOverTimeGraph({
   return (
     <div className="bg-white p-4 rounded-lg shadow">
       <h3 className="text-lg font-medium text-gray-900 mb-4">
-        Tickets Over Time
+        {title || t("dashboard.charts.ticketsOverTime")}
       </h3>
       <div className="h-[250px]">
         <ResponsiveContainer width="100%" height="100%">
@@ -60,7 +65,7 @@ export default function TicketsOverTimeGraph({
                 const d = new Date(date);
                 return `${d.getMonth() + 1}/${d.getDate()}`;
               }}
-              formatter={(value) => [value, "Tickets"]}
+              formatter={(value) => [value, t("dashboard.charts.tickets")]}
             />
             <Line
               type="monotone"
@@ -68,7 +73,7 @@ export default function TicketsOverTimeGraph({
               stroke="#3b82f6"
               strokeWidth={2}
               dot={false}
-              name="Tickets"
+              name={t("dashboard.charts.tickets")}
             />
           </LineChart>
         </ResponsiveContainer>

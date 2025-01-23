@@ -1,4 +1,5 @@
 import type { Database, TicketStatus } from "../../types/supabase";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   selectedCount: number;
@@ -17,32 +18,34 @@ export default function BulkActions({
   workers,
   updating,
 }: Props) {
+  const { t } = useTranslation();
+
   if (selectedCount === 0) return null;
 
   return (
     <div className="mb-4 p-4 bg-gray-50 rounded-lg flex items-center justify-between">
       <div className="flex items-center space-x-4">
         <span className="text-sm text-gray-600">
-          {selectedCount} ticket{selectedCount === 1 ? "" : "s"} selected
+          {t("ticket.bulk.selected", { count: selectedCount })}
         </span>
         <select
           onChange={(e) => onStatusUpdate(e.target.value as TicketStatus)}
           className="rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
           disabled={updating}
         >
-          <option value="">Change Status</option>
-          <option value="OPEN">Open</option>
-          <option value="IN_PROGRESS">In Progress</option>
-          <option value="RESOLVED">Resolved</option>
-          <option value="CLOSED">Closed</option>
+          <option value="">{t("ticket.bulk.changeStatus")}</option>
+          <option value="OPEN">{t("ticket.status.OPEN")}</option>
+          <option value="IN_PROGRESS">{t("ticket.status.IN_PROGRESS")}</option>
+          <option value="RESOLVED">{t("ticket.status.RESOLVED")}</option>
+          <option value="CLOSED">{t("ticket.status.CLOSED")}</option>
         </select>
         <select
           onChange={(e) => onAssign(e.target.value)}
           className="rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
           disabled={updating}
         >
-          <option value="">Assign To</option>
-          <option value="">Unassigned</option>
+          <option value="">{t("ticket.bulk.assignTo")}</option>
+          <option value="">{t("ticket.labels.unassigned")}</option>
           {workers.map((worker) => (
             <option key={worker.id} value={worker.id}>
               {worker.email}
@@ -54,7 +57,7 @@ export default function BulkActions({
         onClick={onClearSelection}
         className="text-sm text-gray-600 hover:text-gray-900"
       >
-        Clear Selection
+        {t("ticket.bulk.clearSelection")}
       </button>
     </div>
   );

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Mail, Lock, LogIn, AlertCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "../lib/supabaseClient";
 import { useNavigate } from "react-router-dom";
 
@@ -7,6 +8,7 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleEmailLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,13 +26,9 @@ const LoginPage = () => {
 
     if (error) {
       if (error.message.includes("Email not confirmed")) {
-        setError(
-          "Please verify your email address before logging in. Check your inbox for the verification link."
-        );
+        setError(t("auth.errors.emailNotConfirmed"));
       } else if (error.message.includes("Invalid login credentials")) {
-        setError(
-          "Invalid email or password. If you haven't verified your email, please check your inbox."
-        );
+        setError(t("auth.errors.invalidCredentials"));
       } else {
         setError(error.message);
       }
@@ -62,7 +60,7 @@ const LoginPage = () => {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
+            {t("auth.signInTitle")}
           </h2>
         </div>
 
@@ -85,7 +83,7 @@ const LoginPage = () => {
                 type="email"
                 required
                 className="appearance-none rounded-lg relative block w-full px-12 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Email address"
+                placeholder={t("auth.email")}
               />
             </div>
             <div className="relative">
@@ -98,7 +96,7 @@ const LoginPage = () => {
                 type="password"
                 required
                 className="appearance-none rounded-lg relative block w-full px-12 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Password"
+                placeholder={t("auth.password")}
               />
             </div>
           </div>
@@ -113,7 +111,7 @@ const LoginPage = () => {
                 className="absolute left-3 top-1/2 transform -translate-y-1/2"
                 size={20}
               />
-              {loading ? "Signing in..." : "Sign in"}
+              {loading ? t("common.loading") : t("auth.signIn")}
             </button>
           </div>
         </form>
@@ -125,7 +123,7 @@ const LoginPage = () => {
             </div>
             <div className="relative flex justify-center text-sm">
               <span className="px-2 bg-gray-50 text-gray-500">
-                Or continue with
+                {t("auth.continueWith")}
               </span>
             </div>
           </div>
@@ -140,17 +138,17 @@ const LoginPage = () => {
               src="https://www.svgrepo.com/show/475656/google-color.svg"
               alt="Google logo"
             />
-            <span className="ml-2">Sign in with Google</span>
+            <span className="ml-2">{t("auth.signInWithGoogle")}</span>
           </button>
         </div>
 
         <p className="mt-2 text-center text-sm text-gray-600">
-          Don't have an account?{" "}
+          {t("auth.noAccount")}{" "}
           <a
             href="/register"
             className="font-medium text-blue-600 hover:text-blue-500"
           >
-            Sign up
+            {t("auth.signUp")}
           </a>
         </p>
       </div>

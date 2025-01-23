@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { UserRole } from "../../types/supabase";
 
 type SidebarProps = {
@@ -10,6 +11,7 @@ type SidebarProps = {
 
 export default function Sidebar({ userRole, onCollapse }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     onCollapse?.(isCollapsed);
@@ -20,7 +22,11 @@ export default function Sidebar({ userRole, onCollapse }: SidebarProps) {
 
     // Common links for all authenticated users
     if (userRole) {
-      links.push({ to: "/dashboard", label: "Dashboard", icon: "📊" });
+      links.push({
+        to: "/dashboard",
+        label: t("common.dashboard"),
+        icon: "📊",
+      });
     }
 
     // Role-specific links
@@ -28,23 +34,31 @@ export default function Sidebar({ userRole, onCollapse }: SidebarProps) {
       case "CUSTOMER":
         links.push({
           to: "/create-ticket",
-          label: "Create Ticket",
+          label: t("ticket.create"),
           icon: "➕",
         });
         break;
       case "WORKER":
         links.push(
-          { to: "/all-tickets", label: "All Tickets", icon: "🎫" },
-          { to: "/assigned-tickets", label: "My Assigned", icon: "📌" },
-          { to: "/stats", label: "Stats", icon: "📈" }
+          { to: "/all-tickets", label: t("ticket.allTickets"), icon: "🎫" },
+          {
+            to: "/assigned-tickets",
+            label: t("ticket.assignedTickets"),
+            icon: "📌",
+          },
+          { to: "/stats", label: t("common.stats"), icon: "📈" }
         );
         break;
       case "ADMIN":
         links.push(
-          { to: "/all-tickets", label: "All Tickets", icon: "🎫" },
-          { to: "/assigned-tickets", label: "My Assigned", icon: "📌" },
-          { to: "/stats", label: "Stats", icon: "📈" },
-          { to: "/admin/users", label: "Users", icon: "👥" }
+          { to: "/all-tickets", label: t("ticket.allTickets"), icon: "🎫" },
+          {
+            to: "/assigned-tickets",
+            label: t("ticket.assignedTickets"),
+            icon: "📌",
+          },
+          { to: "/stats", label: t("common.stats"), icon: "📈" },
+          { to: "/admin/users", label: t("common.manageUsers"), icon: "👥" }
         );
         break;
     }
@@ -64,6 +78,7 @@ export default function Sidebar({ userRole, onCollapse }: SidebarProps) {
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
         className="absolute -right-3 top-8 bg-white rounded-full p-1 shadow-md hover:bg-gray-100"
+        aria-label={t("sidebar.toggle")}
       >
         <ChevronRight
           className={`h-4 w-4 transition-transform ${
@@ -80,24 +95,26 @@ export default function Sidebar({ userRole, onCollapse }: SidebarProps) {
             isCollapsed ? "hidden" : "block"
           }`}
         >
-          TicketAI
+          {t("common.appTitle")}
         </Link>
         {isCollapsed && (
           <Link to="/" className="text-xl font-bold text-blue-600">
-            T
+            {t("common.appTitle").charAt(0)}
           </Link>
         )}
       </div>
 
       {/* Navigation Links */}
-      <nav className="mt-4">
+      <nav className="mt-4" aria-label={t("sidebar.mainNavigation")}>
         {navLinks.map((link) => (
           <Link
             key={link.to}
             to={link.to}
             className="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
           >
-            <span className="text-xl">{link.icon}</span>
+            <span className="text-xl" aria-hidden="true">
+              {link.icon}
+            </span>
             {!isCollapsed && (
               <span className="ml-3 text-sm font-medium">{link.label}</span>
             )}

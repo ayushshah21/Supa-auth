@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { getUsers, updateUserRole } from "../lib/supabase/auth";
 import type { Database, UserRole } from "../types/supabase";
 
@@ -10,6 +11,7 @@ export default function ManageUsersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [updating, setUpdating] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -18,14 +20,14 @@ export default function ManageUsersPage() {
         if (error) throw error;
         setUsers(data || []);
       } catch (err: any) {
-        setError(err.message || "Failed to load users");
+        setError(err.message || t("users.errors.loadUsers"));
       } finally {
         setLoading(false);
       }
     };
 
     loadUsers();
-  }, []);
+  }, [t]);
 
   const handleRoleUpdate = async (userId: string, newRole: UserRole) => {
     try {
@@ -38,7 +40,7 @@ export default function ManageUsersPage() {
         )
       );
     } catch (err: any) {
-      setError(err.message || "Failed to update user role");
+      setError(err.message || t("users.errors.updateRole"));
     } finally {
       setUpdating(null);
     }
@@ -70,7 +72,9 @@ export default function ManageUsersPage() {
             </svg>
           </div>
           <div className="ml-3">
-            <h3 className="text-sm font-medium text-red-800">Error</h3>
+            <h3 className="text-sm font-medium text-red-800">
+              {t("common.error")}
+            </h3>
             <div className="mt-2 text-sm text-red-700">{error}</div>
           </div>
         </div>
@@ -81,23 +85,25 @@ export default function ManageUsersPage() {
   return (
     <div className="bg-white shadow rounded-lg">
       <div className="px-4 py-5 sm:p-6">
-        <h2 className="text-lg font-medium text-gray-900 mb-4">Manage Users</h2>
+        <h2 className="text-lg font-medium text-gray-900 mb-4">
+          {t("users.manageUsers")}
+        </h2>
 
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Email
+                  {t("users.labels.email")}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
+                  {t("users.labels.name")}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Current Role
+                  {t("users.labels.currentRole")}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
+                  {t("users.labels.actions")}
                 </th>
               </tr>
             </thead>
@@ -121,7 +127,7 @@ export default function ManageUsersPage() {
                           : "bg-gray-100 text-gray-800"
                       }`}
                     >
-                      {user.role}
+                      {t(`users.roles.${user.role}`)}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -133,8 +139,8 @@ export default function ManageUsersPage() {
                           className="text-gray-600 hover:text-gray-900 disabled:opacity-50"
                         >
                           {updating === user.id
-                            ? "Updating..."
-                            : "Change to Customer"}
+                            ? t("users.actions.updating")
+                            : t("users.actions.changeToCustomer")}
                         </button>
                       )}
                       {user.role !== "WORKER" && (
@@ -144,8 +150,8 @@ export default function ManageUsersPage() {
                           className="text-blue-600 hover:text-blue-900 disabled:opacity-50"
                         >
                           {updating === user.id
-                            ? "Updating..."
-                            : "Change to Worker"}
+                            ? t("users.actions.updating")
+                            : t("users.actions.changeToWorker")}
                         </button>
                       )}
                       {user.role !== "ADMIN" && (
@@ -155,8 +161,8 @@ export default function ManageUsersPage() {
                           className="text-purple-600 hover:text-purple-900 disabled:opacity-50"
                         >
                           {updating === user.id
-                            ? "Updating..."
-                            : "Change to Admin"}
+                            ? t("users.actions.updating")
+                            : t("users.actions.changeToAdmin")}
                         </button>
                       )}
                     </div>

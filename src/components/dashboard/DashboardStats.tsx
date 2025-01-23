@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "../../lib/supabase/client";
 import MetricCard from "./MetricCard";
 import TicketTypesPieChart from "./TicketTypesPieChart";
@@ -29,6 +30,7 @@ export default function DashboardStats() {
     []
   );
   const [ticketTrends, setTicketTrends] = useState<TicketTrend[]>([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const loadDashboardData = async () => {
@@ -59,7 +61,7 @@ export default function DashboardStats() {
       } catch (err) {
         console.error("Error loading dashboard data:", err);
         setError(
-          err instanceof Error ? err.message : "Failed to load dashboard data"
+          err instanceof Error ? err.message : t("dashboard.error.loadData")
         );
       } finally {
         setLoading(false);
@@ -67,12 +69,12 @@ export default function DashboardStats() {
     };
 
     loadDashboardData();
-  }, []);
+  }, [t]);
 
   if (error) {
     return (
       <div className="text-red-600 p-4 text-center bg-red-50 rounded-lg">
-        Error: {error}
+        {t("common.error")}: {error}
       </div>
     );
   }
@@ -82,16 +84,16 @@ export default function DashboardStats() {
       {/* Metrics Row */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard
-          title="Open Tickets"
+          title={t("dashboard.stats.openTickets")}
           value={loading ? "-" : workerStats?.open_tickets || 0}
         />
         <MetricCard
-          title="Recently Resolved"
+          title={t("dashboard.stats.recentlyResolved")}
           value={loading ? "-" : workerStats?.resolved_last_7_days || 0}
-          description="Last 7 days"
+          description={t("dashboard.stats.last7Days")}
         />
         <MetricCard
-          title="Avg. Resolution Time"
+          title={t("dashboard.stats.avgResolutionTime")}
           value={
             loading
               ? "-"
@@ -101,15 +103,23 @@ export default function DashboardStats() {
           }
         />
         <MetricCard
-          title="Total Tickets"
+          title={t("dashboard.stats.totalTickets")}
           value={loading ? "-" : workerStats?.total_tickets || 0}
         />
       </div>
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <TicketTypesPieChart data={ticketPriorities} loading={loading} />
-        <TicketsOverTimeGraph data={ticketTrends} loading={loading} />
+        <TicketTypesPieChart
+          data={ticketPriorities}
+          loading={loading}
+          title={t("dashboard.charts.ticketsByPriority")}
+        />
+        <TicketsOverTimeGraph
+          data={ticketTrends}
+          loading={loading}
+          title={t("dashboard.charts.ticketsOverTime")}
+        />
       </div>
     </div>
   );

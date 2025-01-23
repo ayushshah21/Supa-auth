@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { getCurrentUser } from "../lib/supabase/auth";
 import { getTickets } from "../lib/supabase/tickets";
 import type { Database } from "../types/supabase";
@@ -14,6 +15,7 @@ export default function AssignedTicketsPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { t } = useTranslation();
 
   useEffect(() => {
     const loadTickets = async () => {
@@ -27,14 +29,14 @@ export default function AssignedTicketsPage() {
         if (ticketsError) throw ticketsError;
         setTickets((data as Ticket[]) || []);
       } catch (err: any) {
-        setError(err.message || "Failed to load tickets");
+        setError(err.message || t("common.error.loadTickets"));
       } finally {
         setLoading(false);
       }
     };
 
     loadTickets();
-  }, []);
+  }, [t]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -73,19 +75,23 @@ export default function AssignedTicketsPage() {
   }
 
   if (error) {
-    return <div className="text-red-600 p-4 text-center">{error}</div>;
+    return (
+      <div className="text-red-600 p-4 text-center">
+        {t("common.error")}: {error}
+      </div>
+    );
   }
 
   return (
     <div className="bg-white shadow rounded-lg">
       <div className="px-4 py-5 sm:p-6">
         <h2 className="text-lg font-medium text-gray-900 mb-4">
-          My Assigned Tickets
+          {t("ticket.assignedTickets")}
         </h2>
 
         {tickets.length === 0 ? (
           <p className="text-gray-500 text-center py-4">
-            No tickets are currently assigned to you.
+            {t("ticket.noAssignedTickets")}
           </p>
         ) : (
           <div className="overflow-x-auto">
@@ -93,19 +99,19 @@ export default function AssignedTicketsPage() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Title
+                    {t("ticket.labels.title")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Customer
+                    {t("ticket.labels.customer")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
+                    {t("ticket.labels.status")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Priority
+                    {t("ticket.labels.priority")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Created
+                    {t("ticket.labels.createdAt")}
                   </th>
                 </tr>
               </thead>
@@ -121,7 +127,7 @@ export default function AssignedTicketsPage() {
                       </Link>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {ticket.customer?.email || "Unknown"}
+                      {ticket.customer?.email || t("ticket.labels.unknown")}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
@@ -129,7 +135,7 @@ export default function AssignedTicketsPage() {
                           ticket.status
                         )}`}
                       >
-                        {ticket.status}
+                        {t(`ticket.status.${ticket.status}`)}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -138,7 +144,7 @@ export default function AssignedTicketsPage() {
                           ticket.priority
                         )}`}
                       >
-                        {ticket.priority}
+                        {t(`ticket.priority.${ticket.priority}`)}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

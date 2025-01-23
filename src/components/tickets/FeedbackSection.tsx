@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "../../lib/supabase/client";
 
-interface FeedbackSectionProps {
+type Props = {
   ticketId: string;
-}
+};
 
 interface Feedback {
   id: string;
@@ -15,7 +16,8 @@ interface Feedback {
   type: string;
 }
 
-export default function FeedbackSection({ ticketId }: FeedbackSectionProps) {
+export default function FeedbackSection({ ticketId }: Props) {
+  const { t } = useTranslation();
   const [feedbackList, setFeedbackList] = useState<Feedback[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -41,13 +43,20 @@ export default function FeedbackSection({ ticketId }: FeedbackSectionProps) {
   }, [ticketId]);
 
   if (loading) {
-    return <div className="animate-pulse h-20 bg-gray-100 rounded"></div>;
+    return (
+      <div className="animate-pulse">
+        <div className="h-4 bg-gray-200 rounded w-1/4 mb-2"></div>
+        <div className="h-20 bg-gray-100 rounded"></div>
+      </div>
+    );
   }
 
   if (feedbackList.length === 0) {
     return (
-      <div className="bg-gray-50 rounded-md p-4">
-        <p className="text-gray-500 text-sm">No feedback provided yet.</p>
+      <div className="bg-gray-50 rounded-lg p-4">
+        <p className="text-gray-500 italic">
+          {t("ticket.sections.noFeedback")}
+        </p>
       </div>
     );
   }
