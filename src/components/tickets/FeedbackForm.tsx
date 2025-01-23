@@ -30,7 +30,7 @@ export default function FeedbackForm({ ticketId, userId, onSubmit }: Props) {
       console.log("[FeedbackForm] Creating feedback record with:", {
         ticket_id: ticketId,
         user_id: userId,
-        content: content.trim(),
+        feedback: content.trim(),
       });
 
       const { data: feedbackData, error: feedbackError } = await supabase
@@ -38,7 +38,7 @@ export default function FeedbackForm({ ticketId, userId, onSubmit }: Props) {
         .insert({
           ticket_id: ticketId,
           user_id: userId,
-          content: content.trim(),
+          feedback: content.trim(),
         })
         .select()
         .single();
