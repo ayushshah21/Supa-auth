@@ -9,6 +9,8 @@
     "manageUsers": "Gestionar Usuarios",
     "openMenu": "Abrir menú principal",
     "backToTickets": "Volver a Tickets",
+    "cancel": "Cancelar",
+    "creating": "Creando...",
     "error": {
       "loadUser": "Error al cargar los datos del usuario",
       "loadTickets": "Error al cargar los tickets"
@@ -51,7 +53,8 @@
     "signUp": "Regístrate",
     "errors": {
       "emailNotConfirmed": "Por favor, verifica tu dirección de correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada para el enlace de verificación.",
-      "invalidCredentials": "Correo electrónico o contraseña inválidos. Si no has verificado tu correo electrónico, revisa tu bandeja de entrada."
+      "invalidCredentials": "Correo electrónico o contraseña inválidos. Si no has verificado tu correo electrónico, revisa tu bandeja de entrada.",
+      "notAuthenticated": "Debes iniciar sesión para crear un ticket"
     }
   },
   "ticket": {
@@ -104,7 +107,8 @@
       "noteAdded": "Nota agregada exitosamente",
       "emailSent": "Correo enviado exitosamente",
       "feedbackSubmitted": "Gracias por tus comentarios",
-      "ratingSubmitted": "Gracias por tu calificación"
+      "ratingSubmitted": "Gracias por tu calificación",
+      "error": "Error al crear el ticket"
     },
     "bulk": {
       "selected": "{{count}} ticket seleccionado",
@@ -133,6 +137,10 @@
       "assignment": "Asignación",
       "assignedTo": "Asignado a",
       "noFeedback": "Aún no se han proporcionado comentarios."
+    },
+    "placeholders": {
+      "titleHint": "Breve descripción de tu problema",
+      "descriptionHint": "Por favor, proporciona información detallada sobre tu problema"
     }
   },
   "feedback": {

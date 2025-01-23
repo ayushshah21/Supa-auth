@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { getCurrentUser } from "../lib/supabase/auth";
 import { createTicket } from "../lib/supabase/tickets";
 import type { TicketPriority } from "../types/supabase";
 
 export default function CreateTicketPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<TicketPriority>("MEDIUM");
@@ -24,7 +26,7 @@ export default function CreateTicketPage() {
       const user = await getCurrentUser();
       if (!user) {
         console.error("[CreateTicketPage] No authenticated user found");
-        setError("You must be logged in to create a ticket");
+        setError(t("auth.errors.notAuthenticated"));
         return;
       }
 
@@ -62,7 +64,7 @@ export default function CreateTicketPage() {
       navigate("/my-tickets");
     } catch (err: any) {
       console.error("[CreateTicketPage] Unexpected error:", err);
-      setError(err.message || "Error creating ticket");
+      setError(t("ticket.messages.error") || err.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -70,7 +72,7 @@ export default function CreateTicketPage() {
 
   return (
     <div className="max-w-2xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Create New Support Ticket</h1>
+      <h1 className="text-2xl font-bold mb-6">{t("ticket.create")}</h1>
 
       {error && (
         <div className="bg-red-50 text-red-600 p-4 rounded mb-4">{error}</div>
@@ -82,7 +84,7 @@ export default function CreateTicketPage() {
             htmlFor="title"
             className="block text-sm font-medium text-gray-700"
           >
-            Title
+            {t("ticket.labels.title")}
           </label>
           <input
             id="title"
@@ -91,7 +93,7 @@ export default function CreateTicketPage() {
             onChange={(e) => setTitle(e.target.value)}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             required
-            placeholder="Brief description of your issue"
+            placeholder={t("ticket.placeholders.titleHint")}
           />
         </div>
 
@@ -100,7 +102,7 @@ export default function CreateTicketPage() {
             htmlFor="description"
             className="block text-sm font-medium text-gray-700"
           >
-            Description
+            {t("ticket.labels.description")}
           </label>
           <textarea
             id="description"
@@ -109,7 +111,7 @@ export default function CreateTicketPage() {
             rows={4}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             required
-            placeholder="Please provide detailed information about your issue"
+            placeholder={t("ticket.placeholders.descriptionHint")}
           />
         </div>
 
@@ -118,7 +120,7 @@ export default function CreateTicketPage() {
             htmlFor="priority"
             className="block text-sm font-medium text-gray-700"
           >
-            Priority
+            {t("ticket.labels.priority")}
           </label>
           <select
             id="priority"
@@ -126,9 +128,9 @@ export default function CreateTicketPage() {
             onChange={(e) => setPriority(e.target.value as TicketPriority)}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           >
-            <option value="LOW">Low</option>
-            <option value="MEDIUM">Medium</option>
-            <option value="HIGH">High</option>
+            <option value="LOW">{t("ticket.priority.LOW")}</option>
+            <option value="MEDIUM">{t("ticket.priority.MEDIUM")}</option>
+            <option value="HIGH">{t("ticket.priority.HIGH")}</option>
           </select>
         </div>
 
@@ -138,14 +140,14 @@ export default function CreateTicketPage() {
             onClick={() => navigate(-1)}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
-            Cancel
+            {t("common.cancel")}
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
           >
-            {isSubmitting ? "Creating..." : "Create Ticket"}
+            {isSubmitting ? t("common.creating") : t("ticket.create")}
           </button>
         </div>
       </form>

@@ -9,6 +9,8 @@
     "manageUsers": "Manage Users",
     "openMenu": "Open main menu",
     "backToTickets": "Back to Tickets",
+    "cancel": "Cancel",
+    "creating": "Creating...",
     "error": {
       "loadUser": "Failed to load user data",
       "loadTickets": "Failed to load tickets"
@@ -51,7 +53,8 @@
     "signUp": "Sign up",
     "errors": {
       "emailNotConfirmed": "Please verify your email address before logging in. Check your inbox for the verification link.",
-      "invalidCredentials": "Invalid email or password. If you haven't verified your email, please check your inbox."
+      "invalidCredentials": "Invalid email or password. If you haven't verified your email, please check your inbox.",
+      "notAuthenticated": "You must be logged in to create a ticket"
     }
   },
   "ticket": {
@@ -104,7 +107,8 @@
       "noteAdded": "Note added successfully",
       "emailSent": "Email sent successfully",
       "feedbackSubmitted": "Thank you for your feedback",
-      "ratingSubmitted": "Thank you for your rating"
+      "ratingSubmitted": "Thank you for your rating",
+      "error": "Error creating ticket"
     },
     "bulk": {
       "selected": "{{count}} ticket selected",
@@ -133,6 +137,10 @@
       "assignment": "Assignment",
       "assignedTo": "Assigned to",
       "noFeedback": "No feedback provided yet."
+    },
+    "placeholders": {
+      "titleHint": "Brief description of your issue",
+      "descriptionHint": "Please provide detailed information about your issue"
     }
   },
   "feedback": {
