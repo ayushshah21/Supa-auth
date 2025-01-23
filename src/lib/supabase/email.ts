@@ -13,6 +13,12 @@ interface SendEmailParams {
   variables: Record<string, string>;
 }
 
+interface SendChatNotificationParams {
+  ticketId: string;
+  customerEmail: string;
+  messageContent: string;
+}
+
 /**
  * Fetches an email template by name
  */
@@ -127,6 +133,83 @@ export const sendEmailNotification = async ({
   } catch (err) {
     const error = err as Error;
     console.error('[email/sendEmailNotification] Error:', {
+      message: error.message,
+      name: error.name,
+      stack: error.stack
+    });
+    return false;
+  }
+};
+
+/**
+ * Sends an email notification for a chat message
+ */
+export const sendChatNotification = async ({
+  ticketId,
+  customerEmail,
+  messageContent,
+}: SendChatNotificationParams): Promise<boolean> => {
+  try {
+    // Get and verify session
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    console.log('[email/sendChatNotification] Session check:', {
+      hasSession: !!sessionData?.session,
+      sessionError
+    });
+
+    if (sessionError) {
+      throw new Error(`Session error: ${sessionError.message}`);
+    }
+
+    if (!sessionData?.session) {
+      throw new Error('No session available');
+    }
+
+    // Call Edge Function
+    console.log('[email/sendChatNotification] Calling Edge Function:', {
+      to: customerEmail,
+      messageContent,
+      ticketId
+    });
+
+    const { data, error } = await supabase.functions.invoke('send-email', {
+      body: {
+        to: customerEmail,
+        subject: `New Message on Ticket #${ticketId}`,
+        body: messageContent,
+        ticketId
+      },
+      headers: {
+        Authorization: `Bearer ${sessionData.session.access_token}`
+      }
+    });
+
+    if (error) {
+      console.error('[email/sendChatNotification] Edge Function error:', {
+        message: error.message,
+        name: error.name,
+        stack: error.stack
+      });
+      throw error;
+    }
+
+    console.log('[email/sendChatNotification] Edge Function response:', data);
+
+    // Log the email attempt
+    const { error: logError } = await supabase.from("email_logs").insert({
+      ticket_id: ticketId,
+      status: "SENT",
+      recipient_email: customerEmail,
+    });
+
+    if (logError) {
+      console.error('[email/sendChatNotification] Error logging email:', logError);
+    }
+
+    return true;
+  } catch (err) {
+    const error = err as Error;
+    console.error('[email/sendChatNotification] Error:', {
       message: error.message,
       name: error.name,
       stack: error.stack

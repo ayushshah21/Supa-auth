@@ -5,11 +5,16 @@ import "react-quill/dist/quill.snow.css";
 type NoteEditorProps = {
   onSubmit: (note: { content: string; internal: boolean }) => Promise<void>;
   disabled?: boolean;
+  hideInternalToggle?: boolean;
 };
 
-export default function NoteEditor({ onSubmit, disabled }: NoteEditorProps) {
+export default function NoteEditor({
+  onSubmit,
+  disabled,
+  hideInternalToggle,
+}: NoteEditorProps) {
   const [content, setContent] = useState("");
-  const [isInternalNote, setIsInternalNote] = useState(true);
+  const [isInternalNote, setIsInternalNote] = useState(false);
 
   const handleSubmit = async () => {
     if (!content.trim()) return;
@@ -41,23 +46,27 @@ export default function NoteEditor({ onSubmit, disabled }: NoteEditorProps) {
       </div>
 
       <div className="flex items-center justify-between space-x-4">
-        <label className="flex items-center">
-          <input
-            type="checkbox"
-            className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            checked={isInternalNote}
-            onChange={(e) => setIsInternalNote(e.target.checked)}
-            disabled={disabled}
-          />
-          <span className="ml-2 text-sm text-gray-600">Internal Note</span>
-        </label>
+        {!hideInternalToggle && (
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              checked={isInternalNote}
+              onChange={(e) => setIsInternalNote(e.target.checked)}
+              disabled={disabled}
+            />
+            <span className="ml-2 text-sm text-gray-600">Internal Note</span>
+          </label>
+        )}
 
         <button
           onClick={handleSubmit}
           disabled={!content.trim() || disabled}
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+          className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 ${
+            hideInternalToggle ? "ml-auto" : ""
+          }`}
         >
-          Add Note
+          Add Message
         </button>
       </div>
     </div>

@@ -3,13 +3,20 @@ import type { Interaction } from "../../lib/supabase/interactions/types";
 import type { UserRole } from "../../types/supabase";
 import { supabase } from "../../lib/supabase/client";
 import { getInteractions } from "../../lib/supabase/interactions/queries";
+import { sendChatNotification } from "../../lib/supabase/email";
+import { toast } from "react-hot-toast";
 
 type Props = {
   ticketId: string;
   userRole: UserRole | null;
+  customerEmail?: string;
 };
 
-export default function InteractionTimeline({ ticketId, userRole }: Props) {
+export default function InteractionTimeline({
+  ticketId,
+  userRole,
+  customerEmail,
+}: Props) {
   const [interactions, setInteractions] = useState<Interaction[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -119,7 +126,7 @@ export default function InteractionTimeline({ ticketId, userRole }: Props) {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+                    d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
                   />
                 </svg>
               </div>
@@ -263,13 +270,49 @@ export default function InteractionTimeline({ ticketId, userRole }: Props) {
               </div>
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm text-gray-500">
-                <span className="font-medium">{author}</span>{" "}
-                {interaction.content.internal && (
-                  <span className="text-yellow-600">(Internal) </span>
-                )}
-                added a note
-              </p>
+              <div className="flex justify-between items-start">
+                <p className="text-sm text-gray-500">
+                  <span className="font-medium">{author}</span>{" "}
+                  {interaction.content.internal && (
+                    <span className="text-yellow-600">(Internal) </span>
+                  )}
+                  added a note
+                </p>
+                {!interaction.content.internal &&
+                  userRole !== "CUSTOMER" &&
+                  customerEmail && (
+                    <button
+                      onClick={async () => {
+                        const success = await sendChatNotification({
+                          ticketId,
+                          customerEmail,
+                          messageContent: interaction.content.text,
+                        });
+                        if (success) {
+                          toast.success("Email notification sent!");
+                        } else {
+                          toast.error("Failed to send email notification");
+                        }
+                      }}
+                      className="ml-2 inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    >
+                      <svg
+                        className="h-4 w-4 mr-1"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        />
+                      </svg>
+                      Notify
+                    </button>
+                  )}
+              </div>
               <div
                 className={`mt-1 text-sm prose prose-sm prose-a:text-blue-600 prose-a:underline hover:prose-a:text-blue-800 max-w-none ${
                   interaction.content.internal ? "bg-yellow-50" : "bg-gray-50"

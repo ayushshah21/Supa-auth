@@ -22,6 +22,7 @@ import FeedbackForm from "../components/tickets/FeedbackForm";
 import RatingForm from "../components/tickets/RatingForm";
 import FeedbackSection from "../components/tickets/FeedbackSection";
 import AssignmentSection from "../components/tickets/AssignmentSection";
+import NoteEditor from "../components/tickets/NoteEditor";
 
 type Ticket = Database["public"]["Tables"]["tickets"]["Row"] & {
   customer: Database["public"]["Tables"]["users"]["Row"];
@@ -398,8 +399,28 @@ export default function TicketDetailPage() {
             </>
           )}
 
+          {userRole === "CUSTOMER" && (
+            <div className="mt-6">
+              <h2 className="text-lg font-medium text-gray-900 mb-2">
+                Add Message
+              </h2>
+              <NoteEditor
+                onSubmit={async ({ content }) => {
+                  // For customers, always set internal to false
+                  await handleAddNote({ content, internal: false });
+                }}
+                disabled={updating}
+                hideInternalToggle={true}
+              />
+            </div>
+          )}
+
           <div className="mt-6">
-            <InteractionTimeline ticketId={ticket.id} userRole={userRole} />
+            <InteractionTimeline
+              ticketId={ticket.id}
+              userRole={userRole}
+              customerEmail={ticket.customer?.email}
+            />
           </div>
         </div>
       </div>
