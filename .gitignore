@@ -41,3 +41,5 @@ backups/
 
 # Supabase
 .supabase/
+
+backup-db.sh

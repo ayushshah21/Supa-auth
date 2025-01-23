@@ -1,10 +1,20 @@
 import { supabase } from "../lib/supabase/client";
+import { sendEmailNotification } from "../lib/supabase/email";
 import type { Database } from "../types/supabase";
+import type { PostgrestError } from "@supabase/supabase-js";
 
 type Ticket = Database["public"]["Tables"]["tickets"]["Row"] & {
   customer: Database["public"]["Tables"]["users"]["Row"];
   assigned_to: Database["public"]["Tables"]["users"]["Row"] | null;
   notes: Database["public"]["Tables"]["notes"]["Row"][];
+};
+
+type CustomerData = {
+  id: string;
+  customer: {
+    id: string;
+    email: string;
+  };
 };
 
 export async function getTicketById(ticketId: string): Promise<{ data: Ticket | null; error: Error | null }> {
@@ -28,23 +38,65 @@ export async function getTicketById(ticketId: string): Promise<{ data: Ticket | 
   }
 }
 
-export async function updateTicketStatus(
+export const updateTicketStatus = async (
   ticketId: string,
-  status: Database["public"]["Tables"]["tickets"]["Row"]["status"]
-): Promise<{ error: Error | null }> {
+  newStatus: Database["public"]["Tables"]["tickets"]["Row"]["status"]
+) => {
+  console.log(`[ticketsService/updateTicketStatus] Starting status update for ticket ${ticketId} to ${newStatus}`);
   try {
-    const { error } = await supabase
+    const { data: ticket, error: ticketError } = await supabase
       .from("tickets")
-      .update({ status })
-      .eq("id", ticketId);
+      .update({ status: newStatus })
+      .eq("id", ticketId)
+      .select("*")
+      .single();
 
-    if (error) throw error;
-    return { error: null };
+    if (ticketError) {
+      console.error("[ticketsService/updateTicketStatus] Error updating ticket:", ticketError);
+      return { error: ticketError };
+    }
+
+    if (newStatus === "RESOLVED") {
+      console.log("[ticketsService/updateTicketStatus] Ticket resolved, fetching customer data");
+      const { data: customerData, error: customerError } = await supabase
+        .from("tickets")
+        .select(`
+          id,
+          customer:users!tickets_customer_id_fkey (
+            id,
+            email
+          )
+        `)
+        .eq("id", ticketId)
+        .single() as { data: CustomerData | null; error: PostgrestError | null };
+
+      if (customerError) {
+        console.error("[ticketsService/updateTicketStatus] Error fetching customer data:", customerError);
+        return { error: customerError };
+      }
+
+      if (customerData?.customer?.email) {
+        console.log(`[ticketsService/updateTicketStatus] Sending email notification to ${customerData.customer.email}`);
+        await sendEmailNotification({
+          ticketId,
+          templateName: "ticket_resolved",
+          variables: {
+            ticket_id: ticketId,
+            customer_email: customerData.customer.email
+          }
+        });
+      } else {
+        console.warn("[ticketsService/updateTicketStatus] No customer email found for notification");
+      }
+    }
+
+    console.log("[ticketsService/updateTicketStatus] Status update completed successfully");
+    return { data: ticket, error: null };
   } catch (error) {
-    console.error("[ticketsService] Error updating ticket status:", error);
-    return { error: error as Error };
+    console.error("[ticketsService/updateTicketStatus] Unexpected error:", error);
+    return { error };
   }
-}
+};
 
 export async function updateTicketAssignment(
   ticketId: string,
@@ -166,5 +218,44 @@ export async function checkTicketFeedback(ticketId: string): Promise<{
   } catch (error) {
     console.error("[ticketsService] Error checking ticket feedback:", error);
     return { hasFeedback: false, hasRating: false, error: error as Error };
+  }
+}
+
+export async function updateTickets(
+  ticketIds: string[],
+  updates: Database["public"]["Tables"]["tickets"]["Update"]
+): Promise<{ error: Error | null }> {
+  try {
+    const { data, error } = await supabase
+      .from("tickets")
+      .update(updates)
+      .in("id", ticketIds)
+      .select(`
+        *,
+        customer:users!tickets_customer_id_fkey(*)
+      `);
+
+    if (error) throw error;
+
+    // Send email notifications if tickets are resolved
+    if (updates.status === "RESOLVED" && data) {
+      await Promise.all(
+        data.map((ticket) =>
+          sendEmailNotification({
+            ticketId: ticket.id,
+            templateName: "ticket_resolved",
+            variables: {
+              ticket_id: ticket.id,
+              customer_email: ticket.customer.email
+            }
+          })
+        )
+      );
+    }
+
+    return { error: null };
+  } catch (error) {
+    console.error("[ticketsService] Error updating tickets:", error);
+    return { error: error as Error };
   }
 } 

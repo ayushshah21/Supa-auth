@@ -2,7 +2,11 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getCurrentUser, getUserRole, getWorkers } from "../lib/supabase/auth";
-import { getTickets, updateTicket } from "../lib/supabase/tickets";
+import { getTickets } from "../lib/supabase/tickets";
+import {
+  updateTicketStatus,
+  updateTicketAssignment,
+} from "../services/ticketsService";
 import { createNote } from "../lib/supabase/notes";
 import {
   createStatusChangeInteraction,
@@ -205,7 +209,7 @@ export default function TicketDetailPage() {
       const user = await getCurrentUser();
       if (!user) throw new Error("User not found");
 
-      const { error } = await updateTicket(ticketId, { status: newStatus });
+      const { error } = await updateTicketStatus(ticketId, newStatus);
       if (error) throw error;
 
       await createStatusChangeInteraction(
@@ -235,9 +239,7 @@ export default function TicketDetailPage() {
       const user = await getCurrentUser();
       if (!user) throw new Error("User not found");
 
-      const { error } = await updateTicket(ticketId, {
-        assigned_to_id: workerId,
-      });
+      const { error } = await updateTicketAssignment(ticketId, workerId);
       if (error) throw error;
 
       const assignedWorker = workers.find((w) => w.id === workerId);
