@@ -212,5 +212,16 @@
       "avatarUpload": "Failed to upload avatar",
       "saveProfile": "Failed to save profile changes"
     }
+  },
+  "knowledgeBase": {
+    "title": "Knowledge Base",
+    "subtitle": "Find quick answers to frequently asked questions below.",
+    "searchPlaceholder": "Type a keyword to find answers...",
+    "noResults": "No matching questions found",
+    "noQuestions": "No questions available",
+    "errors": {
+      "loadQuestions": "Failed to load questions",
+      "search": "Failed to search questions"
+    }
   }
 } 

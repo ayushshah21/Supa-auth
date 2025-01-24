@@ -13,6 +13,7 @@ import TicketDetailPage from "./pages/TicketDetailPage";
 import ManageUsersPage from "./pages/ManageUsersPage";
 import StatsPage from "./pages/StatsPage";
 import ProfilePage from "./pages/ProfilePage";
+import KnowledgeBasePage from "./pages/KnowledgeBasePage";
 
 function App() {
   return (
@@ -22,6 +23,16 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+
+        {/* Knowledge Base - accessible to all users */}
+        <Route
+          path="/knowledge-base"
+          element={
+            <Layout>
+              <KnowledgeBasePage />
+            </Layout>
+          }
+        />
 
         {/* Protected routes with Layout */}
         <Route

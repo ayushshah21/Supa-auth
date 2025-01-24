@@ -22,11 +22,18 @@ export default function Sidebar({ userRole, onCollapse }: SidebarProps) {
 
     // Common links for all authenticated users
     if (userRole) {
-      links.push({
-        to: "/dashboard",
-        label: t("common.dashboard"),
-        icon: "📊",
-      });
+      links.push(
+        {
+          to: "/dashboard",
+          label: t("common.dashboard"),
+          icon: "📊",
+        },
+        {
+          to: "/knowledge-base",
+          label: t("knowledgeBase.title"),
+          icon: "📚",
+        }
+      );
     }
 
     // Role-specific links
