@@ -155,23 +155,53 @@ export const signUpUser = async (email: string, password: string) => {
 
 // Function to update user role (admin only)
 export const updateUserRole = async (userId: string, newRole: UserRole) => {
+    console.log('Starting role update for user:', userId, 'to role:', newRole);
+    
     // First verify the current user is an admin
     const currentUser = await getCurrentUser();
     if (!currentUser) throw new Error('Not authenticated');
     
     const currentRole = await getUserRole(currentUser.id);
+    console.log('Current user role:', currentRole);
     if (currentRole !== 'ADMIN') throw new Error('Only admins can modify user roles');
 
     // Update the user's role
-    const { data, error } = await supabase
+    const { error } = await supabase
         .from('users')
-        .update({ role: newRole })
+        .update({ 
+            role: newRole,
+            updated_at: new Date().toISOString()
+        })
+        .eq('id', userId);
+
+    console.log('Update response error:', error);
+    if (error) {
+        console.error('Error updating role:', error);
+        throw error;
+    }
+
+    // Fetch the updated user data
+    const { data: updatedUser, error: fetchError } = await supabase
+        .from('users')
+        .select('*')
         .eq('id', userId)
-        .select()
         .single();
 
-    if (error) throw error;
-    return data;
+    console.log('Fetch updated user response:', { updatedUser, fetchError });
+    if (fetchError) {
+        console.error('Error fetching updated user:', fetchError);
+        throw fetchError;
+    }
+
+    // Clear the role cache for this user
+    userRoleCache.delete(userId);
+    console.log('Cleared role cache for user:', userId);
+
+    // Also clear the role cache for the current user to ensure fresh data
+    userRoleCache.delete(currentUser.id);
+    console.log('Cleared role cache for current user:', currentUser.id);
+
+    return updatedUser;
 };
 
 export const getWorkers = async () => {
