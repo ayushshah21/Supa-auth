@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Search, ChevronDown, ChevronUp } from "lucide-react";
-import { knowledgeBaseData } from "../data/knowledgeBaseData";
+import { getKnowledgeBaseData } from "../data/knowledgeBaseData";
 
 export default function KnowledgeBasePage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  // Get language-specific knowledge base data
+  const knowledgeBaseData = getKnowledgeBaseData(i18n.language);
 
   // Enhanced search functionality
   const getSearchResults = () => {
@@ -17,7 +20,7 @@ export default function KnowledgeBasePage() {
 
     return knowledgeBaseData
       .map((qa) => {
-        // Calculate relevance score 
+        // Calculate relevance score
         let score = 0;
         const questionLower = qa.question.toLowerCase();
         const answerLower = qa.answer.toLowerCase();

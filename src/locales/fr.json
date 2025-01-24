@@ -10,6 +10,8 @@
     "openMenu": "Ouvrir le menu principal",
     "backToTickets": "Retour aux tickets",
     "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "delete": "Supprimer",
     "creating": "Création en cours...",
     "error": {
       "loadUser": "Échec du chargement des données utilisateur",
@@ -141,7 +143,10 @@
     "placeholders": {
       "titleHint": "Brève description de votre problème",
       "descriptionHint": "Veuillez fournir des informations détaillées sur votre problème"
-    }
+    },
+    "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer ce ticket ? Cette action ne peut pas être annulée.",
+    "deleteSuccess": "Ticket supprimé avec succès",
+    "deleteError": "Échec de la suppression du ticket"
   },
   "feedback": {
     "title": "Partagez votre retour",
@@ -211,6 +216,84 @@
       "unauthorized": "Vous devez être connecté pour accéder à cette page",
       "avatarUpload": "Échec du téléchargement de l'avatar",
       "saveProfile": "Échec de l'enregistrement des modifications du profil"
+    }
+  },
+  "knowledgeBase": {
+    "title": "Base de Connaissances",
+    "subtitle": "Trouvez rapidement des réponses aux questions fréquemment posées ci-dessous.",
+    "searchPlaceholder": "Tapez un mot-clé pour trouver des réponses...",
+    "noResults": "Aucune question correspondante trouvée",
+    "noQuestions": "Aucune question disponible",
+    "errors": {
+      "loadQuestions": "Échec du chargement des questions",
+      "search": "Échec de la recherche des questions"
+    },
+    "categories": {
+      "all": "Toutes les Catégories",
+      "general": "Général",
+      "account": "Compte",
+      "billing": "Facturation",
+      "technical": "Technique"
+    },
+    "actions": {
+      "viewMore": "Voir plus",
+      "viewLess": "Voir moins",
+      "back": "Retour à la liste"
+    },
+    "admin": {
+      "title": "Gérer la Base de Connaissances",
+      "addQuestion": "Ajouter une Question",
+      "editQuestion": "Modifier la Question",
+      "deleteQuestion": "Supprimer la Question",
+      "questionLabel": "Question",
+      "answerLabel": "Réponse",
+      "categoryLabel": "Catégorie",
+      "saveQuestion": "Enregistrer la Question",
+      "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer cette question ?",
+      "successMessages": {
+        "added": "Question ajoutée avec succès",
+        "updated": "Question mise à jour avec succès",
+        "deleted": "Question supprimée avec succès"
+      },
+      "errorMessages": {
+        "addFailed": "Échec de l'ajout de la question",
+        "updateFailed": "Échec de la mise à jour de la question",
+        "deleteFailed": "Échec de la suppression de la question"
+      }
+    },
+    "questions": {
+      "updateTicket": {
+        "question": "Comment puis-je ajouter de nouvelles informations à mon ticket ?",
+        "answer": "Pour ajouter de nouvelles informations à votre ticket, suivez ces étapes :\n1. Connectez-vous à votre compte\n2. Allez dans 'Mes Tickets'\n3. Sélectionnez le ticket à mettre à jour\n4. Cliquez sur le bouton 'Modifier'\n5. Ajoutez vos nouvelles informations\n6. Sauvegardez les modifications"
+      },
+      "changeLanguage": {
+        "question": "Comment puis-je changer la langue de l'interface ?",
+        "answer": "Pour changer la langue de l'interface :\n1. Cliquez sur votre profil en haut à droite\n2. Sélectionnez 'Paramètres'\n3. Dans la section 'Préférences de langue', choisissez votre langue préférée\n4. Les changements seront appliqués immédiatement"
+      },
+      "ticketPriorities": {
+        "question": "Que signifient les différents niveaux de priorité des tickets ?",
+        "answer": "Les niveaux de priorité des tickets sont :\n- Élevé : Problèmes critiques nécessitant une attention immédiate\n- Moyen : Problèmes importants à résoudre rapidement\n- Faible : Problèmes mineurs ou requêtes générales"
+      },
+      "agentResponse": {
+        "question": "Comment saurai-je si un agent de support a répondu à mon ticket ?",
+        "answer": "Vous serez informé des réponses des agents de plusieurs façons :\n1. Vous recevrez une notification par email\n2. Vous verrez une mise à jour sur le tableau de bord\n3. Le statut du ticket sera mis à jour\n4. Vous verrez la réponse dans la chronologie du ticket"
+      },
+      "reopenTicket": {
+        "question": "Puis-je rouvrir un ticket fermé ?",
+        "answer": "Oui, vous pouvez rouvrir un ticket fermé en suivant ces étapes :\n1. Allez dans 'Mes Tickets'\n2. Trouvez le ticket fermé\n3. Cliquez sur 'Rouvrir le Ticket'\n4. Fournissez une raison pour la réouverture\n\nNote : Si le problème est lié mais différent, nous vous recommandons de créer un nouveau ticket."
+      },
+      "ticketHistory": {
+        "question": "Comment puis-je voir mon historique de tickets ?",
+        "answer": "Pour voir votre historique de tickets :\n1. Connectez-vous à votre compte\n2. Allez dans 'Mes Tickets'\n3. Vous verrez ici une liste de tous vos tickets\n4. Vous pouvez filtrer par statut (Ouvert, Fermé, etc.)\n5. Cliquez sur n'importe quel ticket pour voir ses détails complets"
+      },
+      "createTicket": {
+        "question": "Quelles informations dois-je inclure lors de la création d'un ticket ?",
+        "answer": "Lors de la création d'un ticket, incluez :\n1. Un titre clair et concis\n2. Une description détaillée du problème\n3. Les étapes pour reproduire le problème (si applicable)\n4. Tout message d'erreur que vous avez reçu\n5. Ce que vous avez déjà essayé pour résoudre le problème\n6. Des captures d'écran si pertinent"
+      },
+      "emailNotifications": {
+        "question": "Comment puis-je gérer les notifications par email de mes tickets ?",
+        "answer": "Pour gérer vos notifications par email :\n1. Allez dans les Paramètres de votre Profil\n2. Trouvez la section 'Préférences de Notification'\n3. Vous pouvez choisir de recevoir des notifications pour :\n   - Les mises à jour de tickets\n   - Les réponses des agents\n   - Les changements de statut\n   - Les rappels\n4. Sauvegardez vos préférences"
+      }
     }
   }
 } 

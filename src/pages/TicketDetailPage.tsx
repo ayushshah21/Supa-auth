@@ -350,16 +350,13 @@ export default function TicketDetailPage() {
 
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <div className="p-6">
-          <TicketHeader ticket={ticket} />
-
-          <div className="mt-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-2">
-              {t("ticket.labels.description")}
-            </h2>
-            <p className="text-gray-600 whitespace-pre-wrap">
-              {ticket.description}
-            </p>
-          </div>
+          <TicketHeader
+            ticket={ticket}
+            userRole={userRole}
+            currentUserId={currentUserId}
+            onUpdate={fetchTicket}
+            updating={updating}
+          />
 
           {shouldShowFeedback && currentUserId && (
             <div className="mt-6">
@@ -413,7 +410,6 @@ export default function TicketDetailPage() {
               </h2>
               <NoteEditor
                 onSubmit={async ({ content }) => {
-                  // For customers, always set internal to false
                   await handleAddNote({ content, internal: false });
                 }}
                 disabled={updating}

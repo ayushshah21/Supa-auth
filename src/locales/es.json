@@ -10,6 +10,8 @@
     "openMenu": "Abrir menú principal",
     "backToTickets": "Volver a Tickets",
     "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "delete": "Eliminar",
     "creating": "Creando...",
     "error": {
       "loadUser": "Error al cargar los datos del usuario",
@@ -141,7 +143,10 @@
     "placeholders": {
       "titleHint": "Breve descripción de tu problema",
       "descriptionHint": "Por favor, proporciona información detallada sobre tu problema"
-    }
+    },
+    "deleteConfirmation": "¿Estás seguro de que deseas eliminar este ticket? Esta acción no se puede deshacer.",
+    "deleteSuccess": "Ticket eliminado exitosamente",
+    "deleteError": "Error al eliminar el ticket"
   },
   "feedback": {
     "title": "Comparte tus Comentarios",
@@ -211,6 +216,84 @@
       "unauthorized": "Debes iniciar sesión para acceder a esta página",
       "avatarUpload": "Error al subir el avatar",
       "saveProfile": "Error al guardar los cambios del perfil"
+    }
+  },
+  "knowledgeBase": {
+    "title": "Base de Conocimientos",
+    "subtitle": "Encuentra respuestas rápidas a preguntas frecuentes a continuación.",
+    "searchPlaceholder": "Escribe una palabra clave para encontrar respuestas...",
+    "noResults": "No se encontraron preguntas coincidentes",
+    "noQuestions": "No hay preguntas disponibles",
+    "errors": {
+      "loadQuestions": "Error al cargar las preguntas",
+      "search": "Error al buscar preguntas"
+    },
+    "categories": {
+      "all": "Todas las Categorías",
+      "general": "General",
+      "account": "Cuenta",
+      "billing": "Facturación",
+      "technical": "Técnico"
+    },
+    "actions": {
+      "viewMore": "Ver más",
+      "viewLess": "Ver menos",
+      "back": "Volver a la lista"
+    },
+    "admin": {
+      "title": "Gestionar Base de Conocimientos",
+      "addQuestion": "Añadir Pregunta",
+      "editQuestion": "Editar Pregunta",
+      "deleteQuestion": "Eliminar Pregunta",
+      "questionLabel": "Pregunta",
+      "answerLabel": "Respuesta",
+      "categoryLabel": "Categoría",
+      "saveQuestion": "Guardar Pregunta",
+      "deleteConfirmation": "¿Estás seguro de que deseas eliminar esta pregunta?",
+      "successMessages": {
+        "added": "Pregunta añadida exitosamente",
+        "updated": "Pregunta actualizada exitosamente",
+        "deleted": "Pregunta eliminada exitosamente"
+      },
+      "errorMessages": {
+        "addFailed": "Error al añadir la pregunta",
+        "updateFailed": "Error al actualizar la pregunta",
+        "deleteFailed": "Error al eliminar la pregunta"
+      }
+    },
+    "questions": {
+      "updateTicket": {
+        "question": "¿Cómo puedo actualizar mi ticket con nueva información?",
+        "answer": "Para actualizar tu ticket con nueva información, sigue estos pasos:\n1. Inicia sesión en tu cuenta\n2. Ve a 'Mis Tickets'\n3. Selecciona el ticket que deseas actualizar\n4. Haz clic en el botón 'Editar'\n5. Añade tu nueva información\n6. Guarda los cambios"
+      },
+      "changeLanguage": {
+        "question": "¿Cómo puedo cambiar el idioma de la interfaz?",
+        "answer": "Para cambiar el idioma de la interfaz:\n1. Haz clic en tu perfil en la esquina superior derecha\n2. Selecciona 'Configuración'\n3. En la sección 'Preferencias de Idioma', elige tu idioma preferido\n4. Los cambios se aplicarán inmediatamente"
+      },
+      "ticketPriorities": {
+        "question": "¿Qué significan los diferentes niveles de prioridad de los tickets?",
+        "answer": "Los niveles de prioridad de los tickets son:\n- Alta: Problemas críticos que requieren atención inmediata\n- Media: Problemas importantes que deben resolverse pronto\n- Baja: Problemas menores o consultas generales"
+      },
+      "agentResponse": {
+        "question": "¿Cómo sé si un agente de soporte ha respondido a mi ticket?",
+        "answer": "Serás notificado de las respuestas de los agentes de las siguientes maneras:\n1. Recibirás una notificación por correo electrónico\n2. Verás una actualización en el panel de control\n3. El estado del ticket se actualizará\n4. Podrás ver la respuesta en la línea de tiempo del ticket"
+      },
+      "reopenTicket": {
+        "question": "¿Puedo reabrir un ticket cerrado?",
+        "answer": "Sí, puedes reabrir un ticket cerrado siguiendo estos pasos:\n1. Ve a 'Mis Tickets'\n2. Encuentra el ticket cerrado\n3. Haz clic en 'Reabrir Ticket'\n4. Proporciona una razón para la reapertura\n\nNota: Si el problema está relacionado pero es diferente, te recomendamos crear un nuevo ticket."
+      },
+      "ticketHistory": {
+        "question": "¿Cómo puedo ver mi historial de tickets?",
+        "answer": "Para ver tu historial de tickets:\n1. Inicia sesión en tu cuenta\n2. Ve a 'Mis Tickets'\n3. Aquí verás una lista de todos tus tickets\n4. Puedes filtrar por estado (Abierto, Cerrado, etc.)\n5. Haz clic en cualquier ticket para ver sus detalles completos"
+      },
+      "createTicket": {
+        "question": "¿Qué información debo incluir al crear un ticket?",
+        "answer": "Al crear un ticket, incluye:\n1. Un título claro y conciso\n2. Descripción detallada del problema\n3. Pasos para reproducir el problema (si aplica)\n4. Cualquier mensaje de error que hayas recibido\n5. Lo que ya has intentado para resolver el problema\n6. Capturas de pantalla si son relevantes"
+      },
+      "emailNotifications": {
+        "question": "¿Cómo puedo gestionar las notificaciones por correo electrónico de mis tickets?",
+        "answer": "Para gestionar tus notificaciones por correo:\n1. Ve a la Configuración de tu Perfil\n2. Busca la sección 'Preferencias de Notificación'\n3. Puedes elegir recibir notificaciones para:\n   - Actualizaciones de tickets\n   - Respuestas de agentes\n   - Cambios de estado\n   - Recordatorios\n4. Guarda tus preferencias"
+      }
     }
   }
 } 
