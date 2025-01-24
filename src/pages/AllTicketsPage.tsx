@@ -26,7 +26,9 @@ const AllTicketsPage = () => {
 
   // Ticket management state
   const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [statusFilter, setStatusFilter] = useState<TicketStatus | "ALL">("ALL");
+  const [statusFilter, setStatusFilter] = useState<TicketStatus | "ALL">(
+    "OPEN"
+  );
   const [selectedTickets, setSelectedTickets] = useState<string[]>([]);
   const [workers, setWorkers] = useState<
     Database["public"]["Tables"]["users"]["Row"][]
@@ -221,6 +223,7 @@ const AllTicketsPage = () => {
                   selectedTickets={selectedTickets}
                   onSelectAll={handleSelectAll}
                   onSelectTicket={handleSelectTicket}
+                  userRole={role}
                 />
               </div>
             </div>
@@ -248,6 +251,7 @@ const AllTicketsPage = () => {
                   onSelectAll={() => {}}
                   onSelectTicket={() => {}}
                   hideSelectionColumn={true}
+                  userRole={role}
                 />
               </div>
             </div>

@@ -68,7 +68,12 @@
     "manageAllTickets": "બધી સપોર્ટ ટિકેટ્સનું સંચાલન કરો",
     "supportTickets": "સપોર્ટ ટિકેટ્સ",
     "filter": {
-      "allStatus": "બધી સ્થિતિ"
+      "allStatus": "બધી સ્થિતિ",
+      "activeTickets": "સક્રિય",
+      "openTickets": "ખુલ્લી",
+      "inProgressTickets": "પ્રગતિમાં",
+      "resolvedTickets": "ઉકેલાયેલી",
+      "closedTickets": "બંધ"
     },
     "status": {
       "OPEN": "ખુલ્લી",
@@ -101,7 +106,8 @@
       "updatedAt": "અપડેટની તારીખ",
       "unknown": "અજાણ્યું",
       "createdBy": "બનાવનાર",
-      "on": "ના રોજ"
+      "on": "ના રોજ",
+      "supportAgent": "સપોર્ટ એજન્ટ"
     },
     "messages": {
       "ticketCreated": "ટિકેટ સફળતાપૂર્વક બનાવાઈ",
@@ -127,7 +133,7 @@
       "title": "પ્રવૃત્તિ ટાઇમલાઇન",
       "statusChanged": "{{author}} દ્વારા સ્થિતિ {{oldStatus}}થી {{newStatus}}માં બદલાઈ",
       "assignmentChanged": "{{author}} દ્વારા {{oldAssignee}}થી {{newAssignee}}ને સોંપાઈ",
-      "noteAdded": "{{author}}એ નોંધ ઉમેરી",
+      "noteAdded": "એ નોંધ ઉમેરી",
       "internalNote": "(આંતરિક)",
       "providedFeedback": "{{author}}એ પ્રતિસાદ આપ્યો",
       "ratedTicket": "{{author}}એ આ ટિકેટને રેટ કરી",

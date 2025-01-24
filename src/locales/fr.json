@@ -68,7 +68,12 @@
     "manageAllTickets": "Gérer tous les tickets de support",
     "supportTickets": "Tickets de support",
     "filter": {
-      "allStatus": "Tous les statuts"
+      "allStatus": "Tous les Statuts",
+      "activeTickets": "Actifs",
+      "openTickets": "Ouverts",
+      "inProgressTickets": "En Cours",
+      "resolvedTickets": "Résolus",
+      "closedTickets": "Fermés"
     },
     "status": {
       "OPEN": "Ouvert",
@@ -101,7 +106,8 @@
       "updatedAt": "Mis à jour le",
       "unknown": "Inconnu",
       "createdBy": "Créé par",
-      "on": "le"
+      "on": "le",
+      "supportAgent": "Agent de Support"
     },
     "messages": {
       "ticketCreated": "Ticket créé avec succès",
@@ -127,7 +133,7 @@
       "title": "Chronologie des activités",
       "statusChanged": "Statut changé de {{oldStatus}} à {{newStatus}} par {{author}}",
       "assignmentChanged": "Assigné de {{oldAssignee}} à {{newAssignee}} par {{author}}",
-      "noteAdded": "{{author}} a ajouté une note",
+      "noteAdded": "a ajouté une note",
       "internalNote": "(Interne)",
       "providedFeedback": "{{author}} a fourni un retour",
       "ratedTicket": "{{author}} a évalué ce ticket",

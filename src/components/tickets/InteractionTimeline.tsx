@@ -37,7 +37,20 @@ export default function InteractionTimeline({
         }
 
         if (data) {
-          setInteractions(data);
+          // Filter out status changes and assignments for customers
+          const filteredInteractions =
+            userRole === "CUSTOMER"
+              ? data.filter(
+                  (interaction) =>
+                    interaction.type !== "STATUS_CHANGE" &&
+                    interaction.type !== "ASSIGNMENT" &&
+                    !(
+                      interaction.type === "NOTE" &&
+                      interaction.content.internal
+                    )
+                )
+              : data;
+          setInteractions(filteredInteractions);
         }
         setLoading(false);
       } catch (error) {
@@ -78,7 +91,14 @@ export default function InteractionTimeline({
 
   const renderInteractionContent = (interaction: Interaction) => {
     const date = new Date(interaction.created_at).toLocaleString();
-    const author = interaction.author?.email || t("ticket.labels.unknown");
+    const authorEmail = interaction.author?.email;
+    // For customers, show a friendly name instead of email/unknown
+    const authorDisplay =
+      userRole === "CUSTOMER"
+        ? authorEmail?.includes("@")
+          ? t("ticket.labels.supportAgent")
+          : authorEmail || t("ticket.labels.supportAgent")
+        : authorEmail || t("ticket.labels.unknown");
 
     switch (interaction.type) {
       case "FEEDBACK":
@@ -103,7 +123,9 @@ export default function InteractionTimeline({
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm text-gray-500">
-                {t("ticket.timeline.providedFeedback", { author })}
+                {t("ticket.timeline.providedFeedback", {
+                  author: authorDisplay,
+                })}
               </p>
               <div className="mt-1 text-sm bg-purple-50 rounded-md p-3">
                 {interaction.content.feedback}
@@ -135,7 +157,7 @@ export default function InteractionTimeline({
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm text-gray-500">
-                {t("ticket.timeline.ratedTicket", { author })}
+                {t("ticket.timeline.ratedTicket", { author: authorDisplay })}
               </p>
               <div className="mt-1 text-sm bg-yellow-50 rounded-md p-3">
                 <div className="flex space-x-1 text-lg">
@@ -169,6 +191,9 @@ export default function InteractionTimeline({
         );
 
       case "STATUS_CHANGE":
+        if (userRole === "CUSTOMER") {
+          return null;
+        }
         return (
           <div className="flex items-center space-x-2">
             <div className="flex-shrink-0">
@@ -197,7 +222,7 @@ export default function InteractionTimeline({
                   newStatus: t(
                     `ticket.status.${interaction.content.newStatus}`
                   ),
-                  author,
+                  author: authorDisplay,
                 })}
               </p>
               <p className="text-xs text-gray-400">{date}</p>
@@ -206,6 +231,9 @@ export default function InteractionTimeline({
         );
 
       case "ASSIGNMENT":
+        if (userRole === "CUSTOMER") {
+          return null;
+        }
         return (
           <div className="flex items-center space-x-2">
             <div className="flex-shrink-0">
@@ -234,7 +262,7 @@ export default function InteractionTimeline({
                   newAssignee:
                     interaction.content.newAssigneeEmail ||
                     t("ticket.labels.unassigned"),
-                  author,
+                  author: authorDisplay,
                 })}
               </p>
               <p className="text-xs text-gray-400">{date}</p>
@@ -276,13 +304,25 @@ export default function InteractionTimeline({
             <div className="min-w-0 flex-1">
               <div className="flex justify-between items-start">
                 <p className="text-sm text-gray-500">
-                  <span className="font-medium">{author}</span>{" "}
-                  {interaction.content.internal && (
-                    <span className="text-yellow-600">
-                      {t("ticket.timeline.internalNote")}{" "}
-                    </span>
+                  {userRole === "CUSTOMER" ? (
+                    <>
+                      <span className="font-medium">
+                        {t("ticket.labels.supportAgent")}
+                      </span>{" "}
+                      {t("ticket.timeline.noteAdded")}
+                    </>
+                  ) : (
+                    <>
+                      <span className="font-medium">{authorDisplay}</span>{" "}
+                      {t("ticket.timeline.noteAdded")}
+                      {interaction.content.internal && (
+                        <span className="text-yellow-600">
+                          {" "}
+                          {t("ticket.timeline.internalNote")}
+                        </span>
+                      )}
+                    </>
                   )}
-                  {t("ticket.timeline.noteAdded")}
                 </p>
                 {!interaction.content.internal &&
                   userRole !== "CUSTOMER" &&

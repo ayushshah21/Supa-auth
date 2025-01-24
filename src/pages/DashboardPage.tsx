@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { getCurrentUser, getUserRole } from "../lib/supabase";
 import { getTickets } from "../lib/supabase/tickets";
 import { supabase } from "../lib/supabase/client";
-import type { Database, UserRole } from "../types/supabase";
+import type { Database, UserRole, TicketStatus } from "../types/supabase";
 import TicketTable from "../components/tickets/TicketTable";
 import DashboardStats from "../components/dashboard/DashboardStats";
 
@@ -23,6 +23,9 @@ const DashboardPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [statusFilter, setStatusFilter] = useState<
+    TicketStatus | "ALL" | "ACTIVE"
+  >("ACTIVE");
 
   const loadUser = async () => {
     try {
@@ -46,13 +49,37 @@ const DashboardPage = () => {
     try {
       if (!user) return;
 
-      // Fetch tickets based on role
+      // Fetch tickets based on role and filter
       const { data, error: ticketsError } = await getTickets(
-        role === "CUSTOMER" ? { customer_id: user.id } : { status: "OPEN" }
+        role === "CUSTOMER"
+          ? {
+              customer_id: user.id,
+              ...(statusFilter === "ACTIVE"
+                ? {} // For active tickets, we'll filter them in memory
+                : statusFilter === "ALL"
+                ? {}
+                : { status: statusFilter as TicketStatus }),
+            }
+          : {
+              ...(statusFilter === "ACTIVE"
+                ? {} // For active tickets, we'll filter them in memory
+                : statusFilter === "ALL"
+                ? {}
+                : { status: statusFilter as TicketStatus }),
+            }
       );
 
       if (ticketsError) throw ticketsError;
-      setTickets(data || []);
+
+      // Filter active tickets in memory if needed
+      const filteredData =
+        statusFilter === "ACTIVE"
+          ? (data || []).filter(
+              (t) => t.status === "OPEN" || t.status === "IN_PROGRESS"
+            )
+          : data || [];
+
+      setTickets(filteredData);
     } catch (err: unknown) {
       setError(
         err instanceof Error ? err.message : t("common.error.loadTickets")
@@ -88,7 +115,7 @@ const DashboardPage = () => {
         };
       }
     }
-  }, [user, role]);
+  }, [user, role, statusFilter]);
 
   if (loading)
     return (
@@ -129,12 +156,15 @@ const DashboardPage = () => {
 
                   <TicketTable
                     tickets={tickets
-                      .filter((t) => t.status === "OPEN")
+                      .filter(
+                        (t) => t.status === "OPEN" || t.status === "IN_PROGRESS"
+                      )
                       .slice(0, 5)}
                     selectedTickets={[]}
                     onSelectAll={() => {}}
                     onSelectTicket={() => {}}
                     hideSelectionColumn={true}
+                    userRole={role}
                   />
                 </div>
               </div>
@@ -149,12 +179,42 @@ const DashboardPage = () => {
                   <h2 className="text-xl font-semibold mb-4 sm:mb-0">
                     {t("dashboard.mySupportTickets")}
                   </h2>
-                  <button
-                    onClick={() => navigate("/create-ticket")}
-                    className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  >
-                    {t("ticket.create")}
-                  </button>
+                  <div className="flex items-center gap-4">
+                    <select
+                      value={statusFilter}
+                      onChange={(e) =>
+                        setStatusFilter(
+                          e.target.value as TicketStatus | "ALL" | "ACTIVE"
+                        )
+                      }
+                      className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    >
+                      <option value="ACTIVE">
+                        {t("ticket.filter.activeTickets")}
+                      </option>
+                      <option value="ALL">
+                        {t("ticket.filter.allStatus")}
+                      </option>
+                      <option value="OPEN">
+                        {t("ticket.filter.openTickets")}
+                      </option>
+                      <option value="IN_PROGRESS">
+                        {t("ticket.filter.inProgressTickets")}
+                      </option>
+                      <option value="RESOLVED">
+                        {t("ticket.filter.resolvedTickets")}
+                      </option>
+                      <option value="CLOSED">
+                        {t("ticket.filter.closedTickets")}
+                      </option>
+                    </select>
+                    <button
+                      onClick={() => navigate("/create-ticket")}
+                      className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    >
+                      {t("ticket.create")}
+                    </button>
+                  </div>
                 </div>
 
                 {tickets.length === 0 ? (
@@ -178,6 +238,7 @@ const DashboardPage = () => {
                       onSelectTicket={() => {}}
                       hideSelectionColumn={true}
                       hideCustomerColumn={true}
+                      userRole={role}
                     />
                   </div>
                 )}

@@ -71,7 +71,12 @@
     "deleteSuccess": "Ticket deleted successfully",
     "deleteError": "Failed to delete ticket",
     "filter": {
-      "allStatus": "All Status"
+      "allStatus": "All Status",
+      "activeTickets": "Active",
+      "openTickets": "Open",
+      "inProgressTickets": "In Progress",
+      "resolvedTickets": "Resolved",
+      "closedTickets": "Closed"
     },
     "status": {
       "OPEN": "Open",
@@ -104,7 +109,8 @@
       "updatedAt": "Updated at",
       "unknown": "Unknown",
       "createdBy": "Created by",
-      "on": "on"
+      "on": "on",
+      "supportAgent": "Support Agent"
     },
     "messages": {
       "ticketCreated": "Ticket created successfully",
@@ -130,7 +136,7 @@
       "title": "Activity Timeline",
       "statusChanged": "Status changed from {{oldStatus}} to {{newStatus}} by {{author}}",
       "assignmentChanged": "Assigned from {{oldAssignee}} to {{newAssignee}} by {{author}}",
-      "noteAdded": "{{author}} added a note",
+      "noteAdded": "added a note",
       "internalNote": "(Internal)",
       "providedFeedback": "{{author}} provided feedback",
       "ratedTicket": "{{author}} rated this ticket",

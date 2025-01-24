@@ -1,20 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { getCurrentUser } from "../lib/supabase/auth";
+import { getCurrentUser, getUserRole } from "../lib/supabase";
 import { getTickets } from "../lib/supabase/tickets";
-import type { Database } from "../types/supabase";
+import type { Database, UserRole } from "../types/supabase";
+import TicketTable from "../components/tickets/TicketTable";
 
 type Ticket = Database["public"]["Tables"]["tickets"]["Row"] & {
   customer: Database["public"]["Tables"]["users"]["Row"];
   assigned_to: Database["public"]["Tables"]["users"]["Row"] | null;
+  notes: Database["public"]["Tables"]["notes"]["Row"][];
 };
 
 export default function AssignedTicketsPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -23,11 +25,19 @@ export default function AssignedTicketsPage() {
         const user = await getCurrentUser();
         if (!user) return;
 
+        const role = await getUserRole(user.id);
+        setUserRole(role);
+
         const { data, error: ticketsError } = await getTickets({
           assigned_to_id: user.id,
         });
         if (ticketsError) throw ticketsError;
-        setTickets((data as Ticket[]) || []);
+
+        // Filter for active tickets (OPEN and IN_PROGRESS)
+        const activeTickets = (data || []).filter(
+          (t) => t.status === "OPEN" || t.status === "IN_PROGRESS"
+        );
+        setTickets(activeTickets);
       } catch (err: any) {
         setError(err.message || t("common.error.loadTickets"));
       } finally {
@@ -37,34 +47,6 @@ export default function AssignedTicketsPage() {
 
     loadTickets();
   }, [t]);
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "OPEN":
-        return "bg-yellow-100 text-yellow-800";
-      case "IN_PROGRESS":
-        return "bg-blue-100 text-blue-800";
-      case "RESOLVED":
-        return "bg-green-100 text-green-800";
-      case "CLOSED":
-        return "bg-gray-100 text-gray-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "HIGH":
-        return "text-red-600";
-      case "MEDIUM":
-        return "text-yellow-600";
-      case "LOW":
-        return "text-green-600";
-      default:
-        return "text-gray-600";
-    }
-  };
 
   if (loading) {
     return (
@@ -82,6 +64,8 @@ export default function AssignedTicketsPage() {
     );
   }
 
+  if (!userRole) return null;
+
   return (
     <div className="bg-white shadow rounded-lg">
       <div className="px-4 py-5 sm:p-6">
@@ -95,65 +79,14 @@ export default function AssignedTicketsPage() {
           </p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t("ticket.labels.title")}
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t("ticket.labels.customer")}
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t("ticket.labels.status")}
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t("ticket.labels.priority")}
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t("ticket.labels.createdAt")}
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {tickets.map((ticket) => (
-                  <tr key={ticket.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <Link
-                        to={`/ticket/${ticket.id}`}
-                        className="text-blue-600 hover:text-blue-900"
-                      >
-                        {ticket.title}
-                      </Link>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {ticket.customer?.email || t("ticket.labels.unknown")}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
-                          ticket.status
-                        )}`}
-                      >
-                        {t(`ticket.status.${ticket.status}`)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`text-sm font-medium ${getPriorityColor(
-                          ticket.priority
-                        )}`}
-                      >
-                        {t(`ticket.priority.${ticket.priority}`)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(ticket.created_at).toLocaleDateString()}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <TicketTable
+              tickets={tickets}
+              selectedTickets={[]}
+              onSelectAll={() => {}}
+              onSelectTicket={() => {}}
+              hideSelectionColumn={true}
+              userRole={userRole}
+            />
           </div>
         )}
       </div>

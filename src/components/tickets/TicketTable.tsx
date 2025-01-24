@@ -15,6 +15,7 @@ type Props = {
   onSelectTicket: (ticketId: string, checked: boolean) => void;
   hideSelectionColumn?: boolean;
   hideCustomerColumn?: boolean;
+  userRole: string;
 };
 
 export default function TicketTable({
@@ -24,6 +25,7 @@ export default function TicketTable({
   onSelectTicket,
   hideSelectionColumn = false,
   hideCustomerColumn = false,
+  userRole,
 }: Props) {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -157,7 +159,9 @@ export default function TicketTable({
                 </span>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {ticket.assigned_to?.email || t("ticket.labels.unassigned")}
+                {userRole === "CUSTOMER"
+                  ? t("ticket.labels.supportAgent")
+                  : ticket.assigned_to?.email || t("ticket.labels.unassigned")}
               </td>
             </tr>
           ))}
