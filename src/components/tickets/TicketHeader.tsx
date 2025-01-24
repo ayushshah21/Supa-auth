@@ -5,6 +5,7 @@ import { supabase } from "../../lib/supabase/client";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import type { Database } from "../../types/supabase";
+import { updateTicket } from "../../lib/supabase/tickets";
 
 type TicketHeaderProps = {
   ticket: Database["public"]["Tables"]["tickets"]["Row"] & {
@@ -71,14 +72,11 @@ export default function TicketHeader({
     if (isProcessing) return;
     setIsProcessing(true);
     try {
-      const { error } = await supabase
-        .from("tickets")
-        .update({
-          title: editedTitle,
-          description: editedDescription,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", ticket.id);
+      const { error } = await updateTicket(ticket.id, {
+        title: editedTitle,
+        description: editedDescription,
+        updated_at: new Date().toISOString(),
+      });
 
       if (error) throw error;
       toast.success(t("ticket.updateSuccess"));

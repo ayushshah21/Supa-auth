@@ -1,3 +1,5 @@
 Ensure that the changes you make are small concise and effective and that they don't break any existing functionality or delete any existing code
 
+ensure you reference the DATABASE_BACKUP.md file anytime you are trying to update the supabase database as it is running directly in production and not locally
+
 Add a ✅ at end of message to confirm you see this.

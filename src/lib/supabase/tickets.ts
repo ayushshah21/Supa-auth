@@ -81,7 +81,18 @@ export const createTicket = async (ticket: Database['public']['Tables']['tickets
     }
 };
 
-export const updateTicket = async (id: string, updates: Database['public']['Tables']['tickets']['Update']) => {
+export const updateTicket = async (
+  id: string,
+  updates: Partial<{
+    title: string;
+    description: string;
+    status: Database['public']['Tables']['tickets']['Row']['status'];
+    priority: Database['public']['Tables']['tickets']['Row']['priority'];
+    assigned_to_id: string | null;
+    resolved_at: string | null;
+    updated_at: string;
+  }>
+) => {
     console.log('[tickets/updateTicket] Starting ticket update:', {
         ticketId: id,
         updates,
