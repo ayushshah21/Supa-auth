@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { UserRole } from "../../types/supabase";
@@ -12,6 +12,7 @@ type SidebarProps = {
 export default function Sidebar({ userRole, onCollapse }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { t } = useTranslation();
+  const location = useLocation();
 
   useEffect(() => {
     onCollapse?.(isCollapsed);
@@ -22,27 +23,20 @@ export default function Sidebar({ userRole, onCollapse }: SidebarProps) {
 
     // Common links for all authenticated users
     if (userRole) {
-      links.push(
-        {
-          to: "/dashboard",
-          label: t("common.dashboard"),
-          icon: "📊",
-        },
-        {
-          to: "/knowledge-base",
-          label: t("knowledgeBase.title"),
-          icon: "📚",
-        }
-      );
+      links.push({
+        to: "/dashboard",
+        label: t("common.dashboard"),
+        icon: "📊",
+      });
     }
 
     // Role-specific links
     switch (userRole) {
       case "CUSTOMER":
         links.push({
-          to: "/create-ticket",
-          label: t("ticket.create"),
-          icon: "➕",
+          to: "/knowledge-base",
+          label: t("knowledgeBase.title"),
+          icon: "📚",
         });
         break;
       case "WORKER":
@@ -53,7 +47,12 @@ export default function Sidebar({ userRole, onCollapse }: SidebarProps) {
             label: t("ticket.assignedTickets"),
             icon: "📌",
           },
-          { to: "/stats", label: t("common.stats"), icon: "📈" }
+          { to: "/stats", label: t("common.stats"), icon: "📈" },
+          {
+            to: "/knowledge-base",
+            label: t("knowledgeBase.title"),
+            icon: "📚",
+          }
         );
         break;
       case "ADMIN":
@@ -65,7 +64,12 @@ export default function Sidebar({ userRole, onCollapse }: SidebarProps) {
             icon: "📌",
           },
           { to: "/stats", label: t("common.stats"), icon: "📈" },
-          { to: "/admin/users", label: t("common.manageUsers"), icon: "👥" }
+          { to: "/admin/users", label: t("common.manageUsers"), icon: "👥" },
+          {
+            to: "/knowledge-base",
+            label: t("knowledgeBase.title"),
+            icon: "📚",
+          }
         );
         break;
     }
@@ -117,7 +121,12 @@ export default function Sidebar({ userRole, onCollapse }: SidebarProps) {
           <Link
             key={link.to}
             to={link.to}
-            className="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+            className={`flex items-center px-4 py-3 transition-colors duration-200 ${
+              location.pathname === link.to
+                ? "bg-blue-50 text-blue-600"
+                : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+            }`}
+            aria-current={location.pathname === link.to ? "page" : undefined}
           >
             <span className="text-xl" aria-hidden="true">
               {link.icon}

@@ -17,7 +17,7 @@ export default function KnowledgeBasePage() {
 
     return knowledgeBaseData
       .map((qa) => {
-        // Calculate relevance score
+        // Calculate relevance score 
         let score = 0;
         const questionLower = qa.question.toLowerCase();
         const answerLower = qa.answer.toLowerCase();
