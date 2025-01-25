@@ -2,13 +2,24 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentUser, getUserRole, getWorkers } from "../lib/supabase/auth";
-import { getTeams, getTeamsForWorker } from "../lib/supabase/teams";
+import {
+  getTeams,
+  getTeamsForWorker,
+  isWorkerInTeam,
+} from "../lib/supabase/teams";
 import type { Database, UserRole } from "../types/supabase";
 import CreateTeamModal from "../components/teams/CreateTeamModal";
 import TeamMembersModal from "../components/teams/TeamMembersModal";
+import TeamSpecialtiesEditor from "../components/teams/TeamSpecialtiesEditor";
+import { supabase } from "../lib/supabase/client";
 
 type Team = Database["public"]["Tables"]["teams"]["Row"] & {
   members: Database["public"]["Tables"]["team_members"]["Row"][];
+  specialties: {
+    team_id: string;
+    tag_id: string;
+    tag: Database["public"]["Tables"]["tags"]["Row"];
+  }[];
 };
 
 export default function TeamsPage() {
@@ -24,6 +35,7 @@ export default function TeamsPage() {
   const [workers, setWorkers] = useState<
     Database["public"]["Tables"]["users"]["Row"][]
   >([]);
+  const [isSpecialtiesModalOpen, setIsSpecialtiesModalOpen] = useState(false);
 
   const loadTeams = async (userId: string, role: UserRole) => {
     try {
@@ -31,7 +43,31 @@ export default function TeamsPage() {
         role === "ADMIN" ? await getTeams() : await getTeamsForWorker(userId);
 
       if (teamsError) throw teamsError;
-      setTeams(teamsData || []);
+
+      // Fetch specialties for each team
+      if (teamsData) {
+        const teamsWithSpecialties = await Promise.all(
+          teamsData.map(async (team) => {
+            const { data: specialtiesData, error: specialtiesError } =
+              await supabase
+                .from("team_specialties")
+                .select(`*, tag:tags(*)`)
+                .eq("team_id", team.id);
+
+            if (specialtiesError) {
+              console.error(
+                "Error fetching team specialties:",
+                specialtiesError
+              );
+              return { ...team, specialties: [] };
+            }
+
+            return { ...team, specialties: specialtiesData || [] };
+          })
+        );
+
+        setTeams(teamsWithSpecialties);
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -156,17 +192,34 @@ export default function TeamsPage() {
                           {team.description}
                         </p>
                       )}
-                      {userRole === "ADMIN" && (
-                        <button
-                          onClick={() => {
-                            setSelectedTeamId(team.id);
-                            setIsManageMembersModalOpen(true);
-                          }}
-                          className="mt-3 w-full px-3 py-1.5 text-sm font-medium text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                        >
-                          Manage Members
-                        </button>
-                      )}
+                      <div className="mt-3 space-y-2">
+                        {userRole === "ADMIN" && (
+                          <button
+                            onClick={() => {
+                              setSelectedTeamId(team.id);
+                              setIsManageMembersModalOpen(true);
+                            }}
+                            className="w-full px-3 py-1.5 text-sm font-medium text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                          >
+                            Manage Members
+                          </button>
+                        )}
+                        {(userRole === "ADMIN" ||
+                          (userRole === "WORKER" &&
+                            team.members.some(
+                              (m) => m.user_id === currentUserId
+                            ))) && (
+                          <button
+                            onClick={() => {
+                              setSelectedTeamId(team.id);
+                              setIsSpecialtiesModalOpen(true);
+                            }}
+                            className="w-full px-3 py-1.5 text-sm font-medium text-green-600 border border-green-600 rounded-md hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                          >
+                            Edit Specialties
+                          </button>
+                        )}
+                      </div>
                       <div className="mt-4">
                         <h4 className="text-sm font-medium text-gray-700">
                           Team Members ({team.members.length})
@@ -185,6 +238,34 @@ export default function TeamsPage() {
                               </div>
                             );
                           })}
+                        </div>
+                      </div>
+
+                      <div className="mt-4">
+                        <h4 className="text-sm font-medium text-gray-700">
+                          Team Specialties ({team.specialties.length})
+                        </h4>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {team.specialties.length === 0 ? (
+                            <p className="text-sm text-gray-500">
+                              No specialties defined
+                            </p>
+                          ) : (
+                            team.specialties.map((specialty) => (
+                              <span
+                                key={specialty.tag_id}
+                                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                                style={{
+                                  backgroundColor: specialty.tag.color
+                                    ? `${specialty.tag.color}20`
+                                    : "#E5E7EB",
+                                  color: specialty.tag.color || "#374151",
+                                }}
+                              >
+                                {specialty.tag.name}
+                              </span>
+                            ))
+                          )}
                         </div>
                       </div>
                     </div>
@@ -224,6 +305,36 @@ export default function TeamsPage() {
             }
           }}
         />
+      )}
+
+      {selectedTeamId && isSpecialtiesModalOpen && (
+        <div className="fixed inset-0 z-10 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div
+              className="fixed inset-0 transition-opacity"
+              aria-hidden="true"
+            >
+              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+              <TeamSpecialtiesEditor
+                teamId={selectedTeamId}
+                teamName={
+                  teams.find((t) => t.id === selectedTeamId)?.name || ""
+                }
+                onClose={() => {
+                  setIsSpecialtiesModalOpen(false);
+                  setSelectedTeamId(null);
+                }}
+                onSaved={async () => {
+                  if (userRole && currentUserId) {
+                    await loadTeams(currentUserId, userRole);
+                  }
+                }}
+              />
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
