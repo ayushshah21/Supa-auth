@@ -5,7 +5,6 @@ import { getCurrentUser, getUserRole, getWorkers } from "../lib/supabase/auth";
 import {
   getTeams,
   getTeamsForWorker,
-  isWorkerInTeam,
 } from "../lib/supabase/teams";
 import type { Database, UserRole } from "../types/supabase";
 import CreateTeamModal from "../components/teams/CreateTeamModal";
