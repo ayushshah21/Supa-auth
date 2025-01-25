@@ -14,6 +14,7 @@ import ManageUsersPage from "./pages/ManageUsersPage";
 import StatsPage from "./pages/StatsPage";
 import ProfilePage from "./pages/ProfilePage";
 import KnowledgeBasePage from "./pages/KnowledgeBasePage";
+import TeamsPage from "./pages/TeamsPage";
 
 function App() {
   return (
@@ -107,6 +108,16 @@ function App() {
             <Layout>
               <ProtectedRoute>
                 <TicketDetailPage />
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+        <Route
+          path="/teams"
+          element={
+            <Layout>
+              <ProtectedRoute allowedRoles={["WORKER", "ADMIN"]}>
+                <TeamsPage />
               </ProtectedRoute>
             </Layout>
           }

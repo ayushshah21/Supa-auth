@@ -8,6 +8,7 @@ type Props = {
       customer: Database["public"]["Tables"]["users"]["Row"];
       assigned_to: Database["public"]["Tables"]["users"]["Row"] | null;
       notes: Database["public"]["Tables"]["notes"]["Row"][];
+      team: Database["public"]["Tables"]["teams"]["Row"] | null;
     }
   >;
   selectedTickets: string[];
@@ -67,12 +68,12 @@ export default function TicketTable({
   }
 
   return (
-    <div className="bg-white shadow overflow-hidden sm:rounded-md">
+    <div>
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
             {!hideSelectionColumn && (
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="w-10 px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 <input
                   type="checkbox"
                   checked={selectedTickets.length === tickets.length}
@@ -81,26 +82,29 @@ export default function TicketTable({
                 />
               </th>
             )}
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="w-52 px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               {t("ticket.labels.title")}
             </th>
             {!hideCustomerColumn && (
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="w-44 px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 {t("ticket.labels.customer")}
               </th>
             )}
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="w-24 px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               {t("ticket.labels.status")}
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="w-20 px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               {t("ticket.labels.priority")}
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="w-44 px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               {t("ticket.labels.assignedTo")}
+            </th>
+            <th className="w-32 px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              {t("ticket.labels.team")}
             </th>
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
+        <tbody className="divide-y divide-gray-200">
           {tickets.map((ticket) => (
             <tr
               key={ticket.id}
@@ -111,7 +115,7 @@ export default function TicketTable({
               }}
             >
               {!hideSelectionColumn && (
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="w-10 px-2 py-3 whitespace-nowrap">
                   <input
                     type="checkbox"
                     checked={selectedTickets.includes(ticket.id)}
@@ -123,33 +127,33 @@ export default function TicketTable({
                   />
                 </td>
               )}
-              <td className="px-6 py-4 whitespace-nowrap">
+              <td className="w-52 px-3 py-3 whitespace-nowrap">
                 <div>
-                  <div className="text-sm font-medium text-gray-900">
+                  <div className="text-sm font-medium text-gray-900 truncate">
                     {ticket.title}
                   </div>
-                  <div className="text-sm text-gray-500 truncate max-w-xs">
+                  <div className="text-sm text-gray-500 truncate">
                     {ticket.description}
                   </div>
                 </div>
               </td>
               {!hideCustomerColumn && (
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">
+                <td className="w-44 px-3 py-3 whitespace-nowrap">
+                  <div className="text-sm text-gray-900 truncate">
                     {ticket.customer?.email}
                   </div>
                 </td>
               )}
-              <td className="px-6 py-4 whitespace-nowrap">
+              <td className="w-24 px-3 py-3 whitespace-nowrap">
                 <span
-                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
+                  className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
                     ticket.status
                   )}`}
                 >
                   {t(`ticket.status.${ticket.status}`)}
                 </span>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
+              <td className="w-20 px-3 py-3 whitespace-nowrap">
                 <span
                   className={`text-xs font-medium ${getPriorityColor(
                     ticket.priority
@@ -158,10 +162,19 @@ export default function TicketTable({
                   {t(`ticket.priority.${ticket.priority}`)}
                 </span>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td className="w-44 px-3 py-3 whitespace-nowrap text-sm text-gray-500 truncate">
                 {userRole === "CUSTOMER"
                   ? t("ticket.labels.supportAgent")
                   : ticket.assigned_to?.email || t("ticket.labels.unassigned")}
+              </td>
+              <td className="w-32 px-3 py-3 whitespace-nowrap text-sm text-gray-500">
+                {ticket.team ? (
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 truncate max-w-[120px]">
+                    {ticket.team.name}
+                  </span>
+                ) : (
+                  t("ticket.labels.noTeam")
+                )}
               </td>
             </tr>
           ))}

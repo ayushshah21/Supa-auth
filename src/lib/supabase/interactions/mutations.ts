@@ -47,10 +47,10 @@ export async function createAssignmentInteraction(
     author_id: userId,
     type: "ASSIGNMENT",
     content: {
-      previous_assignee_id: previousAssigneeId,
-      new_assignee_id: newAssigneeId,
-      previous_assignee_email: previousAssigneeEmail,
-      new_assignee_email: newAssigneeEmail
+      oldAssigneeId: previousAssigneeId,
+      newAssigneeId: newAssigneeId,
+      oldAssigneeEmail: previousAssigneeEmail,
+      newAssigneeEmail: newAssigneeEmail
     }
   });
 

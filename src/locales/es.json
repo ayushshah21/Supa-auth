@@ -301,5 +301,14 @@
         "answer": "Para gestionar tus notificaciones por correo:\n1. Ve a la Configuración de tu Perfil\n2. Busca la sección 'Preferencias de Notificación'\n3. Puedes elegir recibir notificaciones para:\n   - Actualizaciones de tickets\n   - Respuestas de agentes\n   - Cambios de estado\n   - Recordatorios\n4. Guarda tus preferencias"
       }
     }
+  },
+  "teams": {
+    "title": "Gestión de Equipos",
+    "description": "Crea y gestiona equipos de soporte, asigna miembros y establece responsabilidades de equipo.",
+    "allTeams": "Todos los Equipos",
+    "createTeam": "Crear Equipo",
+    "noTeamsYet": "Aún no se han creado equipos.",
+    "createFirstTeam": "Crea tu primer equipo",
+    "members": "Miembros del Equipo"
   }
 } 

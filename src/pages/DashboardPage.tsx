@@ -5,15 +5,10 @@ import { useTranslation } from "react-i18next";
 import { getCurrentUser, getUserRole } from "../lib/supabase";
 import { getTickets } from "../lib/supabase/tickets";
 import { supabase } from "../lib/supabase/client";
-import type { Database, UserRole, TicketStatus } from "../types/supabase";
+import type { UserRole, TicketStatus } from "../types/supabase";
+import type { Ticket } from "../types/tickets";
 import TicketTable from "../components/tickets/TicketTable";
 import DashboardStats from "../components/dashboard/DashboardStats";
-
-type Ticket = Database["public"]["Tables"]["tickets"]["Row"] & {
-  customer: Database["public"]["Tables"]["users"]["Row"];
-  assigned_to: Database["public"]["Tables"]["users"]["Row"] | null;
-  notes: Database["public"]["Tables"]["notes"]["Row"][];
-};
 
 const DashboardPage = () => {
   const navigate = useNavigate();

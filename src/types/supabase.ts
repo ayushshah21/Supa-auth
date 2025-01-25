@@ -74,6 +74,7 @@ export interface Database {
           customer_id: string;
           assigned_to_id: string | null;
           resolved_at: string | null;
+          team_id: string | null;
         };
         Insert: Omit<Database['public']['Tables']['tickets']['Row'], 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Database['public']['Tables']['tickets']['Insert']>;

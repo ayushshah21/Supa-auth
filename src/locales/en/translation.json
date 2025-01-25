@@ -5,6 +5,15 @@
     "error": "An error occurred",
     "success": "Success"
   },
+  "teams": {
+    "title": "Team Management",
+    "description": "Create and manage support teams, assign team members, and define team responsibilities.",
+    "allTeams": "All Teams",
+    "createTeam": "Create Team",
+    "noTeamsYet": "No teams have been created yet.",
+    "createFirstTeam": "Create your first team",
+    "members": "Team Members"
+  },
   "auth": {
     "signIn": "Sign In",
     "signOut": "Sign Out",

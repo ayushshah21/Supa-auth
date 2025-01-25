@@ -3,10 +3,14 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { getCurrentUser, getUserRole, getWorkers } from "../lib/supabase/auth";
+import { getTeams, getTeamsForWorker } from "../lib/supabase/teams";
 import { getTickets } from "../lib/supabase/tickets";
 import {
   updateTicketStatus,
   updateTicketAssignment,
+  claimTicket,
+  releaseTicket,
+  updateTicketTeam,
 } from "../services/ticketsService";
 import { createNote } from "../lib/supabase/notes";
 import {
@@ -17,13 +21,14 @@ import {
 import { supabase } from "../lib/supabase/client";
 import type { Database, UserRole } from "../types/supabase";
 import TicketHeader from "../components/tickets/TicketHeader";
-import TicketManagement from "../components/tickets/TicketManagement";
+import TicketManagementModal from "../components/tickets/TicketManagementModal";
 import InteractionTimeline from "../components/tickets/InteractionTimeline";
 import FeedbackForm from "../components/tickets/FeedbackForm";
 import RatingForm from "../components/tickets/RatingForm";
 import FeedbackSection from "../components/tickets/FeedbackSection";
 import AssignmentSection from "../components/tickets/AssignmentSection";
 import NoteEditor from "../components/tickets/NoteEditor";
+import { toast } from "react-hot-toast";
 
 type Ticket = Database["public"]["Tables"]["tickets"]["Row"] & {
   customer: Database["public"]["Tables"]["users"]["Row"];
@@ -43,11 +48,15 @@ export default function TicketDetailPage() {
   const [workers, setWorkers] = useState<
     Database["public"]["Tables"]["users"]["Row"][]
   >([]);
+  const [teams, setTeams] = useState<
+    Database["public"]["Tables"]["teams"]["Row"][]
+  >([]);
   const [updating, setUpdating] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [hasFeedback, setHasFeedback] = useState(false);
   const [showRating, setShowRating] = useState(false);
   const [hasRating, setHasRating] = useState(false);
+  const [isManagementModalOpen, setIsManagementModalOpen] = useState(false);
 
   const fetchTicket = async () => {
     try {
@@ -132,6 +141,15 @@ export default function TicketDetailPage() {
         if (role === "WORKER" || role === "ADMIN") {
           const { data: workersData } = await getWorkers();
           if (workersData) setWorkers(workersData);
+
+          // Load teams based on role
+          if (role === "ADMIN") {
+            const { data: teamsData } = await getTeams();
+            if (teamsData) setTeams(teamsData);
+          } else if (role === "WORKER") {
+            const { data: teamsData } = await getTeamsForWorker(user.id);
+            if (teamsData) setTeams(teamsData);
+          }
         }
 
         await fetchTicket();
@@ -235,27 +253,40 @@ export default function TicketDetailPage() {
     }
   };
 
-  const handleAssignmentChange = async (workerId: string) => {
+  const handleAssignmentChange = async (assigneeId: string | null) => {
     if (!ticket || !ticketId) return;
     setUpdating(true);
     try {
       const user = await getCurrentUser();
       if (!user) throw new Error("User not found");
 
-      const { error } = await updateTicketAssignment(ticketId, workerId);
-      if (error) throw error;
+      // Check if this is a team ID by looking it up in the teams array
+      const isTeamAssignment = teams.some((team) => team.id === assigneeId);
 
-      const assignedWorker = workers.find((w) => w.id === workerId);
+      if (isTeamAssignment) {
+        // If it's a team assignment, use updateTicketTeam
+        const { error } = await updateTicketTeam(ticketId, assigneeId);
+        if (error) throw error;
+      } else {
+        // If it's a worker assignment, use updateTicketAssignment
+        const { error } = await updateTicketAssignment(ticketId, assigneeId);
+        if (error) throw error;
+      }
+
       await createAssignmentInteraction(
         ticketId,
         user.id,
         ticket.assigned_to?.id || null,
-        workerId,
+        assigneeId,
         ticket.assigned_to?.email,
-        assignedWorker?.email
+        workers.find((w) => w.id === assigneeId)?.email
       );
 
-      setTicket({ ...ticket, assigned_to: assignedWorker || null });
+      const { data } = await getTickets();
+      const updatedTicket = data?.find((t) => t.id === ticketId);
+      if (updatedTicket) {
+        setTicket(updatedTicket as Ticket);
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -294,6 +325,39 @@ export default function TicketDetailPage() {
       }
     } catch (err: any) {
       setError(err.message);
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  // Add handlers for claiming and releasing tickets
+  const handleClaimTicket = async () => {
+    if (!ticketId || !currentUserId || updating) return;
+    setUpdating(true);
+    try {
+      const { error } = await claimTicket(ticketId, currentUserId);
+      if (error) throw error;
+      await fetchTicket();
+      toast.success("Ticket claimed successfully");
+    } catch (error) {
+      console.error("[TicketDetailPage] Error claiming ticket:", error);
+      toast.error("Failed to claim ticket");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleReleaseTicket = async () => {
+    if (!ticketId || updating) return;
+    setUpdating(true);
+    try {
+      const { error } = await releaseTicket(ticketId);
+      if (error) throw error;
+      await fetchTicket();
+      toast.success("Ticket released successfully");
+    } catch (error) {
+      console.error("[TicketDetailPage] Error releasing ticket:", error);
+      toast.error("Failed to release ticket");
     } finally {
       setUpdating(false);
     }
@@ -386,19 +450,46 @@ export default function TicketDetailPage() {
 
           {userRole !== "CUSTOMER" && (
             <>
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={() => setIsManagementModalOpen(true)}
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  disabled={updating}
+                >
+                  Manage Ticket
+                </button>
+              </div>
+
               <AssignmentSection assignedTo={ticket.assigned_to} />
 
               <div className="mt-6">
                 <FeedbackSection ticketId={ticket.id} />
               </div>
 
-              <TicketManagement
+              <div className="mt-6">
+                <h2 className="text-lg font-medium text-gray-900 mb-2">
+                  {t("ticket.actions.addNote")}
+                </h2>
+                <NoteEditor
+                  onSubmit={async ({ content, internal }) => {
+                    await handleAddNote({ content, internal });
+                  }}
+                  disabled={updating}
+                />
+              </div>
+
+              <TicketManagementModal
+                isOpen={isManagementModalOpen}
+                onClose={() => setIsManagementModalOpen(false)}
                 ticket={ticket}
                 workers={workers}
                 onStatusChange={handleStatusChange}
                 onAssignmentChange={handleAssignmentChange}
-                onAddNote={handleAddNote}
+                onClaimTicket={handleClaimTicket}
+                onReleaseTicket={handleReleaseTicket}
                 updating={updating}
+                userRole={userRole || ""}
+                currentUserId={currentUserId || ""}
               />
             </>
           )}

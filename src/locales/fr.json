@@ -301,5 +301,14 @@
         "answer": "Pour gérer vos notifications par email :\n1. Allez dans les Paramètres de votre Profil\n2. Trouvez la section 'Préférences de Notification'\n3. Vous pouvez choisir de recevoir des notifications pour :\n   - Les mises à jour de tickets\n   - Les réponses des agents\n   - Les changements de statut\n   - Les rappels\n4. Sauvegardez vos préférences"
       }
     }
+  },
+  "teams": {
+    "title": "Gestion des Équipes",
+    "description": "Créez et gérez les équipes de support, assignez des membres et définissez les responsabilités des équipes.",
+    "allTeams": "Toutes les Équipes",
+    "createTeam": "Créer une Équipe",
+    "noTeamsYet": "Aucune équipe n'a encore été créée.",
+    "createFirstTeam": "Créer votre première équipe",
+    "members": "Membres de l'Équipe"
   }
 } 

@@ -9,12 +9,7 @@ import { supabase } from "../lib/supabase/client";
 import type { Database, UserRole, TicketStatus } from "../types/supabase";
 import BulkActions from "../components/tickets/BulkActions";
 import TicketTable from "../components/tickets/TicketTable";
-
-type Ticket = Database["public"]["Tables"]["tickets"]["Row"] & {
-  customer: Database["public"]["Tables"]["users"]["Row"];
-  assigned_to: Database["public"]["Tables"]["users"]["Row"] | null;
-  notes: Database["public"]["Tables"]["notes"]["Row"][];
-};
+import type { Ticket } from "../types/tickets";
 
 const AllTicketsPage = () => {
   const navigate = useNavigate();

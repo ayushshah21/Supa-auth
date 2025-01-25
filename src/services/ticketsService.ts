@@ -258,4 +258,81 @@ export async function updateTickets(
     console.error("[ticketsService] Error updating tickets:", error);
     return { error: error as Error };
   }
+}
+
+export async function updateTicketTeam(
+  ticketId: string,
+  teamId: string | null
+): Promise<{ data: Ticket | null; error: Error | null }> {
+  try {
+    console.log("[ticketsService/updateTicketTeam] Updating ticket team:", { ticketId, teamId });
+    
+    const { data, error } = await supabase
+      .from("tickets")
+      .update({ team_id: teamId })
+      .eq("id", ticketId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error("[ticketsService/updateTicketTeam] Error updating ticket team:", error);
+    return { data: null, error: error as Error };
+  }
+}
+
+export async function claimTicket(
+  ticketId: string,
+  workerId: string
+): Promise<{ data: Ticket | null; error: Error | null }> {
+  try {
+    console.log("[ticketsService/claimTicket] Worker claiming ticket:", { ticketId, workerId });
+    
+    // Update the ticket to be assigned to the worker
+    const { data, error } = await supabase
+      .from("tickets")
+      .update({ assigned_to_id: workerId })
+      .eq("id", ticketId)
+      .select(`
+        *,
+        customer:users!tickets_customer_id_fkey(*),
+        assigned_to:users!tickets_assigned_to_id_fkey(*),
+        notes(*)
+      `)
+      .single();
+
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error("[ticketsService/claimTicket] Error claiming ticket:", error);
+    return { data: null, error: error as Error };
+  }
+}
+
+export async function releaseTicket(
+  ticketId: string
+): Promise<{ data: Ticket | null; error: Error | null }> {
+  try {
+    console.log("[ticketsService/releaseTicket] Releasing ticket back to team:", { ticketId });
+    
+    // Update the ticket to remove worker assignment while keeping team assignment
+    const { data, error } = await supabase
+      .from("tickets")
+      .update({ assigned_to_id: null })
+      .eq("id", ticketId)
+      .select(`
+        *,
+        customer:users!tickets_customer_id_fkey(*),
+        assigned_to:users!tickets_assigned_to_id_fkey(*),
+        notes(*)
+      `)
+      .single();
+
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error("[ticketsService/releaseTicket] Error releasing ticket:", error);
+    return { data: null, error: error as Error };
+  }
 } 

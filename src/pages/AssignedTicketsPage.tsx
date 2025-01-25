@@ -2,15 +2,10 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { getCurrentUser, getUserRole } from "../lib/supabase";
-import { getTickets } from "../lib/supabase/tickets";
-import type { Database, UserRole } from "../types/supabase";
+import { getTicketsForWorker } from "../lib/supabase/tickets";
+import type { UserRole } from "../types/supabase";
+import type { Ticket } from "../types/tickets";
 import TicketTable from "../components/tickets/TicketTable";
-
-type Ticket = Database["public"]["Tables"]["tickets"]["Row"] & {
-  customer: Database["public"]["Tables"]["users"]["Row"];
-  assigned_to: Database["public"]["Tables"]["users"]["Row"] | null;
-  notes: Database["public"]["Tables"]["notes"]["Row"][];
-};
 
 export default function AssignedTicketsPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -28,9 +23,9 @@ export default function AssignedTicketsPage() {
         const role = await getUserRole(user.id);
         setUserRole(role);
 
-        const { data, error: ticketsError } = await getTickets({
-          assigned_to_id: user.id,
-        });
+        const { data, error: ticketsError } = await getTicketsForWorker(
+          user.id
+        );
         if (ticketsError) throw ticketsError;
 
         // Filter for active tickets (OPEN and IN_PROGRESS)

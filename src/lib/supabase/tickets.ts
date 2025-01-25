@@ -11,7 +11,8 @@ export const getTickets = async (options?: {
         customer:users!customer_id(*),
         assigned_to:users!assigned_to_id(*),
         notes(*),
-        tags!ticket_tags(*)
+        tags!ticket_tags(*),
+        team:teams!tickets_team_id_fkey(*)
     `);
 
     if (options?.customer_id) {
@@ -26,6 +27,69 @@ export const getTickets = async (options?: {
 
     const { data, error } = await query;
     return { data, error };
+};
+
+export const getTicketsForWorker = async (workerId: string) => {
+    console.log('[tickets/getTicketsForWorker] Fetching tickets for worker:', workerId);
+    
+    try {
+        // First, get the team IDs for this worker
+        const { data: teamMemberships, error: teamError } = await supabase
+            .from('team_members')
+            .select('team_id')
+            .eq('user_id', workerId);
+
+        if (teamError) {
+            console.error('[tickets/getTicketsForWorker] Error fetching team memberships:', teamError);
+            return { data: null, error: teamError };
+        }
+
+        const teamIds = teamMemberships?.map(tm => tm.team_id) || [];
+
+        // Build the query based on whether there are team IDs
+        let query = supabase
+            .from('tickets')
+            .select(`
+                *,
+                customer:users!customer_id(*),
+                assigned_to:users!assigned_to_id(*),
+                notes(*),
+                tags!ticket_tags(*),
+                team:teams!tickets_team_id_fkey(*)
+            `);
+
+        // If there are team IDs, include them in the OR condition
+        if (teamIds.length > 0) {
+            query = query.or(`assigned_to_id.eq.${workerId},team_id.in.(${teamIds.join(',')})`);
+        } else {
+            // If no team IDs, just look for directly assigned tickets
+            query = query.eq('assigned_to_id', workerId);
+        }
+
+        // Add ordering
+        query = query.order('created_at', { ascending: false });
+
+        const { data, error } = await query;
+
+        if (error) {
+            console.error('[tickets/getTicketsForWorker] Error fetching tickets:', {
+                error,
+                errorMessage: error.message,
+                errorDetails: error.details,
+                errorHint: error.hint,
+                errorCode: error.code
+            });
+            return { data: null, error };
+        }
+
+        console.log('[tickets/getTicketsForWorker] Successfully fetched tickets:', {
+            ticketCount: data?.length ?? 0
+        });
+        return { data, error: null };
+    } catch (err) {
+        console.error('[tickets/getTicketsForWorker] Unexpected error:', err);
+        return { data: null, error: err instanceof Error ? err : new Error('Unknown error') };
+    }
 };
 
 export const createTicket = async (ticket: Database['public']['Tables']['tickets']['Insert']) => {

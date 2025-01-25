@@ -1,4 +1,5 @@
 Ensure that the changes you make are small concise and effective and that they don't break any existing functionality or delete any existing code
+Go in order, ensure that you don't make too many changes at once and do each thing incrementally and I'll check that what you added to works and then we'll go onto the next thing and ensure that the existing functionality has not been deleted or any existing code has not been deleted because that is very important
 
 ensure you reference the DATABASE_BACKUP.md file anytime you are trying to update the supabase database as it is running directly in production and not locally
 

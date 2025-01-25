@@ -43,6 +43,7 @@ export default function CreateTicketPage() {
         status: "OPEN" as const,
         assigned_to_id: null,
         resolved_at: null,
+        team_id: null,
       };
 
       console.log(

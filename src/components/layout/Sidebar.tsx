@@ -48,6 +48,7 @@ export default function Sidebar({ userRole, onCollapse }: SidebarProps) {
             icon: "📌",
           },
           { to: "/stats", label: t("common.stats"), icon: "📈" },
+          { to: "/teams", label: t("teams.title"), icon: "👥" },
           {
             to: "/knowledge-base",
             label: t("knowledgeBase.title"),
@@ -65,6 +66,7 @@ export default function Sidebar({ userRole, onCollapse }: SidebarProps) {
           },
           { to: "/stats", label: t("common.stats"), icon: "📈" },
           { to: "/admin/users", label: t("common.manageUsers"), icon: "👥" },
+          { to: "/teams", label: t("teams.title"), icon: "👥" },
           {
             to: "/knowledge-base",
             label: t("knowledgeBase.title"),

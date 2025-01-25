@@ -110,7 +110,9 @@
       "unknown": "Unknown",
       "createdBy": "Created by",
       "on": "on",
-      "supportAgent": "Support Agent"
+      "supportAgent": "Support Agent",
+      "team": "Team",
+      "noTeam": "No Team"
     },
     "messages": {
       "ticketCreated": "Ticket created successfully",
@@ -234,5 +236,20 @@
       "loadQuestions": "Failed to load questions",
       "search": "Failed to search questions"
     }
+  },
+  "teams": {
+    "title": "Team Management",
+    "description": "Create and manage support teams, assign team members, and define team responsibilities.",
+    "allTeams": "All Teams",
+    "createTeam": "Create Team",
+    "noTeamsYet": "No teams have been created yet.",
+    "createFirstTeam": "Create your first team",
+    "members": "Team Members",
+    "teamName": "Team Name",
+    "teamDescription": "Team Description",
+    "teamCreated": "Team created successfully",
+    "teamUpdated": "Team updated successfully",
+    "teamDeleted": "Team deleted successfully",
+    "errorCreatingTeam": "Error creating team"
   }
 } 
