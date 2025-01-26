@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Mail, Lock, User, AlertCircle } from "lucide-react";
+import { Mail, Lock, UserPlus, AlertCircle, User } from "lucide-react";
 import { supabase } from "../lib/supabaseClient";
 import { useNavigate } from "react-router-dom";
+import { AnimatedBackground } from "../components/AnimatedBackground";
 
 const RegisterPage = () => {
   const [loading, setLoading] = useState(false);
@@ -16,37 +17,28 @@ const RegisterPage = () => {
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-    const fullName = formData.get("fullName") as string;
+    const name = formData.get("name") as string;
 
-    const { data, error: signUpError } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
-          full_name: fullName,
+          name,
         },
-        emailRedirectTo: `${window.location.origin}/dashboard`,
       },
     });
 
-    if (signUpError) {
-      setError(signUpError.message);
-    } else if (data?.user?.identities?.length === 0) {
-      setError(
-        "This email is already registered. Please try logging in instead."
-      );
+    if (error) {
+      setError(error.message);
+    } else if (data) {
       navigate("/login");
-    } else {
-      navigate("/login");
-      alert(
-        "Please check your email to confirm your registration before logging in!"
-      );
     }
+
     setLoading(false);
   };
 
-  const handleGoogleSignUp = async (e: React.MouseEvent) => {
-    e.preventDefault();
+  const handleGoogleRegister = async () => {
     setLoading(true);
     setError(null);
 
@@ -64,34 +56,38 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen flex items-center justify-center text-white">
+      <AnimatedBackground />
+      <div className="max-w-md w-full space-y-8 relative z-10">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-6 text-center text-4xl font-bold bg-gradient-to-r from-[#EA384D] to-purple-500 bg-clip-text text-transparent">
             Create your account
           </h2>
         </div>
 
         {error && (
-          <div className="flex items-center gap-2 p-4 text-sm text-red-600 bg-red-50 rounded-lg">
+          <div className="flex items-center gap-2 p-4 text-sm text-red-400 bg-red-900/50 backdrop-blur-md rounded-lg border border-red-500/50">
             <AlertCircle size={20} />
             <p>{error}</p>
           </div>
         )}
 
-        <form className="mt-8 space-y-6" onSubmit={handleRegister} role="form">
-          <div className="rounded-md shadow-sm space-y-4">
+        <form
+          className="mt-8 space-y-6 bg-black/40 backdrop-blur-md p-8 rounded-lg border border-white/10"
+          onSubmit={handleRegister}
+        >
+          <div className="rounded-md space-y-4">
             <div className="relative">
               <User
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
                 size={20}
               />
               <input
-                name="fullName"
+                name="name"
                 type="text"
                 required
-                className="appearance-none rounded-lg relative block w-full px-12 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Full Name"
+                className="appearance-none rounded-lg relative block w-full px-12 py-3 bg-black/50 border border-white/10 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-[#EA384D] focus:border-transparent transition-colors"
+                placeholder="Full name"
               />
             </div>
             <div className="relative">
@@ -103,7 +99,7 @@ const RegisterPage = () => {
                 name="email"
                 type="email"
                 required
-                className="appearance-none rounded-lg relative block w-full px-12 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="appearance-none rounded-lg relative block w-full px-12 py-3 bg-black/50 border border-white/10 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-[#EA384D] focus:border-transparent transition-colors"
                 placeholder="Email address"
               />
             </div>
@@ -116,9 +112,8 @@ const RegisterPage = () => {
                 name="password"
                 type="password"
                 required
-                className="appearance-none rounded-lg relative block w-full px-12 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="appearance-none rounded-lg relative block w-full px-12 py-3 bg-black/50 border border-white/10 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-[#EA384D] focus:border-transparent transition-colors"
                 placeholder="Password"
-                minLength={6}
               />
             </div>
           </div>
@@ -127,8 +122,12 @@ const RegisterPage = () => {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-[#EA384D] hover:bg-[#EA384D]/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#EA384D] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
+              <UserPlus
+                className="absolute left-3 top-1/2 transform -translate-y-1/2"
+                size={20}
+              />
               {loading ? "Creating account..." : "Create account"}
             </button>
           </div>
@@ -137,19 +136,19 @@ const RegisterPage = () => {
         <div className="mt-6">
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
+              <div className="w-full border-t border-white/10" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-gray-50 text-gray-500">
+              <span className="px-2 bg-transparent text-gray-400">
                 Or continue with
               </span>
             </div>
           </div>
 
           <button
-            onClick={handleGoogleSignUp}
-            className="mt-6 w-full flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={handleGoogleRegister}
             disabled={loading}
+            className="mt-6 w-full flex justify-center py-3 px-4 border border-white/10 rounded-lg bg-black/40 backdrop-blur-md text-sm font-medium text-white hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#EA384D] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             <img
               className="h-5 w-5"
@@ -160,11 +159,11 @@ const RegisterPage = () => {
           </button>
         </div>
 
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <p className="mt-2 text-center text-sm text-gray-400">
           Already have an account?{" "}
           <a
             href="/login"
-            className="font-medium text-blue-600 hover:text-blue-500"
+            className="font-medium text-[#EA384D] hover:text-[#EA384D]/90 transition-colors"
           >
             Sign in
           </a>

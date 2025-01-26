@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { Mail, Lock, LogIn, AlertCircle } from "lucide-react";
-import { useTranslation } from "react-i18next";
 import { supabase } from "../lib/supabaseClient";
 import { useNavigate } from "react-router-dom";
+import { AnimatedBackground } from "../components/AnimatedBackground";
 
 const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { t } = useTranslation();
 
   const handleEmailLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -26,9 +25,9 @@ const LoginPage = () => {
 
     if (error) {
       if (error.message.includes("Email not confirmed")) {
-        setError(t("auth.errors.emailNotConfirmed"));
+        setError("Please confirm your email before logging in");
       } else if (error.message.includes("Invalid login credentials")) {
-        setError(t("auth.errors.invalidCredentials"));
+        setError("Invalid email or password");
       } else {
         setError(error.message);
       }
@@ -56,23 +55,27 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen flex items-center justify-center text-white">
+      <AnimatedBackground />
+      <div className="max-w-md w-full space-y-8 relative z-10">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            {t("auth.signInTitle")}
+          <h2 className="mt-6 text-center text-4xl font-bold bg-gradient-to-r from-[#EA384D] to-purple-500 bg-clip-text text-transparent">
+            Sign in to your account
           </h2>
         </div>
 
         {error && (
-          <div className="flex items-center gap-2 p-4 text-sm text-red-600 bg-red-50 rounded-lg">
+          <div className="flex items-center gap-2 p-4 text-sm text-red-400 bg-red-900/50 backdrop-blur-md rounded-lg border border-red-500/50">
             <AlertCircle size={20} />
             <p>{error}</p>
           </div>
         )}
 
-        <form className="mt-8 space-y-6" onSubmit={handleEmailLogin}>
-          <div className="rounded-md shadow-sm space-y-4">
+        <form
+          className="mt-8 space-y-6 bg-black/40 backdrop-blur-md p-8 rounded-lg border border-white/10"
+          onSubmit={handleEmailLogin}
+        >
+          <div className="rounded-md space-y-4">
             <div className="relative">
               <Mail
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
@@ -82,8 +85,8 @@ const LoginPage = () => {
                 name="email"
                 type="email"
                 required
-                className="appearance-none rounded-lg relative block w-full px-12 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                placeholder={t("auth.email")}
+                className="appearance-none rounded-lg relative block w-full px-12 py-3 bg-black/50 border border-white/10 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-[#EA384D] focus:border-transparent transition-colors"
+                placeholder="Email address"
               />
             </div>
             <div className="relative">
@@ -95,8 +98,8 @@ const LoginPage = () => {
                 name="password"
                 type="password"
                 required
-                className="appearance-none rounded-lg relative block w-full px-12 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                placeholder={t("auth.password")}
+                className="appearance-none rounded-lg relative block w-full px-12 py-3 bg-black/50 border border-white/10 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-[#EA384D] focus:border-transparent transition-colors"
+                placeholder="Password"
               />
             </div>
           </div>
@@ -105,13 +108,13 @@ const LoginPage = () => {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-[#EA384D] hover:bg-[#EA384D]/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#EA384D] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <LogIn
                 className="absolute left-3 top-1/2 transform -translate-y-1/2"
                 size={20}
               />
-              {loading ? t("common.loading") : t("auth.signIn")}
+              {loading ? "Signing in..." : "Sign in"}
             </button>
           </div>
         </form>
@@ -119,11 +122,11 @@ const LoginPage = () => {
         <div className="mt-6">
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
+              <div className="w-full border-t border-white/10" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-gray-50 text-gray-500">
-                {t("auth.continueWith")}
+              <span className="px-2 bg-transparent text-gray-400">
+                Or continue with
               </span>
             </div>
           </div>
@@ -131,24 +134,24 @@ const LoginPage = () => {
           <button
             onClick={handleGoogleLogin}
             disabled={loading}
-            className="mt-6 w-full flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mt-6 w-full flex justify-center py-3 px-4 border border-white/10 rounded-lg bg-black/40 backdrop-blur-md text-sm font-medium text-white hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#EA384D] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             <img
               className="h-5 w-5"
               src="https://www.svgrepo.com/show/475656/google-color.svg"
               alt="Google logo"
             />
-            <span className="ml-2">{t("auth.signInWithGoogle")}</span>
+            <span className="ml-2">Sign in with Google</span>
           </button>
         </div>
 
-        <p className="mt-2 text-center text-sm text-gray-600">
-          {t("auth.noAccount")}{" "}
+        <p className="mt-2 text-center text-sm text-gray-400">
+          Don't have an account?{" "}
           <a
             href="/register"
-            className="font-medium text-blue-600 hover:text-blue-500"
+            className="font-medium text-[#EA384D] hover:text-[#EA384D]/90 transition-colors"
           >
-            {t("auth.signUp")}
+            Sign up
           </a>
         </p>
       </div>
