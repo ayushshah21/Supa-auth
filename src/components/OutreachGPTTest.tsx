@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { generateOutreachResponse, sendEmail } from "../lib/outreachGpt";
 
+// Import API_URL from a central location
+const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+console.log("Component API_URL:", API_URL); // Debug log
+
 interface ErrorDetails {
   message: string;
   type?: string;
@@ -69,9 +73,11 @@ export default function OutreachGPTTest() {
 
     try {
       // First, get the ticket data to get the customer's email
-      const ticketResponse = await fetch(
-        `http://localhost:8000/api/tickets/${ticketId}`
-      );
+      console.log(
+        "Fetching ticket data from:",
+        `${API_URL}/api/tickets/${ticketId}`
+      ); // Debug log
+      const ticketResponse = await fetch(`${API_URL}/api/tickets/${ticketId}`);
       if (!ticketResponse.ok) {
         throw new Error("Failed to fetch ticket data");
       }
