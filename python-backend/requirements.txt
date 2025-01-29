@@ -13,5 +13,4 @@ openai==1.8.0
 pydantic==2.5.3
 gotrue==1.1.0
 websockets==10.4
-supafunc==0.2.4
 realtime==1.0.0 
