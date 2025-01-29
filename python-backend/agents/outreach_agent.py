@@ -13,7 +13,7 @@ from langchain.smith import RunEvalConfig, run_on_dataset
 from langsmith.run_helpers import traceable
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Pinecone
-from pinecone import Pinecone as PineconeClient
+import pinecone
 from datetime import datetime
 import json
 from utils.db import supabase
@@ -28,7 +28,7 @@ if not pinecone_api_key:
     )
 
 # Initialize Pinecone client
-pc = PineconeClient(api_key=pinecone_api_key)
+pc = pinecone.Pinecone(api_key=pinecone_api_key)
 
 # Initialize embeddings
 embeddings = OpenAIEmbeddings(
