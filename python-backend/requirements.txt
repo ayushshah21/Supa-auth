@@ -11,7 +11,6 @@ langchain-community==0.0.10
 pinecone-client==2.2.4
 openai==1.8.0
 pydantic==2.5.3
-postgrest==0.10.8
 gotrue==1.1.0
 storage3==0.5.4
 websockets==10.4
