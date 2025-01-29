@@ -21,11 +21,13 @@ interface EmailResponse {
 }
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000"; // FastAPI server URL
+console.log("Current API_URL:", API_URL); // Debug log
 
 export async function generateOutreachResponse(
   request: OutreachRequest,
 ): Promise<OutreachResponse> {
   try {
+    console.log("Making request to:", `${API_URL}/api/generate-outreach`); // Debug log
     const response = await fetch(`${API_URL}/api/generate-outreach`, {
       method: "POST",
       headers: {
