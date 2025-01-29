@@ -16,6 +16,7 @@ import ProfilePage from "./pages/ProfilePage";
 import KnowledgeBasePage from "./pages/KnowledgeBasePage";
 import TeamsPage from "./pages/TeamsPage";
 import OutreachGPTTest from "./components/OutreachGPTTest";
+import BatchOutreachManager from "./components/BatchOutreachManager";
 
 function App() {
   return (
@@ -148,13 +149,23 @@ function App() {
           }
         />
 
-        {/* OutreachGPT Test Route */}
+        {/* OutreachGPT Routes */}
         <Route
           path="/outreach-test"
           element={
             <Layout>
               <ProtectedRoute allowedRoles={["WORKER", "ADMIN"]}>
                 <OutreachGPTTest />
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+        <Route
+          path="/batch-outreach"
+          element={
+            <Layout>
+              <ProtectedRoute allowedRoles={["WORKER", "ADMIN"]}>
+                <BatchOutreachManager />
               </ProtectedRoute>
             </Layout>
           }

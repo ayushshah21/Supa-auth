@@ -53,6 +53,16 @@ export default function Sidebar({ userRole, onCollapse }: SidebarProps) {
             to: "/knowledge-base",
             label: t("knowledgeBase.title"),
             icon: "📚",
+          },
+          {
+            to: "/batch-outreach",
+            label: "Batch Outreach",
+            icon: "✉️",
+          },
+          {
+            to: "/outreach-test",
+            label: "Single Outreach",
+            icon: "📧",
           }
         );
         break;
@@ -71,6 +81,16 @@ export default function Sidebar({ userRole, onCollapse }: SidebarProps) {
             to: "/knowledge-base",
             label: t("knowledgeBase.title"),
             icon: "📚",
+          },
+          {
+            to: "/batch-outreach",
+            label: "Batch Outreach",
+            icon: "✉️",
+          },
+          {
+            to: "/outreach-test",
+            label: "Single Outreach",
+            icon: "📧",
           }
         );
         break;
