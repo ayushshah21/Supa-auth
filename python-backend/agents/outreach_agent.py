@@ -28,7 +28,7 @@ if not pinecone_api_key or not pinecone_environment:
         "Missing Pinecone credentials. Please ensure PINECONE_API_KEY and PINECONE_ENVIRONMENT are set in your .env file"
     )
 
-# Initialize Pinecone client using the new class-based API
+# Initialize Pinecone client using the modern class-based API
 pc = PineconeClient(api_key=pinecone_api_key, environment=pinecone_environment)
 index = pc.Index(pinecone_index_name)
 
