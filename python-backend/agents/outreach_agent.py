@@ -20,15 +20,17 @@ from utils.db import supabase
 
 # Initialize Pinecone
 pinecone_api_key = os.getenv("PINECONE_API_KEY")
+pinecone_environment = os.getenv("PINECONE_ENVIRONMENT")
 pinecone_index_name = os.getenv("PINECONE_INDEX", "ticket-ai")
 
-if not pinecone_api_key:
+if not pinecone_api_key or not pinecone_environment:
     raise ValueError(
-        "Missing Pinecone API key. Please ensure PINECONE_API_KEY is set in your .env file"
+        "Missing Pinecone credentials. Please ensure PINECONE_API_KEY and PINECONE_ENVIRONMENT are set in your .env file"
     )
 
 # Initialize Pinecone client
-pc = pinecone.Pinecone(api_key=pinecone_api_key)
+pc = pinecone.Pinecone(api_key=pinecone_api_key, environment=pinecone_environment)
+index = pc.Index(pinecone_index_name)
 
 # Initialize embeddings
 embeddings = OpenAIEmbeddings(
