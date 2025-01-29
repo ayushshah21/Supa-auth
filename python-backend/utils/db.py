@@ -15,12 +15,8 @@ if not SUPABASE_URL or not SUPABASE_KEY:
     )
 
 try:
-    # Create a single Supabase client instance with error handling
-    supabase = create_client(
-        SUPABASE_URL,
-        SUPABASE_KEY,
-        options={"headers": {"X-Client-Info": "supabase-py/1.0.3"}},
-    )
+    # Create a single Supabase client instance
+    supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
     print("✓ Successfully connected to Supabase")
 except Exception as e:
     print(f"Error connecting to Supabase: {str(e)}")
