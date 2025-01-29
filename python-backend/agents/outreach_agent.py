@@ -13,7 +13,7 @@ from langchain.smith import RunEvalConfig, run_on_dataset
 from langsmith.run_helpers import traceable
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Pinecone
-import pinecone
+from pinecone import Pinecone as PineconeClient
 from datetime import datetime
 import json
 from utils.db import supabase
@@ -28,8 +28,8 @@ if not pinecone_api_key or not pinecone_environment:
         "Missing Pinecone credentials. Please ensure PINECONE_API_KEY and PINECONE_ENVIRONMENT are set in your .env file"
     )
 
-# Initialize Pinecone client
-pc = pinecone.Pinecone(api_key=pinecone_api_key, environment=pinecone_environment)
+# Initialize Pinecone client using the new class-based API
+pc = PineconeClient(api_key=pinecone_api_key, environment=pinecone_environment)
 index = pc.Index(pinecone_index_name)
 
 # Initialize embeddings
