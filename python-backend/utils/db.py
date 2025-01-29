@@ -14,5 +14,8 @@ if not SUPABASE_URL or not SUPABASE_KEY:
         "Missing Supabase credentials. Please ensure SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are set in your .env file"
     )
 
-# Create a single Supabase client instance
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+# Create a single Supabase client instance with basic configuration
+supabase: Client = create_client(
+    supabase_url=SUPABASE_URL,
+    supabase_key=SUPABASE_KEY,
+)
