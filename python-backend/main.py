@@ -403,13 +403,15 @@ async def send_email(
     subject: str,
     body: str,
     ticket_id: str,
-    origin: str = "http://localhost:5173",
+    origin: str = "https://ticket-ai-chi.vercel.app",  # Default to production URL
 ):
     """Send email using Mailgun API."""
     if not MAILGUN_API_KEY:
         raise HTTPException(status_code=500, detail="Mailgun API key not configured")
 
-    ticket_url = f"{origin}/ticket/{ticket_id}"
+    # Use environment variable for frontend URL if available
+    frontend_url = os.getenv("FRONTEND_URL", origin)
+    ticket_url = f"{frontend_url}/ticket/{ticket_id}"
 
     # Create HTML email template
     email_body = f"""
