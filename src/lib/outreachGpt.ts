@@ -20,7 +20,7 @@ interface EmailResponse {
   id?: string;
 }
 
-const API_URL = "http://localhost:8000"; // FastAPI server URL
+const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000"; // FastAPI server URL
 
 export async function generateOutreachResponse(
   request: OutreachRequest,
