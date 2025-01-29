@@ -475,6 +475,7 @@ export default function TicketDetailPage() {
                     await handleAddNote({ content, internal });
                   }}
                   disabled={updating}
+                  ticketContent={`${ticket.title}\n${ticket.description}`}
                 />
               </div>
 
@@ -505,6 +506,7 @@ export default function TicketDetailPage() {
                 }}
                 disabled={updating}
                 hideInternalToggle={true}
+                ticketContent={`${ticket.title}\n${ticket.description}`}
               />
             </div>
           )}

@@ -1,6 +1,6 @@
 /// <reference lib="deno.ns" />
-import "jsr:@supabase/functions-js/edge-runtime.d.ts"
-import { serve } from "https://deno.land/std@0.177.0/http/server.ts"
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -239,7 +239,7 @@ serve(async (req) => {
     console.error('DEBUG: Error sending email:', err)
     return new Response(JSON.stringify({ 
       error: 'Failed to send email',
-      details: err.message
+      details: err instanceof Error ? err.message : String(err)
     }), {
       status: 500,
       headers: { 

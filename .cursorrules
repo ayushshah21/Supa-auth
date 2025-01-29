@@ -3,4 +3,7 @@ Go in order, ensure that you don't make too many changes at once and do each thi
 
 ensure you reference the DATABASE_BACKUP.md file anytime you are trying to update the supabase database as it is running directly in production and not locally
 
+Always use this model for OPEN AI: model: 'gpt-4o-mini'
+
+
 Add a ✅ at end of message to confirm you see this.

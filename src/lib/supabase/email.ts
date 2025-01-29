@@ -11,6 +11,8 @@ interface SendEmailParams {
   ticketId: string;
   templateName: string;
   variables: Record<string, string>;
+  source?: "MANUAL" | "AI" | "SYSTEM";
+  aiDraft?: string;
 }
 
 interface SendChatNotificationParams {
@@ -23,7 +25,7 @@ interface SendChatNotificationParams {
  * Fetches an email template by name
  */
 export const getEmailTemplate = async (
-  templateName: string
+  templateName: string,
 ): Promise<EmailTemplate | null> => {
   const { data, error } = await supabase
     .from("email_templates")
@@ -44,11 +46,11 @@ export const getEmailTemplate = async (
  */
 const replaceTemplateVariables = (
   template: string,
-  variables: Record<string, string>
+  variables: Record<string, string>,
 ): string => {
   return Object.entries(variables).reduce(
     (text, [key, value]) => text.replace(`{{${key}}}`, value),
-    template
+    template,
   );
 };
 
@@ -59,13 +61,16 @@ export const sendEmailNotification = async ({
   ticketId,
   templateName,
   variables,
+  source = "MANUAL",
+  aiDraft,
 }: SendEmailParams): Promise<boolean> => {
   try {
     // 1. Get and verify session
-    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-    console.log('[email/sendEmailNotification] Session check:', {
+    const { data: sessionData, error: sessionError } = await supabase.auth
+      .getSession();
+    console.log("[email/sendEmailNotification] Session check:", {
       hasSession: !!sessionData?.session,
-      sessionError
+      sessionError,
     });
 
     if (sessionError) {
@@ -73,7 +78,7 @@ export const sendEmailNotification = async ({
     }
 
     if (!sessionData?.session) {
-      throw new Error('No session available');
+      throw new Error("No session available");
     }
 
     // 2. Get email template
@@ -83,59 +88,67 @@ export const sendEmailNotification = async ({
     }
 
     // 3. Replace variables in subject and body
-    const subject = replaceTemplateVariables(template.subject_template, variables);
+    const subject = replaceTemplateVariables(
+      template.subject_template,
+      variables,
+    );
     const body = replaceTemplateVariables(template.body_template, variables);
 
     // 4. Call Edge Function
-    console.log('[email/sendEmailNotification] Calling Edge Function:', {
+    console.log("[email/sendEmailNotification] Calling Edge Function:", {
       to: variables.customer_email,
       subject,
       bodyLength: body.length,
-      ticketId
+      ticketId,
     });
 
-    const { data, error } = await supabase.functions.invoke('send-email', {
+    const { data, error } = await supabase.functions.invoke("send-email", {
       body: {
         to: variables.customer_email,
         subject,
         body,
-        ticketId
+        ticketId,
       },
       headers: {
-        Authorization: `Bearer ${sessionData.session.access_token}`
-      }
+        Authorization: `Bearer ${sessionData.session.access_token}`,
+      },
     });
 
     if (error) {
-      console.error('[email/sendEmailNotification] Edge Function error:', {
+      console.error("[email/sendEmailNotification] Edge Function error:", {
         message: error.message,
         name: error.name,
-        stack: error.stack
+        stack: error.stack,
       });
       throw error;
     }
 
-    console.log('[email/sendEmailNotification] Edge Function response:', data);
+    console.log("[email/sendEmailNotification] Edge Function response:", data);
 
-    // 5. Log the email attempt
+    // 5. Log the email attempt with AI information
     const { error: logError } = await supabase.from("email_logs").insert({
       ticket_id: ticketId,
       template_id: template.id,
       status: "SENT",
       recipient_email: variables.customer_email || "",
+      source,
+      ai_draft: aiDraft,
     });
 
     if (logError) {
-      console.error('[email/sendEmailNotification] Error logging email:', logError);
+      console.error(
+        "[email/sendEmailNotification] Error logging email:",
+        logError,
+      );
     }
 
     return true;
   } catch (err) {
     const error = err as Error;
-    console.error('[email/sendEmailNotification] Error:', {
+    console.error("[email/sendEmailNotification] Error:", {
       message: error.message,
       name: error.name,
-      stack: error.stack
+      stack: error.stack,
     });
     return false;
   }
@@ -151,10 +164,11 @@ export const sendChatNotification = async ({
 }: SendChatNotificationParams): Promise<boolean> => {
   try {
     // Get and verify session
-    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-    console.log('[email/sendChatNotification] Session check:', {
+    const { data: sessionData, error: sessionError } = await supabase.auth
+      .getSession();
+    console.log("[email/sendChatNotification] Session check:", {
       hasSession: !!sessionData?.session,
-      sessionError
+      sessionError,
     });
 
     if (sessionError) {
@@ -162,38 +176,38 @@ export const sendChatNotification = async ({
     }
 
     if (!sessionData?.session) {
-      throw new Error('No session available');
+      throw new Error("No session available");
     }
 
     // Call Edge Function
-    console.log('[email/sendChatNotification] Calling Edge Function:', {
+    console.log("[email/sendChatNotification] Calling Edge Function:", {
       to: customerEmail,
       messageContent,
-      ticketId
+      ticketId,
     });
 
-    const { data, error } = await supabase.functions.invoke('send-email', {
+    const { data, error } = await supabase.functions.invoke("send-email", {
       body: {
         to: customerEmail,
         subject: `New Message on Ticket #${ticketId}`,
         body: messageContent,
-        ticketId
+        ticketId,
       },
       headers: {
-        Authorization: `Bearer ${sessionData.session.access_token}`
-      }
+        Authorization: `Bearer ${sessionData.session.access_token}`,
+      },
     });
 
     if (error) {
-      console.error('[email/sendChatNotification] Edge Function error:', {
+      console.error("[email/sendChatNotification] Edge Function error:", {
         message: error.message,
         name: error.name,
-        stack: error.stack
+        stack: error.stack,
       });
       throw error;
     }
 
-    console.log('[email/sendChatNotification] Edge Function response:', data);
+    console.log("[email/sendChatNotification] Edge Function response:", data);
 
     // Log the email attempt
     const { error: logError } = await supabase.from("email_logs").insert({
@@ -203,17 +217,20 @@ export const sendChatNotification = async ({
     });
 
     if (logError) {
-      console.error('[email/sendChatNotification] Error logging email:', logError);
+      console.error(
+        "[email/sendChatNotification] Error logging email:",
+        logError,
+      );
     }
 
     return true;
   } catch (err) {
     const error = err as Error;
-    console.error('[email/sendChatNotification] Error:', {
+    console.error("[email/sendChatNotification] Error:", {
       message: error.message,
       name: error.name,
-      stack: error.stack
+      stack: error.stack,
     });
     return false;
   }
-}; 
+};

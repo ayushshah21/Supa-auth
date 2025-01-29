@@ -15,6 +15,7 @@ import StatsPage from "./pages/StatsPage";
 import ProfilePage from "./pages/ProfilePage";
 import KnowledgeBasePage from "./pages/KnowledgeBasePage";
 import TeamsPage from "./pages/TeamsPage";
+import OutreachGPTTest from "./components/OutreachGPTTest";
 
 function App() {
   return (
@@ -144,6 +145,18 @@ function App() {
                 <StatsPage />
               </Layout>
             </ProtectedRoute>
+          }
+        />
+
+        {/* OutreachGPT Test Route */}
+        <Route
+          path="/outreach-test"
+          element={
+            <Layout>
+              <ProtectedRoute allowedRoles={["WORKER", "ADMIN"]}>
+                <OutreachGPTTest />
+              </ProtectedRoute>
+            </Layout>
           }
         />
       </Routes>
