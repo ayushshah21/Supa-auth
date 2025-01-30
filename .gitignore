@@ -42,4 +42,4 @@ backups/
 # Supabase
 .supabase/
 
-backup-db.sh
+backup-db.shpython-backend/evaluation_results/
