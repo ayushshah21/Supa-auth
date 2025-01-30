@@ -382,8 +382,10 @@ export default function BatchOutreachManager() {
         {/* Drafts Display */}
         {drafts.length > 0 && (
           <div className="mt-8">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold">Generated Drafts</h3>
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-semibold text-gray-800">
+                Generated Drafts
+              </h3>
               <button
                 onClick={() =>
                   handleSendEmails(
@@ -395,7 +397,7 @@ export default function BatchOutreachManager() {
                   !drafts.some((d) => d.status === "approved") ||
                   drafts.every((d) => d.status === "sent")
                 }
-                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
               >
                 {isSending ? (
                   <span className="flex items-center">
@@ -426,97 +428,153 @@ export default function BatchOutreachManager() {
                 )}
               </button>
             </div>
-            <div className="space-y-4">
-              {drafts.map((draft, index) => (
-                <div key={draft.userId} className="border rounded-lg p-4">
-                  <div className="flex justify-between items-center mb-2">
-                    <h4 className="font-medium">
-                      {selectedUsers.find((u) => u.id === draft.userId)?.name}
-                    </h4>
-                    <span className="text-sm text-gray-500 capitalize">
-                      {draft.status}
-                    </span>
-                  </div>
-                  <textarea
-                    value={draft.content}
-                    onChange={(e) => {
-                      const newDrafts = [...drafts];
-                      newDrafts[index] = {
-                        ...draft,
-                        content: e.target.value,
-                        status: "edited",
-                      };
-                      setDrafts(newDrafts);
-                    }}
-                    className="w-full p-2 border rounded mt-2"
-                    rows={4}
-                  />
-                  <div className="flex justify-end mt-2 space-x-2">
-                    <button
-                      onClick={() => {
-                        const newDrafts = [...drafts];
-                        newDrafts[index] = {
-                          ...draft,
-                          status: "approved",
-                        };
-                        setDrafts(newDrafts);
-                      }}
-                      className="px-3 py-1 text-green-700 border border-green-700 rounded hover:bg-green-50"
-                    >
-                      Approve
-                    </button>
-                    <button
-                      onClick={() => handleSendEmails([draft])}
-                      disabled={isSending || draft.status === "sent"}
-                      className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {isSending ? (
-                        <span className="flex items-center">
-                          <svg
-                            className="animate-spin -ml-1 mr-2 h-4 w-4"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
+
+            <div className="space-y-6 max-w-4xl mx-auto">
+              {drafts.map((draft, index) => {
+                const user = selectedUsers.find((u) => u.id === draft.userId);
+                return (
+                  <div
+                    key={draft.userId}
+                    className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200"
+                  >
+                    <div className="p-4 border-b border-gray-100">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          {user?.avatar_url ? (
+                            <img
+                              src={user.avatar_url}
+                              alt={user.name}
+                              className="w-10 h-10 rounded-full"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                              <span className="text-blue-600 font-medium text-lg">
+                                {user?.name?.charAt(0)}
+                              </span>
+                            </div>
+                          )}
+                          <div>
+                            <h4 className="font-medium text-gray-900 text-lg">
+                              {user?.name}
+                            </h4>
+                            <p className="text-sm text-gray-500">
+                              {user?.email}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <span
+                            className={`px-3 py-1.5 text-sm rounded-full ${
+                              draft.status === "sent"
+                                ? "bg-green-100 text-green-800"
+                                : draft.status === "approved"
+                                ? "bg-blue-100 text-blue-800"
+                                : draft.status === "edited"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-gray-100 text-gray-800"
+                            }`}
                           >
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                            ></circle>
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            ></path>
-                          </svg>
-                          Sending...
-                        </span>
-                      ) : draft.status === "sent" ? (
-                        "Sent ✓"
-                      ) : (
-                        "Send"
-                      )}
-                    </button>
+                            {draft.status.charAt(0).toUpperCase() +
+                              draft.status.slice(1)}
+                          </span>
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => {
+                                const newDrafts = [...drafts];
+                                newDrafts[index] = {
+                                  ...draft,
+                                  status: "approved",
+                                };
+                                setDrafts(newDrafts);
+                              }}
+                              className="px-3 py-1.5 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors duration-200"
+                            >
+                              Approve
+                            </button>
+                            <button
+                              onClick={() => handleSendEmails([draft])}
+                              disabled={isSending || draft.status === "sent"}
+                              className="px-3 py-1.5 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                            >
+                              {isSending
+                                ? "Sending..."
+                                : draft.status === "sent"
+                                ? "Sent ✓"
+                                : "Send"}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-6">
+                      <textarea
+                        value={draft.content}
+                        onChange={(e) => {
+                          const newDrafts = [...drafts];
+                          newDrafts[index] = {
+                            ...draft,
+                            content: e.target.value,
+                            status: "edited",
+                          };
+                          setDrafts(newDrafts);
+                        }}
+                        className="w-full h-96 p-4 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 text-base leading-relaxed resize-none"
+                        placeholder="Email content..."
+                      />
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
+
             {sendingStatus && (
               <div
-                className={`mt-4 p-4 rounded-md ${
+                className={`mt-6 p-4 rounded-lg ${
                   sendingStatus.success
-                    ? "bg-green-50 text-green-800"
-                    : "bg-red-50 text-red-800"
+                    ? "bg-green-50 border border-green-200"
+                    : "bg-red-50 border border-red-200"
                 }`}
               >
-                <p className="font-medium">{sendingStatus.message}</p>
+                <div className="flex items-center">
+                  {sendingStatus.success ? (
+                    <svg
+                      className="h-5 w-5 text-green-400 mr-2"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className="h-5 w-5 text-red-400 mr-2"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  )}
+                  <p
+                    className={`font-medium ${
+                      sendingStatus.success ? "text-green-800" : "text-red-800"
+                    }`}
+                  >
+                    {sendingStatus.message}
+                  </p>
+                </div>
                 {sendingStatus.errors && sendingStatus.errors.length > 0 && (
-                  <ul className="mt-2 text-sm">
+                  <ul className="mt-2 space-y-1 text-sm text-red-700">
                     {sendingStatus.errors.map((error, index) => (
-                      <li key={index}>
+                      <li key={index} className="flex items-center">
+                        <span className="mr-2">•</span>
                         {selectedUsers.find((u) => u.id === error.userId)?.name}
                         : {error.error}
                       </li>
