@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 import os
+import uuid
 
 # Load environment variables at the very beginning
 load_dotenv()
@@ -39,9 +40,11 @@ embeddings = OpenAIEmbeddings(
 
 
 class OutreachAgent:
-    def __init__(self):
-        # Initialize the model
-        self.model = ChatOpenAI(model="gpt-4o-mini", temperature=0.7)
+    def __init__(self, callbacks=None):
+        # Initialize the model with callbacks if provided
+        self.model = ChatOpenAI(
+            model="gpt-4o-mini", temperature=0.7, callbacks=callbacks
+        )
 
         # Initialize vector store
         try:
@@ -81,13 +84,11 @@ class OutreachAgent:
             ]
         )
 
-        # Define the chain
+        # Define the chain with callbacks
         self.chain = (
             {
-                "db_context": lambda x: self.get_customer_context(x["customer_id"]),
-                "similar_interactions": lambda x: self.get_similar_interactions(
-                    x["customer_id"], x["request"]
-                ),
+                "db_context": RunnablePassthrough(),  # We'll pass the context directly
+                "similar_interactions": RunnablePassthrough(),  # We'll pass the interactions directly
                 "request": lambda x: x["request"],
             }
             | self.prompt
@@ -280,6 +281,9 @@ class OutreachAgent:
                 "author_id": customer_id,
                 "content": message,
                 "type": "outreach",
+                "ticket_id": str(
+                    uuid.uuid4()
+                ),  # Generate a placeholder ticket ID for testing
                 "metadata": {
                     "success": success,
                     "timestamp": datetime.now().isoformat(),
@@ -312,10 +316,18 @@ class OutreachAgent:
         try:
             start_time = datetime.now()
 
+            # Get context and similar interactions first
+            db_context = await self.get_customer_context(customer_id)
+            similar_interactions = await self.get_similar_interactions(
+                customer_id, request
+            )
+
+            # Then invoke the chain with the gathered data
             result = await self.chain.ainvoke(
                 {
                     "request": request,
-                    "customer_id": customer_id,
+                    "db_context": db_context,
+                    "similar_interactions": similar_interactions,
                     "options": options or {},
                 }
             )
