@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from dotenv import load_dotenv
 from routes.outreach import router as outreach_router
+from routes.resolution import router as resolution_router
 
 # Load environment variables
 load_dotenv()
@@ -30,6 +31,9 @@ app.add_middleware(
 
 # Include the outreach routes with proper prefix
 app.include_router(outreach_router, prefix="/api")
+
+# Include the resolution routes
+app.include_router(resolution_router, prefix="/api/resolution")
 
 
 @app.get("/")

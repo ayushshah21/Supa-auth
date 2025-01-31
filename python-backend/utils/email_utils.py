@@ -40,13 +40,48 @@ async def send_email(
     if not MAILGUN_API_KEY:
         raise HTTPException(status_code=500, detail="Mailgun API key not configured")
 
-    # Create HTML email template with link to dashboard
+    # Create HTML email template with better styling and direct ticket link
     email_body = f"""
     <!DOCTYPE html>
     <html>
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            .content {{
+                color: #4a5568;
+                font-size: 16px;
+                line-height: 1.8;
+                margin-bottom: 30px;
+            }}
+            .ticket-button {{
+                background-color: #4f46e5;
+                color: #ffffff !important;  /* Force white text */
+                padding: 12px 24px;
+                text-decoration: none;
+                border-radius: 6px;
+                font-weight: 500;
+                display: inline-block;
+                margin: 20px 0;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }}
+            .ticket-button:hover {{
+                background-color: #4338ca;
+            }}
+            .divider {{
+                border-top: 1px solid #e2e8f0;
+                margin: 20px 0;
+            }}
+            .footer {{
+                color: #718096;
+                font-size: 14px;
+                text-align: center;
+            }}
+            .signature {{
+                margin-top: 24px;
+                color: #4a5568;
+            }}
+        </style>
     </head>
     <body style="margin: 0; padding: 0; background-color: #f6f9fc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
         <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -54,24 +89,23 @@ async def send_email(
                 <div style="text-align: center; margin-bottom: 30px;">
                     <h1 style="color: #1a1a1a; margin: 0; font-size: 24px;">TicketAI Support</h1>
                 </div>
-                <div style="color: #4a5568; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
+                
+                <div class="content">
                     {body}
                 </div>
-                <div style="text-align: center; margin-top: 30px;">
-                    <a href="{FRONTEND_URL.rstrip("/")}/dashboard" 
-                       style="display: inline-block; 
-                              background-color: #4f46e5; 
-                              color: white; 
-                              padding: 12px 24px; 
-                              text-decoration: none; 
-                              border-radius: 6px; 
-                              font-weight: 500;">
-                        View Dashboard
+
+                <div class="divider"></div>
+
+                <div style="text-align: center;">
+                    <a href="{FRONTEND_URL.rstrip('/')}/ticket/{ticket_id}" 
+                       class="ticket-button">
+                        View Ticket Details
                     </a>
                 </div>
             </div>
-            <div style="text-align: center; color: #718096; font-size: 14px; margin-top: 20px;">
-                <p style="margin: 0;">This is an automated message from TicketAI Support System.</p>
+            
+            <div class="footer">
+                <p style="margin: 5px 0;">This is an automated message from TicketAI Support System.</p>
                 <p style="margin: 5px 0;">Please do not reply directly to this email.</p>
             </div>
         </div>
