@@ -339,7 +339,6 @@ async def send_batch_emails(request: BatchEmailRequest):
                         to=draft.email,
                         subject=draft.subject,
                         body=draft.content,
-                        ticket_id=draft.userId,  # Using userId as ticket_id for now
                     )
 
                     email_log_data["status"] = "SENT"
