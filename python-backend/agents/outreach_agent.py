@@ -18,6 +18,7 @@ from pinecone import Pinecone as PineconeClient
 from datetime import datetime
 import json
 from utils.db import supabase
+from utils.email_utils import send_email
 
 # Initialize Pinecone
 pinecone_api_key = os.getenv("PINECONE_API_KEY")
@@ -333,6 +334,28 @@ class OutreachAgent:
             )
 
             response_time = (datetime.now() - start_time).total_seconds()
+
+            # Get customer email from context
+            user_response = (
+                supabase.table("users")
+                .select("email")
+                .eq("id", customer_id)
+                .single()
+                .execute()
+            )
+
+            if user_response and user_response.data:
+                customer_email = user_response.data.get("email")
+                if customer_email:
+                    try:
+                        await send_email(
+                            to=customer_email,
+                            subject="TicketAI: Updates and Recommendations",
+                            body=result,
+                            # Don't pass ticket_id for outreach emails
+                        )
+                    except Exception as e:
+                        print(f"Error sending outreach email: {str(e)}")
 
             # Store the interaction
             await self.store_interaction(customer_id, result, True)
