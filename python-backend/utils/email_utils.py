@@ -40,7 +40,7 @@ async def send_email(
     if not MAILGUN_API_KEY:
         raise HTTPException(status_code=500, detail="Mailgun API key not configured")
 
-    # Create HTML email template with better styling and direct ticket link
+    # Create HTML email template with better styling and conditional ticket link
     email_body = f"""
     <!DOCTYPE html>
     <html>
@@ -54,7 +54,7 @@ async def send_email(
                 line-height: 1.8;
                 margin-bottom: 30px;
             }}
-            .ticket-button {{
+            .button {{
                 background-color: #4f46e5;
                 color: #ffffff !important;  /* Force white text */
                 padding: 12px 24px;
@@ -65,7 +65,7 @@ async def send_email(
                 margin: 20px 0;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             }}
-            .ticket-button:hover {{
+            .button:hover {{
                 background-color: #4338ca;
             }}
             .divider {{
@@ -97,10 +97,7 @@ async def send_email(
                 <div class="divider"></div>
 
                 <div style="text-align: center;">
-                    <a href="{FRONTEND_URL.rstrip('/')}/ticket/{ticket_id}" 
-                       class="ticket-button">
-                        View Ticket Details
-                    </a>
+                    {generate_action_button(ticket_id)}
                 </div>
             </div>
             
@@ -164,3 +161,23 @@ async def send_email(
         except aiohttp.ClientError as e:
             print(f"Email sending failed: {e}")
             raise HTTPException(status_code=500, detail="Failed to send email")
+
+
+def generate_action_button(ticket_id: Optional[str] = None) -> str:
+    """Generate the appropriate action button based on whether a ticket_id is provided"""
+    if ticket_id:
+        # For resolution emails - link to specific ticket
+        return f"""
+        <a href="{FRONTEND_URL.rstrip('/')}/ticket/{ticket_id}" 
+           class="button">
+            View Ticket Details
+        </a>
+        """
+    else:
+        # For outreach emails - link directly to dashboard
+        return f"""
+        <a href="{FRONTEND_URL.rstrip('/')}/dashboard" 
+           class="button">
+            View Dashboard
+        </a>
+        """
