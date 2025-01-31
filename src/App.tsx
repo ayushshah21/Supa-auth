@@ -17,6 +17,7 @@ import KnowledgeBasePage from "./pages/KnowledgeBasePage";
 import TeamsPage from "./pages/TeamsPage";
 import OutreachGPTTest from "./components/OutreachGPTTest";
 import BatchOutreachManager from "./components/BatchOutreachManager";
+import TicketResolutionPage from "./pages/TicketResolutionPage";
 
 function App() {
   return (
@@ -166,6 +167,18 @@ function App() {
             <Layout>
               <ProtectedRoute allowedRoles={["WORKER", "ADMIN"]}>
                 <BatchOutreachManager />
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+
+        {/* Ticket Resolution Route */}
+        <Route
+          path="/ticket-resolution"
+          element={
+            <Layout>
+              <ProtectedRoute allowedRoles={["WORKER", "ADMIN"]}>
+                <TicketResolutionPage />
               </ProtectedRoute>
             </Layout>
           }

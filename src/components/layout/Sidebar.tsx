@@ -63,6 +63,11 @@ export default function Sidebar({ userRole, onCollapse }: SidebarProps) {
             to: "/outreach-test",
             label: "Single Outreach",
             icon: "📧",
+          },
+          {
+            to: "/ticket-resolution",
+            label: "Ticket Resolution",
+            icon: "🤖",
           }
         );
         break;
@@ -91,6 +96,11 @@ export default function Sidebar({ userRole, onCollapse }: SidebarProps) {
             to: "/outreach-test",
             label: "Single Outreach",
             icon: "📧",
+          },
+          {
+            to: "/ticket-resolution",
+            label: "Ticket Resolution",
+            icon: "🤖",
           }
         );
         break;
